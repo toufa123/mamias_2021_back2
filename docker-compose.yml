@@ -1,0 +1,153 @@
+version: '3.8'
+services:
+  #######################################
+  # PHP application Docker container
+  #######################################
+  app:
+    container_name: "${name}_app"
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile.development
+    links:
+      #- mysql
+      - postgres
+      #- mail
+      #- redis
+      #- memcached
+    ports:
+      - "${ngnix80port}:80"
+      - "${ngnix443port}:443"
+    volumes:
+      - ./app/:/app/
+    environment:
+      - DATABASE_URL=pgsql://admin:postgres@postgres:5432/db_${name}
+    env_file:
+      - etc/environment.yml
+      - etc/environment.development.yml
+    labels:
+      - "traefik.http.routers.${name}.rule=Host(`${name}.docker.localhost`)"
+  #######################################
+  # PostgreSQL server
+  #######################################
+  postgres:
+    container_name: "${name}_database"
+    restart: always
+    build:
+      context: docker/postgres/
+      dockerfile: Postgres.Dockerfile
+    #    dockerfile: Postgres-9.5.Dockerfile
+    ports:
+      - "${pg_port}:5432"
+    volumes:
+      #  - solr:/opt/solr/server/solr/data
+      - ${name}_postgres:/var/lib/postgresql/data
+      - ./backup/mamias03012020.sql:/docker-entrypoint-initdb.d/setup-db.sql
+
+    environment:
+      - ALLOW_IP_RANGE=0.0.0.0/0
+      - DB_HOST=postgres
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=db_mamias
+      - POSTGRES_MULTIPLE_EXTENSIONS=postgis
+      - DEFAULT_ENCODING="UTF8"
+    env_file:
+      - etc/environment.yml
+      - etc/environment.production.yml
+    command: bash -c "while [ ! -f /docker-entrypoin-initdb.d/public.sql ]; do sleep 1; done && /docker-entrypoint.sh"
+    #######################################
+    # Redis
+    #######################################
+    #redis:
+    #  build:
+    #    context: docker/redis/
+    #  volumes:
+    #    - redis:/data
+    #  env_file:
+    #    - etc/environment.yml
+    #    - etc/environment.production.yml
+
+    #######################################
+    # Memcached
+    #######################################
+    #memcached:
+    #  build:
+    #    context: docker/memcached/
+    #  env_file:
+    #    - etc/environment.yml
+    #    - etc/environment.production.yml
+
+  #######################################
+  # pgAdmin
+  #######################################
+  pgAdmin:
+    restart: always
+    container_name: "${name}_pgadmin4"
+    image: dpage/pgadmin4
+    ports:
+      - "${pgadmin_port}:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: atef.ouerghi@spa-rac.org
+      PGADMIN_DEFAULT_PASSWORD: toufa_2512
+    volumes:
+      - ${name}_pgadmin:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    labels:
+      - "traefik.http.routers.${name}_portainer.rule=Host(`portainer.docker.localhost`)"
+  #######################################
+  # Mail
+  #######################################
+  maildev:
+    container_name: "${name}_maildev"
+    image: maildev/maildev:latest
+    restart: always
+    ports:
+      - "${maildev_port}:80" # smtp server
+      - "1026:25"
+    labels:
+      - "traefik.http.services.${name}_mail.loadbalancer.server.port=1025"
+      - "traefik.http.routers.${name}_mail.rule=Host(`mail.${name}.localhost`)"
+
+
+  #######################################
+  # Portainer
+  #######################################
+  portainer:
+    image: portainer/portainer
+    container_name: "${name}_portainer"
+    restart: always
+    ports:
+      - "${portainer_port}:80"
+    command: --no-auth -H unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "traefik.http.routers.${name}_portainer.rule=Host(`portainer.${name}.docker.localhost`)"
+  #######################################
+  # Traefik
+  #######################################
+  traefik:
+    image: traefik:latest
+    container_name: "${name}_traefik"
+    restart: always
+    command: --api.insecure=true --providers.docker
+    ports:
+      #- '8000:80'
+      - '${traefik_port}:8080' # Dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  #postgres_data:
+  #pgadmin:
+  mamias_postgres:
+    name: ${name}_data # Real ending name
+    external: false
+  mamias_pgadmin:
+    name: ${name}_pgadmin
+    external: false
+

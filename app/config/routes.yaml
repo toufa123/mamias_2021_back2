@@ -1,0 +1,42 @@
+#index:
+#    path: /
+#    controller: App\Controller\DefaultController::index
+sonata_user_admin_resetting:
+    resource: '@SonataUserBundle/Resources/config/routing/admin_resetting.xml'
+    prefix: /user/resetting
+
+sonata_user:
+    resource: '@SonataUserBundle/Resources/config/routing/admin_security.xml'
+    prefix: /admin
+
+fos_user:
+    resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+
+fos_user_profile:
+    resource: "@FOSUserBundle/Resources/config/routing/profile.xml"
+    prefix: /user/profile
+
+fos_user_register:
+    resource: "@FOSUserBundle/Resources/config/routing/registration.xml"
+    prefix: /user/register
+
+news:
+    resource: '@SonataNewsBundle/Resources/config/routing/news.xml'
+    prefix: /news
+
+gallery:
+    resource: '@SonataMediaBundle/Resources/config/routing/gallery.xml'
+    prefix: /media/gallery
+
+media:
+    resource: '@SonataMediaBundle/Resources/config/routing/media.xml'
+    prefix: /media
+
+redcode_tree:
+    resource: "@RedCodeTreeBundle/Resources/config/routing.yml"
+    prefix:   /admin
+
+presta_sitemap:
+    resource: "@PrestaSitemapBundle/Resources/config/routing.yml"
+
+
