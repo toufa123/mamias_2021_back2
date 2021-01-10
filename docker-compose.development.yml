@@ -113,20 +113,20 @@ services:
       - "traefik.http.routers.${name}_mail.rule=Host(`mail.${name}.localhost`)"
 
 
-  #######################################
-  # Portainer
-  #######################################
-  portainer:
-    image: portainer/portainer
-    container_name: "${name}_portainer"
-    restart: always
-    ports:
-      - "${portainer_port}:80"
-    command: --no-auth -H unix:///var/run/docker.sock
-    volumes:
+      #######################################
+      # Portainer
+      #######################################
+      #portainer:
+      #image: portainer/portainer
+      #container_name: "${name}_portainer"
+      #restart: always
+      #ports:
+      #- "${portainer_port}:80"
+      #command: --no-auth -H unix:///var/run/docker.sock
+      #volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    labels:
-      - "traefik.http.routers.${name}_portainer.rule=Host(`portainer.${name}.docker.localhost`)"
+      #labels:
+      #- "traefik.http.routers.${name}_portainer.rule=Host(`portainer.${name}.docker.localhost`)"
   #######################################
   # Traefik
   #######################################
