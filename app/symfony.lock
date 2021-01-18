@@ -1,4 +1,7 @@
 {
+    "kartik-v/strength-meter": {
+        "version": "1.1.x-dev"
+    },
     "phpstan/extension-installer": {
         "version": "1.1.0"
     },

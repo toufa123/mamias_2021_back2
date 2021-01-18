@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8b8a8a2bd3d59fb35e5257871838760a",
+    "content-hash": "587536f45d6a304f702efbb4e4e39cc5",
     "packages": [
         {
             "name": "api-platform/api-pack",
@@ -3681,6 +3681,58 @@
                 "source": "https://github.com/jsor/doctrine-postgis/tree/v1.7.0"
             },
             "time": "2018-08-01T06:24:52+00:00"
+        },
+        {
+            "name": "kartik-v/strength-meter",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kartik-v/strength-meter.git",
+                "reference": "1b1b925bfecf7a7703ed4f0084a739981cbc5184"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kartik-v/strength-meter/zipball/1b1b925bfecf7a7703ed4f0084a739981cbc5184",
+                "reference": "1b1b925bfecf7a7703ed4f0084a739981cbc5184",
+                "shasum": ""
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "kartik\\plugins\\strengthmeter\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Kartik Visweswaran",
+                    "email": "kartikv2@gmail.com",
+                    "homepage": "http://www.krajee.com/"
+                }
+            ],
+            "description": "A dynamic strength meter for password input validation with various configurable options.",
+            "homepage": "https://github.com/kartik-v/strength-meter",
+            "keywords": [
+                "bootstrap",
+                "jquery",
+                "meter",
+                "password",
+                "strength"
+            ],
+            "support": {
+                "issues": "https://github.com/kartik-v/strength-meter/issues",
+                "source": "https://github.com/kartik-v/strength-meter/tree/master"
+            },
+            "time": "2020-08-01T05:48:34+00:00"
         },
         {
             "name": "knplabs/gaufrette",
@@ -15593,6 +15645,7 @@
     "stability-flags": {
         "creof/doctrine2-spatial": 20,
         "ersah/ga-bundle": 20,
+        "kartik-v/strength-meter": 20,
         "redcode/tree-bundle": 15
     },
     "prefer-stable": true,

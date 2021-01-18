@@ -47,7 +47,6 @@
         "swiftmailer/swiftmailer": "^6.2",
         "symfony/asset": "^4.4.11",
         "symfony/console": "4.4.11",
-
         "symfony/expression-language": "4.4.*",
         "symfony/flex": "^1.9.1",
         "symfony/form": "4.4.*",
@@ -63,7 +62,6 @@
         "symfony/swiftmailer-bundle": "3.4.0",
         "symfony/translation": "4.4.*",
         "symfony/twig-bundle": "4.4.10",
-        
         "symfony/validator": "4.4.*",
         "symfony/web-link": "4.4.*",
         "symfony/yaml": "4.4.*",

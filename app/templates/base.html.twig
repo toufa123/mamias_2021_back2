@@ -160,16 +160,16 @@
 
                     <li class="dropdown navbar-c-items">
                         {% if app.user.getFirstname() %}
-                        <a href="" class="dropdown-toggle waves-effect waves-light profile" data-toggle="dropdown"
-                           aria-expanded="true">
-                            <img
-                                src="https://ui-avatars.com/api/?name={{ app.user.getFirstname() }}+{{ app.user.getLastname }}&background=00aeef&color=fff&rounded=true&bold=true&format=svg"
-                                alt="{{ app.user.username|default('undefined') }}" class="img-circle"> </a>
+                            <a href="" class="dropdown-toggle waves-effect waves-light profile" data-toggle="dropdown"
+                               aria-expanded="true">
+                                <img
+                                    src="https://ui-avatars.com/api/?name={{ app.user.getFirstname() }}+{{ app.user.getLastname }}&background=00aeef&color=fff&rounded=true&bold=true&format=svg"
+                                    alt="{{ app.user.username|default('undefined') }}" class="img-circle"> </a>
                         {% else %}
                             <a href="" class="dropdown-toggle waves-effect waves-light profile" data-toggle="dropdown"
                                aria-expanded="true">
-                        <img src="{{ asset('resources/logo/avatarb.png') }}"
-                                 alt="{{ app.user.username|default('undefined') }}" class="img-circle"> </a>
+                                <img src="{{ asset('resources/logo/avatarb.png') }}"
+                                     alt="{{ app.user.username|default('undefined') }}" class="img-circle"> </a>
                         {% endif %}
                         <ul class="dropdown-menu dropdown-menu-right arrow-dropdown-menu arrow-menu-right user-list notify-list">
                             <li class="text-center">
@@ -417,7 +417,6 @@
         {% endblock %}
 
 
-
         <!-- /clickable menu -->
         <div class="m-fab-box m-bottom-right m-fab-fixed" id="example1"
              style="display: inline-block; z-index: 9999;">
@@ -444,6 +443,7 @@
         <!-- /clickable menu -->
 
         <div class="row">
+            {#{{ render_esi(path('ch_cookie_consent.show')) }}#}
             {{ render_esi(path('ch_cookie_consent.show_if_cookie_consent_not_set')) }}
 
         </div>
@@ -786,7 +786,8 @@
                                 href="https://developers.google.com/analytics/devguides/collection/analyticsjs/cookie-usage">https://developers.google.com/analytics/devguides/collection/analyticsjs/cookie-usage</a>.
                             Google's Privacy Policy can be found at: <a
                                 href="https://policies.google.com/privacy?hl=en&amp;gl=uk" target="_blank"
-                                rel="noreferrer noopener">https://policies.google.com/privacy</a><br><br>To opt-out of
+                                rel="noreferrer noopener">https://policies.google.com/privacy</a><br><br>To opt-out
+                            of
                             analysis by Google Analytics, both on this website and other websites, please see <a
                                 href="https://tools.google.com/dlpage/gaoptout">https://tools.google.com/dlpage/gaoptout</a>.
                         </td>
@@ -1157,6 +1158,26 @@
     });
 
 
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false"></script>
+<script>
+    window.cookieconsent.initialise({
+        "palette": {
+            "popup": {
+                "background": "#252e39"
+            },
+            "button": {
+                "background": "#14a7d0"
+            }
+        },
+        "theme": "edgeless",
+        "position": "bottom-right",
+        "type": "opt-out",
+        "content": {
+            "href": "/cookiespolicy"
+        }
+    });
 </script>
 
 {% block javascripts %}
