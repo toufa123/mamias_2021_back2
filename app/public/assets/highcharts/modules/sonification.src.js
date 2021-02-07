@@ -23,6 +23,7 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
@@ -175,6 +176,7 @@
         function Instrument(options) {
             this.init(options);
         }
+
         Instrument.prototype.init = function (options) {
             if (!this.initAudioContext()) {
                 error(29);
@@ -554,7 +556,7 @@
                     if (instr.stopCallback) {
                         instr.stopCallback(callbackData);
                     }
-            };
+                };
             // Clear any existing timers
             if (instr.playCallbackTimers.length) {
                 instr.clearPlayCallbackTimers();
@@ -702,6 +704,7 @@
          *
          * */
         var clamp = U.clamp;
+
         /* eslint-disable no-invalid-this, valid-jsdoc */
         /**
          * The SignalHandler class. Stores signal callbacks (event handlers), and
@@ -720,6 +723,7 @@
         function SignalHandler(supportedSignals) {
             this.init(supportedSignals || []);
         }
+
         SignalHandler.prototype.init = function (supportedSignals) {
             this.supportedSignals = supportedSignals;
             this.signals = {};
@@ -976,6 +980,7 @@
         function Earcon(options) {
             this.init(options || {});
         }
+
         Earcon.prototype.init = function (options) {
             this.options = options;
             if (!this.options.id) {
@@ -1268,6 +1273,7 @@
                 minFrequency: 220,
                 maxFrequency: 2200
             };
+
         /* eslint-disable no-invalid-this, valid-jsdoc */
         /**
          * Sonify a single point.
@@ -1399,6 +1405,7 @@
                 }
             });
         }
+
         /**
          * Cancel sonification of a point. Calls onEnd functions.
          *
@@ -1549,6 +1556,7 @@
                 timeProp(point) :
                 pick(point[timeProp], point.options[timeProp]);
         }
+
         /**
          * Get the time extremes of this series. This is handled outside of the
          * dataExtremes, as we always want to just sonify the visible points, and we
@@ -1619,6 +1627,7 @@
                 return newExtremes;
             }, merge(dataExtremes));
         }
+
         /**
          * Get earcons for the point if there are any.
          * @private
@@ -1651,6 +1660,7 @@
                 return earcons;
             }, []);
         }
+
         /**
          * Utility function to get a new list of instrument options where all the
          * instrument references are copies.
@@ -1826,6 +1836,7 @@
                 targetDuration: options.duration
             });
         }
+
         /* eslint-disable no-invalid-this, valid-jsdoc */
         /**
          * Sonify a series.
@@ -1997,6 +2008,7 @@
             }
             return order;
         }
+
         /**
          * Utility function to add a silent wait after all series.
          * @private
@@ -2028,6 +2040,7 @@
                 return newOrder;
             }, []);
         }
+
         /**
          * Utility function to find the total amout of wait time in the TimelinePaths.
          * @private
@@ -2043,6 +2056,7 @@
                     def[0].options.silentWait || 0);
             }, 0);
         }
+
         /**
          * Utility function to ensure simultaneous paths have start/end events at the
          * same time, to sync them.
@@ -2083,6 +2097,7 @@
                 }
             });
         }
+
         /**
          * Utility function to find the total duration span for all simul path sets
          * that include series.
@@ -2102,6 +2117,7 @@
                 }, 0);
             }, 0);
         }
+
         /**
          * Function to calculate the duration in ms for a series.
          * @private
@@ -2120,6 +2136,7 @@
                 max: totalDurationMs
             });
         }
+
         /**
          * Convert series building objects into paths and return a new list of
          * TimelinePaths.
@@ -2422,6 +2439,7 @@
             });
             this.sonification.timeline.play();
         }
+
         /**
          * Get a list of the points currently under cursor.
          *
@@ -2446,6 +2464,7 @@
             }
             return [];
         }
+
         /**
          * Set the cursor to a point or set of points in different series.
          *
@@ -2468,6 +2487,7 @@
                 });
             }
         }
+
         /**
          * Pause the running sonification.
          *
@@ -2487,6 +2507,7 @@
                 this.sonification.currentlyPlayingPoint.cancelSonify(fadeOut);
             }
         }
+
         /**
          * Resume the currently running sonification. Requires series.sonify or
          * chart.sonify to have been played at some point earlier.
@@ -2505,6 +2526,7 @@
                 this.sonification.timeline.play(onEnd);
             }
         }
+
         /**
          * Play backwards from cursor. Requires series.sonify or chart.sonify to have
          * been played at some point earlier.
@@ -2523,6 +2545,7 @@
                 this.sonification.timeline.rewind(onEnd);
             }
         }
+
         /**
          * Cancel current sonification and reset cursor.
          *
@@ -2539,6 +2562,7 @@
             this.pauseSonify(fadeOut);
             this.resetSonifyCursor();
         }
+
         /**
          * Reset cursor to start. Requires series.sonify or chart.sonify to have been
          * played at some point earlier.
@@ -2554,6 +2578,7 @@
                 this.sonification.timeline.resetCursor();
             }
         }
+
         /**
          * Reset cursor to end. Requires series.sonify or chart.sonify to have been
          * played at some point earlier.
@@ -2569,6 +2594,7 @@
                 this.sonification.timeline.resetCursorEnd();
             }
         }
+
         // Export functions
         var chartSonifyFunctions = {
             chartSonify: chartSonify,
@@ -2650,6 +2676,7 @@
         function TimelineEvent(options) {
             this.init(options || {});
         }
+
         TimelineEvent.prototype.init = function (options) {
             this.options = options;
             this.time = options.time || 0;
@@ -2761,6 +2788,7 @@
         function TimelinePath(options) {
             this.init(options);
         }
+
         TimelinePath.prototype.init = function (options) {
             this.options = options;
             this.id = this.options.id = options.id || uniqueKey();
@@ -3006,6 +3034,7 @@
         function Timeline(options) {
             this.init(options || {});
         }
+
         Timeline.prototype.init = function (options) {
             this.options = options;
             this.cursor = 0;

@@ -156,7 +156,7 @@ final class MamiasAdmin extends AbstractAdmin
                         'query_builder' => function (EntityRepository $er) {
                             return $er->createQueryBuilder('u')
                                 ->orderBy('u.Species', 'ASC');
-                        }, 'choice_label' => 'Species', 'label' => 'Species Name', ])
+                        }, 'choice_label' => 'Species', 'label' => 'Species Name',])
                 ->add('Ecofunctional', null, ['label' => 'Ecofunctional Group'])
                 ->add('invasive', null, ['label' => 'Impact'])
                 //->add('modificationDate', DatePickerType::class, ['label' => 'Date of modification'])
@@ -178,10 +178,10 @@ final class MamiasAdmin extends AbstractAdmin
                 ->with('Admin')
                 ->add('createdAt', DatePickerType::class, ['label' => 'Created At'],
                     ['formate' => 'd/m/y', 'dp_side_by_side' => true, 'dp_use_current' => true,
-                        'dp_use_seconds' => true, 'dp_collapse' => true, ])
+                        'dp_use_seconds' => true, 'dp_collapse' => true,])
                 ->add('updatedAt', DatePickerType::class, ['label' => 'Updated At'], ['formate' => 'd/m/y',
                     'dp_side_by_side' => true, 'dp_use_current' => true, 'dp_use_seconds' => true,
-                    'dp_collapse' => true, ])
+                    'dp_collapse' => true,])
                 ->end()
                 ->end()
                 //->with('scientific literature', ['class' => 'col-md-6'])
@@ -192,8 +192,8 @@ final class MamiasAdmin extends AbstractAdmin
                 ->tab('Country-level occurrences')
                 ->with('Occurrences')
                 ->add('Distribution', CollectionType::class, ['label' => 'Country Level Occurence of ',
-                    'type_options' => ['delete' => true], ], ['by_reference' => true, 'edit' => 'inline',
-                    'inline' => 'table', 'required' => true, ])
+                    'type_options' => ['delete' => true],], ['by_reference' => true, 'edit' => 'inline',
+                    'inline' => 'table', 'required' => true,])
                 ->end()
                 ->end()
                 ->tab('Geo-referenced records')
@@ -226,9 +226,9 @@ final class MamiasAdmin extends AbstractAdmin
                 ->end()
                 ->with('Admin')
                 ->add('createdAt', DatePickerType::class, ['label' => 'Created At'], ['formate' => 'd/m/y',
-                    'dp_side_by_side' => true, 'dp_use_current' => true, 'dp_use_seconds' => true, 'dp_collapse' => true, ])
+                    'dp_side_by_side' => true, 'dp_use_current' => true, 'dp_use_seconds' => true, 'dp_collapse' => true,])
                 ->add('updatedAt', DatePickerType::class, ['label' => 'Updated At'], ['formate' => 'd/m/y', 'dp_side_by_side' => true,
-                    'dp_use_current' => true, 'dp_use_seconds' => true, 'dp_collapse' => true, ])
+                    'dp_use_current' => true, 'dp_use_seconds' => true, 'dp_collapse' => true,])
                 ->end()
                 //->end()
                 //->with('scientific literature', ['class' => 'col-md-6'])

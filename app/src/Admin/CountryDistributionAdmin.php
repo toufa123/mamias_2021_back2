@@ -16,11 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
 final class CountryDistributionAdmin extends AbstractAdmin
 {
-    protected function configureRoutes(RouteCollection $collection)
-    {
-        parent::configureRoutes($collection);
-        $collection->add('importn');
-    }
+    protected $baseRouteName = 'CountryD';
 
     public function configureActionButtons($action, $object = null)
     {
@@ -45,7 +41,11 @@ final class CountryDistributionAdmin extends AbstractAdmin
         return $actions;
     }
 
-    protected $baseRouteName = 'CountryD';
+    protected function configureRoutes(RouteCollection $collection)
+    {
+        parent::configureRoutes($collection);
+        $collection->add('importn');
+    }
 
     protected function configureDatagridFilters(DatagridMapper $datagridMapper): void
     {

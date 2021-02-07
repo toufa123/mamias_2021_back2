@@ -24,6 +24,7 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
@@ -185,6 +186,7 @@
             });
             return patterns;
         })();
+
         /**
          * Utility function to compute a hash value from an object. Modified Java
          * String.hashCode implementation in JS. Use the preSeed parameter to add an
@@ -223,6 +225,7 @@
             }
             return hash.toString(16).replace('-', '1');
         }
+
         /**
          * Set dimensions on pattern from point. This function will set internal
          * pattern._width/_height properties if width and height are not both already

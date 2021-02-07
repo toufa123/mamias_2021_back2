@@ -121,22 +121,22 @@
         <maxBooleanClauses>1024</maxBooleanClauses>
 
         <filterCache
-            class="solr.FastLRUCache"
-            size="512"
-            initialSize="512"
-            autowarmCount="256"/>
+                class="solr.FastLRUCache"
+                size="512"
+                initialSize="512"
+                autowarmCount="256"/>
 
         <queryResultCache
-            class="solr.LRUCache"
-            size="512"
-            initialSize="512"
-            autowarmCount="0"/>
+                class="solr.LRUCache"
+                size="512"
+                initialSize="512"
+                autowarmCount="0"/>
 
         <documentCache
-            class="solr.LRUCache"
-            size="512"
-            initialSize="512"
-            autowarmCount="0"/>
+                class="solr.LRUCache"
+                size="512"
+                initialSize="512"
+                autowarmCount="0"/>
 
         <enableLazyFieldLoading>true</enableLazyFieldLoading>
 
@@ -392,9 +392,9 @@
 
 
     <searchComponent
-        name="clusteringComponent"
-        enable="${solr.clustering.enabled:false}"
-        class="org.apache.solr.handler.clustering.ClusteringComponent">
+            name="clusteringComponent"
+            enable="${solr.clustering.enabled:false}"
+            class="org.apache.solr.handler.clustering.ClusteringComponent">
 
         <lst name="engine">
             <str name="name">default</str>
@@ -448,9 +448,9 @@
     <searchComponent name="highlight" class="solr.HighlightComponent">
         <highlighting>
             <fragmenter
-                name="gap"
-                default="true"
-                class="solr.highlight.GapFragmenter">
+                    name="gap"
+                    default="true"
+                    class="solr.highlight.GapFragmenter">
 
                 <lst name="defaults">
                     <int name="hl.fragsize">100</int>
@@ -467,9 +467,9 @@
             </fragmenter>
 
             <formatter
-                name="html"
-                default="true"
-                class="solr.highlight.HtmlFormatter">
+                    name="html"
+                    default="true"
+                    class="solr.highlight.HtmlFormatter">
 
                 <lst name="defaults">
                     <str name="hl.simple.pre"><![CDATA[<em>]]></str>
@@ -480,22 +480,22 @@
             <encoder name="html" class="solr.highlight.HtmlEncoder"/>
 
             <fragListBuilder
-                name="simple"
-                default="true"
-                class="solr.highlight.SimpleFragListBuilder"/>
+                    name="simple"
+                    default="true"
+                    class="solr.highlight.SimpleFragListBuilder"/>
 
             <fragListBuilder
-                name="single"
-                class="solr.highlight.SingleFragListBuilder"/>
+                    name="single"
+                    class="solr.highlight.SingleFragListBuilder"/>
 
             <fragmentsBuilder
-                name="default"
-                default="true"
-                class="solr.highlight.ScoreOrderFragmentsBuilder"/>
+                    name="default"
+                    default="true"
+                    class="solr.highlight.ScoreOrderFragmentsBuilder"/>
 
             <fragmentsBuilder
-                name="colored"
-                class="solr.highlight.ScoreOrderFragmentsBuilder">
+                    name="colored"
+                    class="solr.highlight.ScoreOrderFragmentsBuilder">
 
                 <lst name="defaults">
                     <str name="hl.tag.pre">

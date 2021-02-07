@@ -33,7 +33,7 @@ framework:
 #    template: EuCookieLawBundle::cookie_law_bar.html.twig # twig template name, default: EuCookieLawBundle::cookie_law_bar.html.twig
 
 white_october_breadcrumbs:
-    #separator:          '/'
+    separator:          '/'
     #separatorClass:     'separator'
     listId:             'wo-breadcrumbs'
     listClass:          'breadcrumb hide-phone float-right p-0 m-0'
@@ -41,6 +41,6 @@ white_october_breadcrumbs:
     linkRel:            'breadcrumb-item active'
     locale:             ~ # defaults to null, so the default locale is used
     translation_domain: ~ # defaults to null, so the default domain is used
-    #viewTemplate:       'App/templates/WhiteOctoberBreadcrumbsBundle/views/microdata.html.twig'
+    viewTemplate:       '@WhiteOctoberBreadcrumbs/microdata.html.twig'
 
 

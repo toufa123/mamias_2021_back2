@@ -4907,6 +4907,7 @@
                 valuesLen,
                 i,
                 j;
+
             /**
              * @private
              */
@@ -4920,6 +4921,7 @@
                 return approximations[(series.getDGApproximation && series.getDGApproximation()) ||
                 'average'];
             }
+
             approximationFn = getApproximation(approximation);
             // Calculate values array size from pointArrayMap length
             if (pointArrayMapLength) {
@@ -7118,6 +7120,7 @@
             path.push(['M', anchorX, anchorY], ['L', x, y + h], ['L', x, y], ['L', x + w, y], ['L', x + w, y + h], ['L', x, y + h], ['Z']);
             return path;
         };
+
         /**
          * Create the circlepin and squarepin icons with anchor.
          * @private
@@ -7167,6 +7170,7 @@
                 return path;
             };
         }
+
         createPinSymbol('circle');
         createPinSymbol('square');
         /**
@@ -8260,6 +8264,7 @@
                         }
                     }
                 }
+
                 // Create the text label
                 this[name + 'Label'] = label = renderer
                     .label(lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'], this.inputGroup.offset)
@@ -8988,6 +8993,7 @@
                         legend.align(alignTo);
                     }
                 }
+
                 if (rangeSelector) {
                     // redraw the scroller on setExtremes
                     unbindSetExtremes = addEvent(chart.xAxis[0], 'afterSetExtremes', function (e) {
@@ -9692,7 +9698,7 @@
                     }
                 }
             }
-            return;
+
         };
         // Modify series extremes
         addEvent(Series, 'afterGetExtremes', function (e) {

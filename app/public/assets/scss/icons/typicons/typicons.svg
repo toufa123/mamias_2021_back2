@@ -9,17 +9,17 @@
     <defs>
         <font id="typicons" horiz-adv-x="750">
             <font-face
-                font-family="Typicons"
-                font-weight="400"
-                font-stretch="normal"
-                units-per-em="1000"
-                panose-1="2 0 5 3 0 0 0 0 0 0"
-                ascent="800"
-                descent="-200"
-                bbox="-1.5 -242 1001.45 800"
-                underline-thickness="50"
-                underline-position="-100"
-                unicode-range="U+E000-E14F"
+                    font-family="Typicons"
+                    font-weight="400"
+                    font-stretch="normal"
+                    units-per-em="1000"
+                    panose-1="2 0 5 3 0 0 0 0 0 0"
+                    ascent="800"
+                    descent="-200"
+                    bbox="-1.5 -242 1001.45 800"
+                    underline-thickness="50"
+                    underline-position="-100"
+                    unicode-range="U+E000-E14F"
             />
             <missing-glyph horiz-adv-x="364"
                            d="M33 0v666h265v-666h-265zM66 33h199v600h-199v-600z"/>

@@ -56,7 +56,7 @@ class RegistrationFormType extends AbstractType
                         //   max length allowed by Symfony for security reasons
                         'max' => 4096,
                     ]),
-            ], ])
+                ],])
             ->add(
                 'country',
                 null,

@@ -23,6 +23,7 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
@@ -233,6 +234,7 @@
                 };
             }
         }
+
         registerApproximation();
         /**
          * @private
@@ -378,7 +380,7 @@
                     };
                 },
                 markerAttribs: function () {
-                    return;
+
                 },
                 getPlotBox: onSeriesMixin.getPlotBox,
                 // Create a single wind arrow. It is later rotated around the zero

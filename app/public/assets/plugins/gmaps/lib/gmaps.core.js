@@ -119,7 +119,7 @@ var getElementById = function (id, context) {
     } else {
         element = document.getElementById(id);
     }
-    ;
+
 
     return element;
 };

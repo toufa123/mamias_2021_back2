@@ -1,6 +1,6 @@
 {
-    "kartik-v/strength-meter": {
-        "version": "1.1.x-dev"
+    "paragonie/constant_time_encoding": {
+        "version": "v2.4.0"
     },
     "phpstan/extension-installer": {
         "version": "1.1.0"

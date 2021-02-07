@@ -35,7 +35,7 @@ var HiddenAxis = /** @class */ (function () {
         };
         axis.createLabelCollector = function () {
             return function () {
-                return;
+
             };
         };
         axis.setScale = function () {

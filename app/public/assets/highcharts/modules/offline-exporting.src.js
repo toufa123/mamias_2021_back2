@@ -23,6 +23,7 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
@@ -184,6 +185,7 @@
             };
             head.appendChild(script);
         }
+
         /**
          * Get blob URL from SVG code. Falls back to normal data URI.
          *
@@ -358,6 +360,7 @@
                 win.svg2pdf(svgElement, pdf, {removeInvalid: true});
                 return pdf.output('datauristring');
             }
+
             /**
              * @private
              * @return {void}
@@ -409,6 +412,7 @@
                     failCallback(e);
                 }
             }
+
             /* eslint-enable valid-jsdoc */
             // Initiate download depending on file type
             if (imageType === 'image/svg+xml') {

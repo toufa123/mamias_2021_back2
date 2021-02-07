@@ -81,6 +81,7 @@ var error = U.error, merge = U.merge, pick = U.pick, uniqueKey = U.uniqueKey;
 function Earcon(options) {
     this.init(options || {});
 }
+
 Earcon.prototype.init = function (options) {
     this.options = options;
     if (!this.options.id) {

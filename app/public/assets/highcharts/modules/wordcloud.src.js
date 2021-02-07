@@ -22,6 +22,7 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
@@ -483,6 +484,7 @@
                 r2.top > r1.bottom ||
                 r2.bottom < r1.top);
         }
+
         /**
          * Detects if a word collides with any previously placed words.
          *
@@ -534,6 +536,7 @@
             }
             return intersects;
         }
+
         /**
          * Gives a set of cordinates for an Archimedian Spiral.
          *
@@ -567,6 +570,7 @@
             }
             return result;
         }
+
         /**
          * Gives a set of cordinates for an rectangular spiral.
          *
@@ -625,6 +629,7 @@
             }
             return result;
         }
+
         /**
          * Gives a set of cordinates for an rectangular spiral.
          *
@@ -651,6 +656,7 @@
             }
             return result;
         }
+
         /**
          * @private
          * @function getRandomPosition
@@ -664,6 +670,7 @@
         function getRandomPosition(size) {
             return Math.round((size * (Math.random() + 0.5)) / 2);
         }
+
         /**
          * Calculates the proper scale to fit the cloud inside the plotting area.
          *
@@ -695,6 +702,7 @@
                 scaleY = height > 0 ? 1 / height * targetHeight : 1;
             return Math.min(scaleX, scaleY);
         }
+
         /**
          * Calculates what is called the playing field. The field is the area which all
          * the words are allowed to be positioned within. The area is proportioned to
@@ -752,6 +760,7 @@
                 ratioY: ratioY
             };
         }
+
         /**
          * Calculates a number of degrees to rotate, based upon a number of orientations
          * within a range from-to.
@@ -795,6 +804,7 @@
             }
             return result;
         }
+
         /**
          * Calculates the spiral positions and store them in scope for quick access.
          *
@@ -821,6 +831,7 @@
                 return attempt <= length ? arr[attempt - 1] : false;
             };
         }
+
         /**
          * Detects if a word is placed outside the playing field.
          *
@@ -848,6 +859,7 @@
                 playingField.top < rect.top &&
                 playingField.bottom > rect.bottom);
         }
+
         /**
          * Check if a point intersects with previously placed words, or if it goes
          * outside the field boundaries. If a collision, then try to adjusts the
@@ -903,6 +915,7 @@
             }
             return delta;
         }
+
         /**
          * Extends the playing field to have enough space to fit a given word.
          *
@@ -950,6 +963,7 @@
             // Return the new extended field.
             return result;
         }
+
         /**
          * If a rectangle is outside a give field, then the boundaries of the field is
          * adjusted accordingly. Modifies the field object which is passed as the first
@@ -983,6 +997,7 @@
             }
             return field;
         }
+
         /**
          * A word cloud is a visualization of a set of words, where the size and
          * placement of a word is determined by how it is weighted.

@@ -51,7 +51,7 @@ seriesType('trix', 'tema',
             var args = arguments, ctx = this;
             requiredIndicator.isParentLoaded(TEMA, 'tema', ctx.type, function (indicator) {
                 indicator.prototype.init.apply(ctx, args);
-                return;
+
             });
         },
         // TRIX is calculated using TEMA so we just extend getTemaPoint method.

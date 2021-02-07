@@ -23,6 +23,7 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
@@ -416,6 +417,7 @@
                 y: sumY / pointsLen
             };
         }
+
         // Prepare array with sorted data objects to be
         // compared in getPointsState method.
         function getDataState(clusteredData, stateDataLen) {
@@ -431,6 +433,7 @@
             });
             return state;
         }
+
         function fadeInElement(elem, opacity, animation) {
             elem
                 .attr({
@@ -440,6 +443,7 @@
                     opacity: 1
                 }, animation);
         }
+
         function fadeInStatePoint(stateObj, opacity, animation, fadeinGraphic, fadeinDataLabel) {
             if (stateObj.point) {
                 if (fadeinGraphic && stateObj.point.graphic) {
@@ -452,6 +456,7 @@
                 }
             }
         }
+
         function hideStatePoint(stateObj, hideGraphic, hideDataLabel) {
             if (stateObj.point) {
                 if (hideGraphic && stateObj.point.graphic) {
@@ -462,6 +467,7 @@
                 }
             }
         }
+
         function destroyOldPoints(oldState) {
             if (oldState) {
                 objectEach(oldState, function (state) {
@@ -471,6 +477,7 @@
                 });
             }
         }
+
         function fadeInNewPointAndDestoryOld(newPointObj, oldPoints, animation, opacity) {
             // Fade in new point.
             fadeInStatePoint(newPointObj, opacity, animation, true, true);
@@ -481,10 +488,12 @@
                 }
             });
         }
+
         // Generate unique stateId for a state element.
         function getStateId() {
             return Math.random().toString(36).substring(2, 7) + '-' + stateIdCounter++;
         }
+
         // Useful for debugging.
         // function drawGridLines(
         //     series: Highcharts.Series,

@@ -23,6 +23,7 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
@@ -327,6 +328,7 @@
                 }
                 return color;
             }
+
             if (node) {
                 point = points[node.i];
                 level = mapOptionsToLevel[node.level] || {};
@@ -655,7 +657,7 @@
                      * @type {Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction}
                      */
                     formatter: function () {
-                        return;
+
                     },
                     inside: true
                 },

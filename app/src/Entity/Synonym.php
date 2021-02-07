@@ -49,7 +49,7 @@ class Synonym
 
     public function __toString()
     {
-        return (string) $this->getSpeciesSynonym();   // TODO: Implement __toString() method.
+        return (string)$this->getSpeciesSynonym();   // TODO: Implement __toString() method.
     }
 
     public function getSpeciesSynonym(): ?string

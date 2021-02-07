@@ -40,7 +40,7 @@ class GeoOccurenceType extends AbstractType
                 ]
             )
             ->add('Location', null, ['label' => 'Coordinates', 'required' => true, 'empty_data' => '',
-                'help' => ' Move marker to get location', ])
+                'help' => ' Move marker to get location',])
             ->add('imageFile', VichImageType::class, ['label' => 'Photo',
                 'required' => true,
                 'allow_delete' => true,
@@ -66,16 +66,16 @@ class GeoOccurenceType extends AbstractType
                 'required' => true,
             ])
             ->add('depth', IntegerType::class, ['label' => 'Depth', 'required' => false,
-                'help' => 'depth in meter', ])
+                'help' => 'depth in meter',])
             ->add('PlantsAnimals', ChoiceType::class, ['choices' => ['' => '', 'Coverage in m2' => 'Coverage in m2',
-                'Numbre of indivudals' => 'Numbre of indivudals', ],
+                'Numbre of indivudals' => 'Numbre of indivudals',],
                 'label' => 'Type of observation',
-                'required' => false, 'help' => 'type of observation', ])
+                'required' => false, 'help' => 'type of observation',])
             ->add('nvalues', IntegerType::class, ['label' => 'Values', 'required' => false,
-                    'help' => 'nb of indivudals or Coverage in m2', ]
+                    'help' => 'nb of indivudals or Coverage in m2',]
             )
             ->add('EstimatedMeasured', ChoiceType::class, ['choices' => ['Estimated' => 'Estimated',
-                'Measured' => 'Measured', ],
+                'Measured' => 'Measured',],
                 //'expanded' => true, 'multiple' => false,
                 //'label_attr' => [
                 //'class' => 'radio-custom'
@@ -83,7 +83,7 @@ class GeoOccurenceType extends AbstractType
                 'required' => false, 'help' => 'Accurancy',
             ])
             ->add('note_occurence', TextareaType::class, ['label' => 'Notes',
-                'required' => false, 'empty_data' => '', ])
+                'required' => false, 'empty_data' => '',])
             ->add('recaptcha', EWZRecaptchaType::class, [
                 'attr' => [
                     'options' => [

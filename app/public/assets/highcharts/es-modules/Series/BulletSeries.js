@@ -219,7 +219,7 @@ seriesType('bullet', 'column'
             }
             columnProto.pointClass.prototype.destroy
                 .apply(this, arguments);
-            return;
+
         }
     });
 /**

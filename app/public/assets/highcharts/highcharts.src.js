@@ -24,6 +24,7 @@
     }
 }(typeof window !== 'undefined' ? window : this, function (win) {
     var _modules = {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
@@ -808,6 +809,7 @@
                         }
                     }
                 }
+
                 /**
                  * Copy and append last point until the length matches the end length.
                  * @private
@@ -837,6 +839,7 @@
                         }
                     }
                 }
+
                 // For sideways animation, find out how much we need to shift to get the
                 // start path Xs to match the end path Xs.
                 if (startX && endX) {
@@ -995,6 +998,7 @@
         function clamp(value, min, max) {
             return value > min ? value < max ? value : max : min;
         }
+
         /**
          * Shortcut for parseInt
          *
@@ -1044,6 +1048,7 @@
             var str = Object.prototype.toString.call(obj);
             return str === '[object Array]' || str === '[object Array Iterator]';
         };
+
         /**
          * Utility function to check if an item is of type object.
          *
@@ -1148,6 +1153,7 @@
         var defined = H.defined = function defined(obj) {
             return typeof obj !== 'undefined' && obj !== null;
         };
+
         /**
          * Set or get an attribute or an object of attributes. To use as a setter, pass
          * a key and a value, or let the second argument be a collection of keys and
@@ -1280,6 +1286,7 @@
             }
             return a;
         };
+
         /* eslint-disable valid-jsdoc */
         /**
          * Return the first value that is not null or undefined.
@@ -2477,6 +2484,7 @@
                     removeEventListener.call(el, type, fn, false);
                 }
             }
+
             /**
              * @private
              * @param {any} eventCollection - collection
@@ -2503,6 +2511,7 @@
                     }
                 });
             }
+
             ['protoEvents', 'hcEvents'].forEach(function (coll, i) {
                 var eventElem = i ? el : el.prototype;
                 var eventCollection = eventElem && eventElem[coll];
@@ -4467,7 +4476,7 @@
                     // Delete all properties
                     delete wrapper[key];
                 });
-                return;
+
             };
             /**
              * Destroy shadows on the element.
@@ -8633,6 +8642,7 @@
                     });
                     return elem.offsetWidth;
                 }
+
                 // apply translate
                 css(elem, {
                     marginLeft: translateX,
@@ -8902,6 +8912,7 @@
                                         }
                                         parentGroup.doTransform = true;
                                     }
+
                                     // Create a HTML div and append it to the parent div
                                     // to emulate the SVG group structure
                                     htmlGroup =
@@ -22924,6 +22935,7 @@
                     // NOTE: y is relative to distributionBoxTop
                     return {x: x, y: y};
                 }
+
                 /**
                  * Updates the attributes and styling of the partial tooltip. Creates a
                  * new partial tooltip if it does not exists.
@@ -25494,6 +25506,7 @@
                         this[key] = this[key].destroy();
                     }
                 }
+
                 // Destroy items
                 this.getAllItems().forEach(function (item) {
                     ['legendItem', 'legendGroup'].forEach(destroyItems, item);
@@ -37234,6 +37247,7 @@
                         chart.redraw(animation);
                     }
                 }
+
                 // Fire the event with a default handler of doing the update
                 if (runEvent === false) { // When called from setData
                     update();
@@ -37490,6 +37504,7 @@
                         chart.redraw(animation);
                     }
                 }
+
                 // Fire the event with a default handler of removing the point
                 if (withEvent !== false) {
                     fireEvent(series, 'remove', null, remove);
@@ -41722,6 +41737,7 @@
             function sortByTarget(a, b) {
                 return a.target - b.target;
             }
+
             // If the total size exceeds the len, remove those boxes with the lowest
             // rank
             i = boxes.length;
@@ -41877,6 +41893,7 @@
                 }
                 return true;
             }
+
             /**
              * Merge two objects that can be arrays. If one of them is an array, the
              * other is merged into each element. If both are arrays, each element is
@@ -41904,6 +41921,7 @@
                 }
                 return res;
             }
+
             // Merge in plotOptions.dataLabels for series
             seriesDlOptions = mergeArrays(mergeArrays(chart.options.plotOptions &&
                 chart.options.plotOptions.series &&
@@ -44642,6 +44660,7 @@
                     }
                 });
             }
+
             getCurrent(options, this.options, ret, 0);
             return ret;
         };

@@ -1303,7 +1303,7 @@ Tabs
         }), v
     }(window.jQuery || window.Zepto || window, window, document)
 });
-;!function (a, b, c, d) {
+!function (a, b, c, d) {
     "use strict";
 
     function k(a, b, c) {

@@ -24,6 +24,7 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
@@ -214,6 +215,7 @@
              */
             H.addEventListenerPolyfill = function (type, fn) {
                 var el = this;
+
                 /**
                  * @private
                  */
@@ -221,6 +223,7 @@
                     e.target = e.srcElement || win; // #2820
                     fn.call(el, e);
                 }
+
                 if (el.attachEvent) {
                     if (!el.hcEventsIE) {
                         el.hcEventsIE = {};

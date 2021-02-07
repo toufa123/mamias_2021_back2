@@ -69,7 +69,7 @@ seriesType('ppo', 'ema',
             var args = arguments, ctx = this;
             requiredIndicator.isParentLoaded(EMA, 'ema', ctx.type, function (indicator) {
                 indicator.prototype.init.apply(ctx, args);
-                return;
+
             });
         },
         getValues: function (series, params) {

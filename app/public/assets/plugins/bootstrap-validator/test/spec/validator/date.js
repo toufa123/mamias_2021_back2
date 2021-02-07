@@ -1,6 +1,6 @@
 function getDate(value, validator, $field) {
     return validator.getFieldElements('date').val();
-};
+}
 
 TestSuite = $.extend({}, TestSuite, {
     Date: {

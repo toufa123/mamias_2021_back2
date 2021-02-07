@@ -21,6 +21,7 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
@@ -480,7 +481,7 @@
                 };
                 axis.createLabelCollector = function () {
                     return function () {
-                        return;
+
                     };
                 };
                 axis.setScale = function () {
@@ -3288,60 +3289,60 @@
          * @optionparent plotOptions.boxplot
          */
         seriesType('boxplot', 'column', {
-            threshold: null,
-            tooltip: {
-                pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> ' +
-                    '{series.name}</b><br/>' +
-                    'Maximum: {point.high}<br/>' +
-                    'Upper quartile: {point.q3}<br/>' +
-                    'Median: {point.median}<br/>' +
-                    'Lower quartile: {point.q1}<br/>' +
-                    'Minimum: {point.low}<br/>'
-            },
-            /**
-             * The length of the whiskers, the horizontal lines marking low and
-             * high values. It can be a numerical pixel value, or a percentage
-             * value of the box width. Set `0` to disable whiskers.
-             *
-             * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-             *         True by default
-             *
-             * @type    {number|string}
-             * @since   3.0
-             * @product highcharts
-             */
-            whiskerLength: '50%',
-            /**
-             * The fill color of the box.
-             *
-             * In styled mode, the fill color can be set with the
-             * `.highcharts-boxplot-box` class.
-             *
-             * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-             *         Box plot styling
-             *
-             * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @default #ffffff
-             * @since   3.0
-             * @product highcharts
-             */
-            fillColor: '#ffffff',
-            /**
-             * The width of the line surrounding the box. If any of
-             * [stemWidth](#plotOptions.boxplot.stemWidth),
-             * [medianWidth](#plotOptions.boxplot.medianWidth)
-             * or [whiskerWidth](#plotOptions.boxplot.whiskerWidth) are `null`,
-             * the lineWidth also applies to these lines.
-             *
-             * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-             *         Box plot styling
-             * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
-             *         Error bar styling
-             *
-             * @since   3.0
-             * @product highcharts
-             */
-            lineWidth: 1,
+                threshold: null,
+                tooltip: {
+                    pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> ' +
+                        '{series.name}</b><br/>' +
+                        'Maximum: {point.high}<br/>' +
+                        'Upper quartile: {point.q3}<br/>' +
+                        'Median: {point.median}<br/>' +
+                        'Lower quartile: {point.q1}<br/>' +
+                        'Minimum: {point.low}<br/>'
+                },
+                /**
+                 * The length of the whiskers, the horizontal lines marking low and
+                 * high values. It can be a numerical pixel value, or a percentage
+                 * value of the box width. Set `0` to disable whiskers.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+                 *         True by default
+                 *
+                 * @type    {number|string}
+                 * @since   3.0
+                 * @product highcharts
+                 */
+                whiskerLength: '50%',
+                /**
+                 * The fill color of the box.
+                 *
+                 * In styled mode, the fill color can be set with the
+                 * `.highcharts-boxplot-box` class.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+                 *         Box plot styling
+                 *
+                 * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @default #ffffff
+                 * @since   3.0
+                 * @product highcharts
+                 */
+                fillColor: '#ffffff',
+                /**
+                 * The width of the line surrounding the box. If any of
+                 * [stemWidth](#plotOptions.boxplot.stemWidth),
+                 * [medianWidth](#plotOptions.boxplot.medianWidth)
+                 * or [whiskerWidth](#plotOptions.boxplot.whiskerWidth) are `null`,
+                 * the lineWidth also applies to these lines.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+                 *         Box plot styling
+                 * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
+                 *         Error bar styling
+                 *
+                 * @since   3.0
+                 * @product highcharts
+                 */
+                lineWidth: 1,
                 /**
                  * The color of the median line. If `undefined`, the general series
                  * color applies.
@@ -3377,35 +3378,35 @@
                  * @since   3.0
                  * @product highcharts
                  */
-            medianWidth: 2,
-            /*
-            // States are not working and are removed from docs.
-            // Refer to: #2340
-            states: {
-                hover: {
-                    brightness: -0.3
-                }
-            },
+                medianWidth: 2,
+                /*
+                // States are not working and are removed from docs.
+                // Refer to: #2340
+                states: {
+                    hover: {
+                        brightness: -0.3
+                    }
+                },
 
-            /**
-             * The color of the stem, the vertical line extending from the box to
-             * the whiskers. If `undefined`, the series color is used.
-             *
-             * In styled mode, the stem stroke can be set with the
-             * `.highcharts-boxplot-stem` class.
-             *
-             * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-             *         Box plot styling
-             * @sample {highcharts} highcharts/css/boxplot/
-             *         Box plot in styled mode
-             * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
-             *         Error bar styling
-             *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @since     3.0
-             * @product   highcharts
-             * @apioption plotOptions.boxplot.stemColor
-             */
+                /**
+                 * The color of the stem, the vertical line extending from the box to
+                 * the whiskers. If `undefined`, the series color is used.
+                 *
+                 * In styled mode, the stem stroke can be set with the
+                 * `.highcharts-boxplot-stem` class.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+                 *         Box plot styling
+                 * @sample {highcharts} highcharts/css/boxplot/
+                 *         Box plot in styled mode
+                 * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
+                 *         Error bar styling
+                 *
+                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @since     3.0
+                 * @product   highcharts
+                 * @apioption plotOptions.boxplot.stemColor
+                 */
                 /**
                  * The dash style of the box.
                  *
@@ -3495,34 +3496,34 @@
                  *
                  * In styled mode, the whisker stroke can be set with the
                  * `.highcharts-boxplot-whisker` class .
-             *
-             * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-             *         Box plot styling
-             * @sample {highcharts} highcharts/css/boxplot/
-             *         Box plot in styled mode
-             *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @since     3.0
-             * @product   highcharts
-             * @apioption plotOptions.boxplot.whiskerColor
-             */
-            /**
-             * The line width of the whiskers, the horizontal lines marking low and
-             * high values. When `undefined`, the general
-             * [lineWidth](#plotOptions.boxplot.lineWidth) applies.
-             *
-             * In styled mode, the whisker stroke width can be set with the
-             * `.highcharts-boxplot-whisker` class.
-             *
-             * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-             *         Box plot styling
-             * @sample {highcharts} highcharts/css/boxplot/
-             *         Box plot in styled mode
-             *
-             * @since   3.0
-             * @product highcharts
-             */
-            whiskerWidth: 2
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+                 *         Box plot styling
+                 * @sample {highcharts} highcharts/css/boxplot/
+                 *         Box plot in styled mode
+                 *
+                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @since     3.0
+                 * @product   highcharts
+                 * @apioption plotOptions.boxplot.whiskerColor
+                 */
+                /**
+                 * The line width of the whiskers, the horizontal lines marking low and
+                 * high values. When `undefined`, the general
+                 * [lineWidth](#plotOptions.boxplot.lineWidth) applies.
+                 *
+                 * In styled mode, the whisker stroke width can be set with the
+                 * `.highcharts-boxplot-whisker` class.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+                 *         Box plot styling
+                 * @sample {highcharts} highcharts/css/boxplot/
+                 *         Box plot in styled mode
+                 *
+                 * @since   3.0
+                 * @product highcharts
+                 */
+                whiskerWidth: 2
             },
             /** @lends Highcharts.seriesTypes.boxplot */
             {
@@ -3556,177 +3557,177 @@
                         });
                         point.plotHigh = point.highPlot; // For data label validation
                     });
-            },
-            // eslint-disable-next-line valid-jsdoc
-            /**
-             * Draw the data points
-             * @private
-             */
-            drawPoints: function () {
-                var series = this,
-                    points = series.points,
-                    options = series.options,
-                    chart = series.chart,
-                    renderer = chart.renderer,
-                    q1Plot,
-                    q3Plot,
-                    highPlot,
-                    lowPlot,
-                    medianPlot,
-                    medianPath,
-                    crispCorr,
-                    crispX = 0,
-                    boxPath,
-                    width,
-                    left,
-                    right,
-                    halfWidth,
-                    // error bar inherits this series type but doesn't do quartiles
-                    doQuartiles = series.doQuartiles !== false,
-                    pointWiskerLength,
-                    whiskerLength = series.options.whiskerLength;
-                points.forEach(function (point) {
-                    var graphic = point.graphic,
-                        verb = graphic ? 'animate' : 'attr',
-                        shapeArgs = point.shapeArgs,
-                        boxAttr = {},
-                        stemAttr = {},
-                        whiskersAttr = {},
-                        medianAttr = {},
-                        color = point.color || series.color;
-                    if (typeof point.plotY !== 'undefined') {
-                        // crisp vector coordinates
-                        width = Math.round(shapeArgs.width);
-                        left = Math.floor(shapeArgs.x);
-                        right = left + width;
-                        halfWidth = Math.round(width / 2);
-                        q1Plot = Math.floor(doQuartiles ? point.q1Plot : point.lowPlot);
-                        q3Plot = Math.floor(doQuartiles ? point.q3Plot : point.lowPlot);
-                        highPlot = Math.floor(point.highPlot);
-                        lowPlot = Math.floor(point.lowPlot);
-                        if (!graphic) {
-                            point.graphic = graphic = renderer.g('point')
-                                .add(series.group);
-                            point.stem = renderer.path()
-                                .addClass('highcharts-boxplot-stem')
-                                .add(graphic);
-                            if (whiskerLength) {
-                                point.whiskers = renderer.path()
-                                    .addClass('highcharts-boxplot-whisker')
+                },
+                // eslint-disable-next-line valid-jsdoc
+                /**
+                 * Draw the data points
+                 * @private
+                 */
+                drawPoints: function () {
+                    var series = this,
+                        points = series.points,
+                        options = series.options,
+                        chart = series.chart,
+                        renderer = chart.renderer,
+                        q1Plot,
+                        q3Plot,
+                        highPlot,
+                        lowPlot,
+                        medianPlot,
+                        medianPath,
+                        crispCorr,
+                        crispX = 0,
+                        boxPath,
+                        width,
+                        left,
+                        right,
+                        halfWidth,
+                        // error bar inherits this series type but doesn't do quartiles
+                        doQuartiles = series.doQuartiles !== false,
+                        pointWiskerLength,
+                        whiskerLength = series.options.whiskerLength;
+                    points.forEach(function (point) {
+                        var graphic = point.graphic,
+                            verb = graphic ? 'animate' : 'attr',
+                            shapeArgs = point.shapeArgs,
+                            boxAttr = {},
+                            stemAttr = {},
+                            whiskersAttr = {},
+                            medianAttr = {},
+                            color = point.color || series.color;
+                        if (typeof point.plotY !== 'undefined') {
+                            // crisp vector coordinates
+                            width = Math.round(shapeArgs.width);
+                            left = Math.floor(shapeArgs.x);
+                            right = left + width;
+                            halfWidth = Math.round(width / 2);
+                            q1Plot = Math.floor(doQuartiles ? point.q1Plot : point.lowPlot);
+                            q3Plot = Math.floor(doQuartiles ? point.q3Plot : point.lowPlot);
+                            highPlot = Math.floor(point.highPlot);
+                            lowPlot = Math.floor(point.lowPlot);
+                            if (!graphic) {
+                                point.graphic = graphic = renderer.g('point')
+                                    .add(series.group);
+                                point.stem = renderer.path()
+                                    .addClass('highcharts-boxplot-stem')
+                                    .add(graphic);
+                                if (whiskerLength) {
+                                    point.whiskers = renderer.path()
+                                        .addClass('highcharts-boxplot-whisker')
+                                        .add(graphic);
+                                }
+                                if (doQuartiles) {
+                                    point.box = renderer.path(boxPath)
+                                        .addClass('highcharts-boxplot-box')
+                                        .add(graphic);
+                                }
+                                point.medianShape = renderer.path(medianPath)
+                                    .addClass('highcharts-boxplot-median')
                                     .add(graphic);
                             }
-                            if (doQuartiles) {
-                                point.box = renderer.path(boxPath)
-                                    .addClass('highcharts-boxplot-box')
-                                    .add(graphic);
+                            if (!chart.styledMode) {
+                                // Stem attributes
+                                stemAttr.stroke =
+                                    point.stemColor || options.stemColor || color;
+                                stemAttr['stroke-width'] = pick(point.stemWidth, options.stemWidth, options.lineWidth);
+                                stemAttr.dashstyle = (point.stemDashStyle ||
+                                    options.stemDashStyle ||
+                                    options.dashStyle);
+                                point.stem.attr(stemAttr);
+                                // Whiskers attributes
+                                if (whiskerLength) {
+                                    whiskersAttr.stroke = (point.whiskerColor ||
+                                        options.whiskerColor ||
+                                        color);
+                                    whiskersAttr['stroke-width'] = pick(point.whiskerWidth, options.whiskerWidth, options.lineWidth);
+                                    whiskersAttr.dashstyle = (point.whiskerDashStyle ||
+                                        options.whiskerDashStyle ||
+                                        options.dashStyle);
+                                    point.whiskers.attr(whiskersAttr);
+                                }
+                                if (doQuartiles) {
+                                    boxAttr.fill = (point.fillColor ||
+                                        options.fillColor ||
+                                        color);
+                                    boxAttr.stroke = options.lineColor || color;
+                                    boxAttr['stroke-width'] = options.lineWidth || 0;
+                                    boxAttr.dashstyle = (point.boxDashStyle ||
+                                        options.boxDashStyle ||
+                                        options.dashStyle);
+                                    point.box.attr(boxAttr);
+                                }
+                                // Median attributes
+                                medianAttr.stroke = (point.medianColor ||
+                                    options.medianColor ||
+                                    color);
+                                medianAttr['stroke-width'] = pick(point.medianWidth, options.medianWidth, options.lineWidth);
+                                medianAttr.dashstyle = (point.medianDashStyle ||
+                                    options.medianDashStyle ||
+                                    options.dashStyle);
+                                point.medianShape.attr(medianAttr);
                             }
-                            point.medianShape = renderer.path(medianPath)
-                                .addClass('highcharts-boxplot-median')
-                                .add(graphic);
-                        }
-                        if (!chart.styledMode) {
-                            // Stem attributes
-                            stemAttr.stroke =
-                                point.stemColor || options.stemColor || color;
-                            stemAttr['stroke-width'] = pick(point.stemWidth, options.stemWidth, options.lineWidth);
-                            stemAttr.dashstyle = (point.stemDashStyle ||
-                                options.stemDashStyle ||
-                                options.dashStyle);
-                            point.stem.attr(stemAttr);
-                            // Whiskers attributes
+                            var d = void 0;
+                            // The stem
+                            crispCorr = (point.stem.strokeWidth() % 2) / 2;
+                            crispX = left + halfWidth + crispCorr;
+                            d = [
+                                // stem up
+                                ['M', crispX, q3Plot],
+                                ['L', crispX, highPlot],
+                                // stem down
+                                ['M', crispX, q1Plot],
+                                ['L', crispX, lowPlot]
+                            ];
+                            point.stem[verb]({d: d});
+                            // The box
+                            if (doQuartiles) {
+                                crispCorr = (point.box.strokeWidth() % 2) / 2;
+                                q1Plot = Math.floor(q1Plot) + crispCorr;
+                                q3Plot = Math.floor(q3Plot) + crispCorr;
+                                left += crispCorr;
+                                right += crispCorr;
+                                d = [
+                                    ['M', left, q3Plot],
+                                    ['L', left, q1Plot],
+                                    ['L', right, q1Plot],
+                                    ['L', right, q3Plot],
+                                    ['L', left, q3Plot],
+                                    ['Z']
+                                ];
+                                point.box[verb]({d: d});
+                            }
+                            // The whiskers
                             if (whiskerLength) {
-                                whiskersAttr.stroke = (point.whiskerColor ||
-                                    options.whiskerColor ||
-                                    color);
-                                whiskersAttr['stroke-width'] = pick(point.whiskerWidth, options.whiskerWidth, options.lineWidth);
-                                whiskersAttr.dashstyle = (point.whiskerDashStyle ||
-                                    options.whiskerDashStyle ||
-                                    options.dashStyle);
-                                point.whiskers.attr(whiskersAttr);
+                                crispCorr = (point.whiskers.strokeWidth() % 2) / 2;
+                                highPlot = highPlot + crispCorr;
+                                lowPlot = lowPlot + crispCorr;
+                                pointWiskerLength = (/%$/).test(whiskerLength) ?
+                                    halfWidth * parseFloat(whiskerLength) / 100 :
+                                    whiskerLength / 2;
+                                d = [
+                                    // High whisker
+                                    ['M', crispX - pointWiskerLength, highPlot],
+                                    ['L', crispX + pointWiskerLength, highPlot],
+                                    // Low whisker
+                                    ['M', crispX - pointWiskerLength, lowPlot],
+                                    ['L', crispX + pointWiskerLength, lowPlot]
+                                ];
+                                point.whiskers[verb]({d: d});
                             }
-                            if (doQuartiles) {
-                                boxAttr.fill = (point.fillColor ||
-                                    options.fillColor ||
-                                    color);
-                                boxAttr.stroke = options.lineColor || color;
-                                boxAttr['stroke-width'] = options.lineWidth || 0;
-                                boxAttr.dashstyle = (point.boxDashStyle ||
-                                    options.boxDashStyle ||
-                                    options.dashStyle);
-                                point.box.attr(boxAttr);
-                            }
-                            // Median attributes
-                            medianAttr.stroke = (point.medianColor ||
-                                options.medianColor ||
-                                color);
-                            medianAttr['stroke-width'] = pick(point.medianWidth, options.medianWidth, options.lineWidth);
-                            medianAttr.dashstyle = (point.medianDashStyle ||
-                                options.medianDashStyle ||
-                                options.dashStyle);
-                            point.medianShape.attr(medianAttr);
-                        }
-                        var d = void 0;
-                        // The stem
-                        crispCorr = (point.stem.strokeWidth() % 2) / 2;
-                        crispX = left + halfWidth + crispCorr;
-                        d = [
-                            // stem up
-                            ['M', crispX, q3Plot],
-                            ['L', crispX, highPlot],
-                            // stem down
-                            ['M', crispX, q1Plot],
-                            ['L', crispX, lowPlot]
-                        ];
-                        point.stem[verb]({d: d});
-                        // The box
-                        if (doQuartiles) {
-                            crispCorr = (point.box.strokeWidth() % 2) / 2;
-                            q1Plot = Math.floor(q1Plot) + crispCorr;
-                            q3Plot = Math.floor(q3Plot) + crispCorr;
-                            left += crispCorr;
-                            right += crispCorr;
+                            // The median
+                            medianPlot = Math.round(point.medianPlot);
+                            crispCorr = (point.medianShape.strokeWidth() % 2) / 2;
+                            medianPlot = medianPlot + crispCorr;
                             d = [
-                                ['M', left, q3Plot],
-                                ['L', left, q1Plot],
-                                ['L', right, q1Plot],
-                                ['L', right, q3Plot],
-                                ['L', left, q3Plot],
-                                ['Z']
+                                ['M', left, medianPlot],
+                                ['L', right, medianPlot]
                             ];
-                            point.box[verb]({d: d});
+                            point.medianShape[verb]({d: d});
                         }
-                        // The whiskers
-                        if (whiskerLength) {
-                            crispCorr = (point.whiskers.strokeWidth() % 2) / 2;
-                            highPlot = highPlot + crispCorr;
-                            lowPlot = lowPlot + crispCorr;
-                            pointWiskerLength = (/%$/).test(whiskerLength) ?
-                                halfWidth * parseFloat(whiskerLength) / 100 :
-                                whiskerLength / 2;
-                            d = [
-                                // High whisker
-                                ['M', crispX - pointWiskerLength, highPlot],
-                                ['L', crispX + pointWiskerLength, highPlot],
-                                // Low whisker
-                                ['M', crispX - pointWiskerLength, lowPlot],
-                                ['L', crispX + pointWiskerLength, lowPlot]
-                            ];
-                            point.whiskers[verb]({d: d});
-                        }
-                        // The median
-                        medianPlot = Math.round(point.medianPlot);
-                        crispCorr = (point.medianShape.strokeWidth() % 2) / 2;
-                        medianPlot = medianPlot + crispCorr;
-                        d = [
-                            ['M', left, medianPlot],
-                            ['L', right, medianPlot]
-                        ];
-                        point.medianShape[verb]({d: d});
-                    }
-                });
-            },
-            setStackedPoints: noop // #3890
-        });
+                    });
+                },
+                setStackedPoints: noop // #3890
+            });
         /**
          * A `boxplot` series. If the [type](#series.boxplot.type) option is
          * not specified, it is inherited from [chart.type](#chart.type).
@@ -4569,7 +4570,7 @@
                     series.dataMin = dataMin + threshold;
                     series.dataMax = dataMax;
                 }
-                return;
+
             },
             // Return y value or string if point is sum
             toYData: function (pt) {
@@ -8127,6 +8128,7 @@
                     afterRender = true;
                 }
             }
+
             if (this.graphLayoutsLookup) {
                 setAnimation(false, this);
                 // Start simulation

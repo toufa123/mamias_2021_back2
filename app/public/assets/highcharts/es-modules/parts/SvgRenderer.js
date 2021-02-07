@@ -1746,7 +1746,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             // Delete all properties
             delete wrapper[key];
         });
-        return;
+
     },
     /**
      * Add a shadow to the element. Must be called after the element is added to

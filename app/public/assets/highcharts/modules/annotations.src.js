@@ -3866,6 +3866,7 @@
             }
             return ret;
         }
+
         /**
          * @private
          * @interface bindingsUtils
@@ -4230,6 +4231,7 @@
                         langKey: options.langKey,
                         type: type
                     };
+
                 /**
                  * Nested options traversing. Method goes down to the options and copies
                  * allowed options (with values) to new object, which is last parameter:
@@ -4301,6 +4303,7 @@
                         }
                     }
                 }
+
                 objectEach(options, function (option, key) {
                     if (key === 'typeOptions') {
                         visualOptions[key] = {};
@@ -4551,6 +4554,7 @@
                 click: selectAndshowPopup
             });
         }
+
         if (H.Annotation) {
             // Basic shapes:
             selectableAnnotation(Annotation);

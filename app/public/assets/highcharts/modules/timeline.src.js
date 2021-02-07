@@ -24,6 +24,7 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
@@ -379,7 +380,7 @@
                         series.yData[i] = 1;
                     }
                     Series.prototype.processData.call(this, arguments);
-                    return;
+
                 },
                 getXExtremes: function (xData) {
                     var series = this,

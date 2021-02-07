@@ -938,7 +938,7 @@
             this._topClusterLevel._recursivelyAddChildrenToMap(null, Math.round(this._map._zoom), newBounds);
 
             this._currentShownBounds = newBounds;
-            return;
+
         },
 
         _generateInitialClusters: function () {
@@ -1034,7 +1034,7 @@
             //Didn't get in anything, add us to the top
             this._topClusterLevel._addChild(layer);
             layer.__parent = this._topClusterLevel;
-            return;
+
         },
 
         /**

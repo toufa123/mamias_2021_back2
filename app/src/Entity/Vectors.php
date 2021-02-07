@@ -29,7 +29,7 @@ class Vectors
 
     public function __toString()
     {
-        return (string) $this->getVectorName();   // TODO: Implement __toString() method.
+        return (string)$this->getVectorName();   // TODO: Implement __toString() method.
     }
 
     public function getVectorName(): ?string

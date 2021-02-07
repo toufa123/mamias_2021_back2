@@ -144,6 +144,7 @@ var defaultOptions = {
 function Instrument(options) {
     this.init(options);
 }
+
 Instrument.prototype.init = function (options) {
     if (!this.initAudioContext()) {
         error(29);

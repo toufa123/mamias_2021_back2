@@ -8,9 +8,9 @@
  */
 (function ($) {
     if (!$.jfab) {
-        $.jfab = new Object();
+        $.jfab = {};
     }
-    ;
+
 
     $.jfab.fab = function (el, links, options) {
         var

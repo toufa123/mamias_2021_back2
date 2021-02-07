@@ -12,17 +12,17 @@
     <defs>
         <font id="jquery-filer" horiz-adv-x="512">
             <font-face
-                font-family="jquery-filer"
-                font-weight="500"
-                font-stretch="normal"
-                units-per-em="512"
-                panose-1="2 0 6 9 0 0 0 0 0 0"
-                ascent="448"
-                descent="-64"
-                bbox="-0.361328 -64.8438 512.331 448.844"
-                underline-thickness="25.6"
-                underline-position="-51.2"
-                unicode-range="U+F2F6-F344"
+                    font-family="jquery-filer"
+                    font-weight="500"
+                    font-stretch="normal"
+                    units-per-em="512"
+                    panose-1="2 0 6 9 0 0 0 0 0 0"
+                    ascent="448"
+                    descent="-64"
+                    bbox="-0.361328 -64.8438 512.331 448.844"
+                    underline-thickness="25.6"
+                    underline-position="-51.2"
+                    unicode-range="U+F2F6-F344"
             />
             <missing-glyph/>
             <glyph glyph-name="uniF32B" unicode="&#xf32b;"

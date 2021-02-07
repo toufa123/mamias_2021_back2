@@ -22,6 +22,7 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
@@ -189,6 +190,7 @@
                 return Math.ceil(2 * Math.pow(baseSeries.options.data.length, 1 / 3));
             }
         };
+
         /**
          * Returns a function for mapping number to the closed (right opened) bins
          * @private
@@ -393,6 +395,7 @@
                 }, 0);
             return length > 0 && sum / length;
         }
+
         /**
          * @private
          */
@@ -406,6 +409,7 @@
             }, 0);
             return len > 1 && Math.sqrt(sum / (len - 1));
         }
+
         /**
          * @private
          */
@@ -414,6 +418,7 @@
             return Math.exp(-(translation * translation) /
                 (2 * standardDeviation * standardDeviation)) / (standardDeviation * Math.sqrt(2 * Math.PI));
         }
+
         /* eslint-enable valid-jsdoc */
         /**
          * Bell curve class

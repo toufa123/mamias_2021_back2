@@ -15,7 +15,7 @@ $.fn.numericInputExample = function () {
                 });
                 footer.children().eq(column).text(total);
             }
-            ;
+
         };
     element.find('td').on('change', function (evt) {
         var cell = $(this),

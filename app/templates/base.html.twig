@@ -335,9 +335,9 @@
                         </ul>
                     </li>
 
-                    <li class="has-submenu">
+                    <!--<li class="has-submenu">
                         <a href="{{ path('sonata_news_home') }}"><i class=" mdi mdi-newspaper"></i>NIS News</a>
-                        <!--<ul class="submenu megamenu">
+                        <ul class="submenu megamenu">
                             <li>
                                 <ul>
                                     <li><a href="page-starter.html">Starter Page</a></li>
@@ -356,8 +356,8 @@
                                     <li><a href="page-500.html">Error 500</a></li>
                                 </ul>
                             </li>
-                        </ul>-->
-                    </li>
+                        </ul>
+                    </li>-->
 
                     <li class="has-submenu">
                         <a href="{{ path('contact') }}"><i class=" mdi mdi-email"></i>Contact Us</a>
@@ -405,7 +405,6 @@
             <div class="col-sm-12">
                 <div class="page-title-box">
                     {{ wo_render_breadcrumbs() }}
-
                     <!--<h4 class="page-title">Dashboard</h4>-->
                 </div>
             </div>
@@ -442,11 +441,7 @@
         </div>
         <!-- /clickable menu -->
 
-        <div class="row">
-            {#{{ render_esi(path('ch_cookie_consent.show')) }}#}
-            {{ render_esi(path('ch_cookie_consent.show_if_cookie_consent_not_set')) }}
 
-        </div>
         <!-- Footer -->
         <footer class="footer text-right">
             <div class="container-fluid">
@@ -475,6 +470,7 @@
     </div> <!-- end container -->
 </div>
 <!-- end wrapper -->
+
 
 
 <div id="disclaimer" class="modal fade disclaimer" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
@@ -1160,25 +1156,6 @@
 
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false"></script>
-<script>
-    window.cookieconsent.initialise({
-        "palette": {
-            "popup": {
-                "background": "#252e39"
-            },
-            "button": {
-                "background": "#14a7d0"
-            }
-        },
-        "theme": "edgeless",
-        "position": "bottom-right",
-        "type": "opt-out",
-        "content": {
-            "href": "/cookiespolicy"
-        }
-    });
-</script>
 
 {% block javascripts %}
 {% endblock %}

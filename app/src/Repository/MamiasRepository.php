@@ -196,9 +196,9 @@ class MamiasRepository extends ServiceEntityRepository
     public function getSpeciesPerCountry()
     {
         $rawSql = 'SELECT country.country As Country, (SELECT COUNT(DISTINCT mamias.id)) As z '
-            .' FROM mamias , country_distribution , country '
-            .' WHERE mamias.id = country_distribution.mamias_id AND country_distribution.country_id = country.id AND mamias.success_id != 7'
-            .' GROUP BY country.country ORDER BY country.country ASC';
+            . ' FROM mamias , country_distribution , country '
+            . ' WHERE mamias.id = country_distribution.mamias_id AND country_distribution.country_id = country.id AND mamias.success_id != 7'
+            . ' GROUP BY country.country ORDER BY country.country ASC';
         $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
         $stmt->execute([]);
 
@@ -207,7 +207,7 @@ class MamiasRepository extends ServiceEntityRepository
 
     public function gettotal()
     {
-        $rawSql1 = 'SELECT mamias.first_med_sighting, (SELECT COUNT(DISTINCT mamias.id)) AS Total '.
+        $rawSql1 = 'SELECT mamias.first_med_sighting, (SELECT COUNT(DISTINCT mamias.id)) AS Total ' .
             'FROM mamias WHERE mamias.first_med_sighting IS NOT NULL AND mamias.first_med_sighting != \'\' AND mamias.success_id != 7 GROUP BY mamias.first_med_sighting ORDER BY mamias.first_med_sighting';
 
         $stmt1 = $this->getEntityManager()->getConnection()->prepare($rawSql1);
@@ -218,7 +218,7 @@ class MamiasRepository extends ServiceEntityRepository
 
     public function getcumulative()
     {
-        $rawSql1 = 'SELECT mamias.first_med_sighting, sum(count(DISTINCT mamias.id)) OVER (ORDER BY mamias.first_med_sighting) as cumulative '.
+        $rawSql1 = 'SELECT mamias.first_med_sighting, sum(count(DISTINCT mamias.id)) OVER (ORDER BY mamias.first_med_sighting) as cumulative ' .
             'FROM mamias WHERE mamias.first_med_sighting IS NOT NULL AND length(mamias.first_med_sighting) > 0 AND mamias.success_id != 7 GROUP BY mamias.first_med_sighting ORDER BY mamias.first_med_sighting';
 
         $stmt1 = $this->getEntityManager()->getConnection()->prepare($rawSql1);
@@ -229,7 +229,7 @@ class MamiasRepository extends ServiceEntityRepository
 
     public function getSpeciesbyGroup()
     {
-        $rawSql1 = 'SELECT ecofunctional.ecofunctional , (SELECT COUNT(DISTINCT mamias.id)) AS Value '.
+        $rawSql1 = 'SELECT ecofunctional.ecofunctional , (SELECT COUNT(DISTINCT mamias.id)) AS Value ' .
             'FROM mamias, ecofunctional WHERE mamias.ecofunctional_id = ecofunctional.id  AND mamias.success_id != 7 GROUP BY ecofunctional.ecofunctional';
 
         $stmt1 = $this->getEntityManager()->getConnection()->prepare($rawSql1);
@@ -240,7 +240,7 @@ class MamiasRepository extends ServiceEntityRepository
 
     public function getSpeciesbyestablishement()
     {
-        $rawSql1 = 'SELECT success_type.success_type AS Success, (SELECT COUNT(DISTINCT mamias.id)) AS Value '.
+        $rawSql1 = 'SELECT success_type.success_type AS Success, (SELECT COUNT(DISTINCT mamias.id)) AS Value ' .
             'FROM mamias, success_type WHERE mamias.success_id = success_type.id  AND mamias.success_id != 7 GROUP BY success_type.success_type';
 
         $stmt1 = $this->getEntityManager()->getConnection()->prepare($rawSql1);
@@ -251,7 +251,7 @@ class MamiasRepository extends ServiceEntityRepository
 
     public function getSpeciesbystatus()
     {
-        $rawSql1 = 'SELECT status.status AS status, (SELECT COUNT(DISTINCT mamias.id)) AS Value '.
+        $rawSql1 = 'SELECT status.status AS status, (SELECT COUNT(DISTINCT mamias.id)) AS Value ' .
             'FROM mamias, status WHERE mamias.speciesstatus_id = status.id  AND mamias.success_id != 7 GROUP BY status.status';
 
         $stmt1 = $this->getEntityManager()->getConnection()->prepare($rawSql1);
@@ -262,7 +262,7 @@ class MamiasRepository extends ServiceEntityRepository
 
     public function getSpeciesbyOrigins()
     {
-        $rawSql1 = "SELECT split_part( origin.origin_region, ' ' , 1 ) As origin, (SELECT COUNT(DISTINCT mamias.id)) AS Value ".
+        $rawSql1 = "SELECT split_part( origin.origin_region, ' ' , 1 ) As origin, (SELECT COUNT(DISTINCT mamias.id)) AS Value " .
             'FROM mamias, origin WHERE mamias.origin_id = origin.id  AND mamias.success_id != 7 GROUP BY origin ';
 
         $stmt1 = $this->getEntityManager()->getConnection()->prepare($rawSql1);
@@ -273,8 +273,8 @@ class MamiasRepository extends ServiceEntityRepository
 
     public function getSpeciesbyEcap()
     {
-        $rawSql1 = 'SELECT ecap.ecap As ecap, (SELECT COUNT(DISTINCT mamias.id)) AS Value '.
-            ' FROM mamias, country_distribution, ecap WHERE mamias.id = country_distribution.mamias_id AND mamias.success_id != 7'.
+        $rawSql1 = 'SELECT ecap.ecap As ecap, (SELECT COUNT(DISTINCT mamias.id)) AS Value ' .
+            ' FROM mamias, country_distribution, ecap WHERE mamias.id = country_distribution.mamias_id AND mamias.success_id != 7' .
             ' AND country_distribution.ecap_id = ecap.id GROUP BY ecap ';
 
         $stmt1 = $this->getEntityManager()->getConnection()->prepare($rawSql1);
@@ -286,10 +286,10 @@ class MamiasRepository extends ServiceEntityRepository
     public function findnumbersBycountry($co)
     {
         $rawSql = 'SELECT country.country As Country, (SELECT DISTINCT COUNT( mamias.id)) As Value '
-            .' FROM mamias , country_distribution , country '
-            .' WHERE mamias.id = country_distribution.mamias_id AND country_distribution.country_id = country.id '
-            .' AND country.id = :country AND mamias.success_id != 7'
-            .' GROUP BY country.country ORDER BY country.country ASC';
+            . ' FROM mamias , country_distribution , country '
+            . ' WHERE mamias.id = country_distribution.mamias_id AND country_distribution.country_id = country.id '
+            . ' AND country.id = :country AND mamias.success_id != 7'
+            . ' GROUP BY country.country ORDER BY country.country ASC';
 
         $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
         $stmt->execute(['country' => $co]);
@@ -317,10 +317,10 @@ class MamiasRepository extends ServiceEntityRepository
     public function getcumulativeBycountry($co)
     {
         $rawSql = 'SELECT mamias.first_med_sighting, sum(count(DISTINCT mamias.id)) OVER (ORDER BY mamias.first_med_sighting) as cumulative '
-            .'  FROM mamias , country_distribution , country WHERE mamias.first_med_sighting IS NOT NULL AND  length(mamias.first_med_sighting) > 0  '
-            .'  WHERE mamias.id = country_distribution.mamias_id AND country_distribution.country_id = country.id AND mamias.success_id != 7 '
-            .'  AND country.id = :country  '
-            .'  GROUP BY mamias.first_med_sighting, country.country ORDER BY mamias.first_med_sighting';
+            . '  FROM mamias , country_distribution , country WHERE mamias.first_med_sighting IS NOT NULL AND  length(mamias.first_med_sighting) > 0  '
+            . '  WHERE mamias.id = country_distribution.mamias_id AND country_distribution.country_id = country.id AND mamias.success_id != 7 '
+            . '  AND country.id = :country  '
+            . '  GROUP BY mamias.first_med_sighting, country.country ORDER BY mamias.first_med_sighting';
 
         $stmt1 = $this->getEntityManager()->getConnection()->prepare($rawSql);
         $stmt1->execute(['country' => $co], []);
@@ -331,11 +331,11 @@ class MamiasRepository extends ServiceEntityRepository
     public function findnumbersByestablished($co)
     {
         $rawSql = 'SELECT country.country As Country, (SELECT DISTINCT COUNT(mamias.id)) As Value '
-            .' FROM mamias , country_distribution , country '
-            .' WHERE mamias.id = country_distribution.mamias_id AND country_distribution.country_id = country.id '
-            .' AND mamias.success_id = 6'
-            .' AND country.id = :country'
-            .' GROUP BY country.country ORDER BY country.country ASC';
+            . ' FROM mamias , country_distribution , country '
+            . ' WHERE mamias.id = country_distribution.mamias_id AND country_distribution.country_id = country.id '
+            . ' AND mamias.success_id = 6'
+            . ' AND country.id = :country'
+            . ' GROUP BY country.country ORDER BY country.country ASC';
 
         $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
         $stmt->execute(['country' => $co]);
@@ -346,11 +346,11 @@ class MamiasRepository extends ServiceEntityRepository
     public function findnumbersByInvasive($co)
     {
         $rawSql = 'SELECT country.country As Country, (SELECT DISTINCT COUNT(mamias.id)) As Value '
-            .' FROM mamias , country_distribution , country '
-            .' WHERE mamias.id = country_distribution.mamias_id AND country_distribution.country_id = country.id '
-            .' AND mamias.success_id = 8'
-            .' AND country.id = :country'
-            .' GROUP BY country.country ORDER BY country.country ASC';
+            . ' FROM mamias , country_distribution , country '
+            . ' WHERE mamias.id = country_distribution.mamias_id AND country_distribution.country_id = country.id '
+            . ' AND mamias.success_id = 8'
+            . ' AND country.id = :country'
+            . ' GROUP BY country.country ORDER BY country.country ASC';
 
         $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
         $stmt->execute(['country' => $co]);
@@ -361,9 +361,9 @@ class MamiasRepository extends ServiceEntityRepository
     public function getcumulativebyCountry1($co)
     {
         $rawSql1 = 'SELECT mamias.first_med_sighting, sum(count(DISTINCT mamias.id)) OVER (ORDER BY mamias.first_med_sighting) as cumulative '
-            .' FROM mamias , country_distribution , country '
-            .' WHERE mamias.id = country_distribution.mamias_id AND country_distribution.country_id = country.id AND mamias.success_id != 7'
-            .' AND mamias.first_med_sighting IS NOT NULL AND country.id = :country GROUP BY  mamias.first_med_sighting, country.country ORDER BY mamias.first_med_sighting';
+            . ' FROM mamias , country_distribution , country '
+            . ' WHERE mamias.id = country_distribution.mamias_id AND country_distribution.country_id = country.id AND mamias.success_id != 7'
+            . ' AND mamias.first_med_sighting IS NOT NULL AND country.id = :country GROUP BY  mamias.first_med_sighting, country.country ORDER BY mamias.first_med_sighting';
 
         $stmt1 = $this->getEntityManager()->getConnection()->prepare($rawSql1);
         $stmt1->execute(['country' => $co], []);
@@ -374,9 +374,9 @@ class MamiasRepository extends ServiceEntityRepository
     public function getSpeciesbyGroupandCountry($co)
     {
         $rawSql1 = 'SELECT ecofunctional.ecofunctional , (SELECT DISTINCT COUNT(mamias.id)) AS Value '
-            .' FROM mamias, ecofunctional , country_distribution , country WHERE mamias.ecofunctional_id = ecofunctional.id '
-            .' AND mamias.id = country_distribution.mamias_id AND country_distribution.country_id = country.id '
-            .'  AND country.id = :country GROUP BY ecofunctional.ecofunctional, country.country ORDER BY ecofunctional.ecofunctional';
+            . ' FROM mamias, ecofunctional , country_distribution , country WHERE mamias.ecofunctional_id = ecofunctional.id '
+            . ' AND mamias.id = country_distribution.mamias_id AND country_distribution.country_id = country.id '
+            . '  AND country.id = :country GROUP BY ecofunctional.ecofunctional, country.country ORDER BY ecofunctional.ecofunctional';
 
         $stmt1 = $this->getEntityManager()->getConnection()->prepare($rawSql1);
         $stmt1->execute(['country' => $co], []);
@@ -387,9 +387,9 @@ class MamiasRepository extends ServiceEntityRepository
     public function getSpeciesbyOriginsandCountry($co)
     {
         $rawSql1 = "SELECT split_part( origin.origin_region, ' ' , 1 ) As origin, (SELECT DISTINCT COUNT(mamias.id)) AS Value "
-            .'FROM mamias, origin, country_distribution , country WHERE mamias.origin_id = origin.id '
-            .' AND mamias.id = country_distribution.mamias_id AND country_distribution.country_id = country.id '
-            .'  AND country.id = :country  GROUP BY origin ';
+            . 'FROM mamias, origin, country_distribution , country WHERE mamias.origin_id = origin.id '
+            . ' AND mamias.id = country_distribution.mamias_id AND country_distribution.country_id = country.id '
+            . '  AND country.id = :country  GROUP BY origin ';
 
         $stmt1 = $this->getEntityManager()->getConnection()->prepare($rawSql1);
         $stmt1->execute(['country' => $co], []);
@@ -431,8 +431,8 @@ class MamiasRepository extends ServiceEntityRepository
     public function getnumberbypathways()
     {
         $rawSql8 = ' SELECT DISTINCT COUNT(mamias.relation_id), vectors.vector_name'
-            .' FROM mamias INNER JOIN mamias_vectors ON mamias.id = mamias_vectors.mamias_id AND mamias.success_id != 7'
-            .' INNER JOIN vectors ON mamias_vectors.vectors_id = vectors.id GROUP BY vectors.vector_name ORDER BY vectors.vector_name ';
+            . ' FROM mamias INNER JOIN mamias_vectors ON mamias.id = mamias_vectors.mamias_id AND mamias.success_id != 7'
+            . ' INNER JOIN vectors ON mamias_vectors.vectors_id = vectors.id GROUP BY vectors.vector_name ORDER BY vectors.vector_name ';
         $stmt8 = $this->getEntityManager()->getConnection()->prepare($rawSql8);
         $stmt8->execute();
 
@@ -443,14 +443,14 @@ class MamiasRepository extends ServiceEntityRepository
     {
         $rawSql9 = ' SELECT DISTINCT COUNT(mamias.relation_id), vectors.vector_name, country.id '
 
-            .' FROM mamias INNER JOIN mamias_vectors ON mamias.id = mamias_vectors.mamias_id '
-            .' INNER JOIN vectors 	ON 	mamias_vectors.vectors_id = vectors.id '
-            .' INNER JOIN catalogue ON mamias.relation_id = catalogue.id AND mamias.success_id != 7'
-            .' INNER JOIN country_distribution ON  mamias.id = country_distribution.mamias_id '
-            .' INNER JOIN country ON country_distribution.country_id = country.id '
-            .' WHERE country.id = :country '
-            .' GROUP BY vectors.vector_name, country.id '
-            .' ORDER BY vectors.vector_name ';
+            . ' FROM mamias INNER JOIN mamias_vectors ON mamias.id = mamias_vectors.mamias_id '
+            . ' INNER JOIN vectors 	ON 	mamias_vectors.vectors_id = vectors.id '
+            . ' INNER JOIN catalogue ON mamias.relation_id = catalogue.id AND mamias.success_id != 7'
+            . ' INNER JOIN country_distribution ON  mamias.id = country_distribution.mamias_id '
+            . ' INNER JOIN country ON country_distribution.country_id = country.id '
+            . ' WHERE country.id = :country '
+            . ' GROUP BY vectors.vector_name, country.id '
+            . ' ORDER BY vectors.vector_name ';
         $stmt9 = $this->getEntityManager()->getConnection()->prepare($rawSql9);
         $stmt9->execute(['country' => $co]);
 

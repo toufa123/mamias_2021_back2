@@ -5179,7 +5179,7 @@
                 var lastLine = "";
                 var lineCount = 0;
 
-                Line: for (var i in textSplit) {
+                for (var i in textSplit) {
                     if (textSplit.hasOwnProperty(i)) {
                         lastLine += textSplit[i] + " "; // Remove last blank
 
@@ -5252,7 +5252,7 @@
                         firstWordInLine = lastWordInLine + 1;
                         lineCount++;
                         lastLine = "";
-                        continue Line;
+
                     }
                 }
 
@@ -5695,7 +5695,7 @@
                     if (_Kids.length > 0) {
                         return _Kids;
                     } else {
-                        return;
+
                     }
                 }
             });
@@ -18485,7 +18485,7 @@
 
 
             this.getHelpXML = function () {
-                var examples = new Array(); // add regexps
+                var examples = []; // add regexps
 
                 for (var i = 0; i < color_defs.length; i++) {
                     var example = color_defs[i].example;
@@ -20914,7 +20914,7 @@
                     }
                 }
 
-                return;
+
             }
 
             PNG.prototype.read = function (bytes) {

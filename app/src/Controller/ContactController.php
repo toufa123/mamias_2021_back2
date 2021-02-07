@@ -74,7 +74,7 @@ class ContactController extends AbstractController
                         'text/html'
                     )
                     ->addPart(
-                        'Hi '.$LastName.'! Your Message is successfully Submitted.We will get back to you soon!
+                        'Hi ' . $LastName . '! Your Message is successfully Submitted.We will get back to you soon!
                             
 Thanks.
 

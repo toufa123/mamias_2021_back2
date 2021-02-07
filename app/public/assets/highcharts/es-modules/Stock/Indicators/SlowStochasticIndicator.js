@@ -59,7 +59,7 @@ seriesType('slowstochastic', 'stochastic',
             var args = arguments, ctx = this;
             requiredIndicator.isParentLoaded(H.seriesTypes.stochastic, 'stochastic', ctx.type, function (indicator) {
                 indicator.prototype.init.apply(ctx, args);
-                return;
+
             });
         },
         getValues: function (series, params) {

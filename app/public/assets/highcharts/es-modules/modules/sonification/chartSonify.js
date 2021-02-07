@@ -116,6 +116,7 @@ function getPointTimeValue(point, timeProp) {
         timeProp(point) :
         pick(point[timeProp], point.options[timeProp]);
 }
+
 /**
  * Get the time extremes of this series. This is handled outside of the
  * dataExtremes, as we always want to just sonify the visible points, and we
@@ -185,6 +186,7 @@ function getExtremesForInstrumentProps(chart, instruments, dataExtremes) {
         return newExtremes;
     }, merge(dataExtremes));
 }
+
 /**
  * Get earcons for the point if there are any.
  * @private
@@ -216,6 +218,7 @@ function getPointEarcons(point, earconDefinitions) {
         return earcons;
     }, []);
 }
+
 /**
  * Utility function to get a new list of instrument options where all the
  * instrument references are copies.
@@ -380,6 +383,7 @@ function buildTimelinePathFromSeries(series, options) {
         targetDuration: options.duration
     });
 }
+
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Sonify a series.
@@ -546,6 +550,7 @@ function buildPathOrder(orderOptions, chart, seriesOptionsCallback) {
     }
     return order;
 }
+
 /**
  * Utility function to add a silent wait after all series.
  * @private
@@ -577,6 +582,7 @@ function addAfterSeriesWaits(order, wait) {
         return newOrder;
     }, []);
 }
+
 /**
  * Utility function to find the total amout of wait time in the TimelinePaths.
  * @private
@@ -592,6 +598,7 @@ function getWaitTime(order) {
             def[0].options.silentWait || 0);
     }, 0);
 }
+
 /**
  * Utility function to ensure simultaneous paths have start/end events at the
  * same time, to sync them.
@@ -629,6 +636,7 @@ function syncSimultaneousPaths(paths) {
         }
     });
 }
+
 /**
  * Utility function to find the total duration span for all simul path sets
  * that include series.
@@ -648,6 +656,7 @@ function getSimulPathDurationTotal(order) {
         }, 0);
     }, 0);
 }
+
 /**
  * Function to calculate the duration in ms for a series.
  * @private
@@ -666,6 +675,7 @@ function getSeriesDurationMs(seriesValueDuration, totalValueDuration, totalDurat
         max: totalDurationMs
     });
 }
+
 /**
  * Convert series building objects into paths and return a new list of
  * TimelinePaths.
@@ -951,6 +961,7 @@ function chartSonify(options) {
     });
     this.sonification.timeline.play();
 }
+
 /**
  * Get a list of the points currently under cursor.
  *
@@ -975,6 +986,7 @@ function getCurrentPoints() {
     }
     return [];
 }
+
 /**
  * Set the cursor to a point or set of points in different series.
  *
@@ -997,6 +1009,7 @@ function setCursor(points) {
         });
     }
 }
+
 /**
  * Pause the running sonification.
  *
@@ -1016,6 +1029,7 @@ function pause(fadeOut) {
         this.sonification.currentlyPlayingPoint.cancelSonify(fadeOut);
     }
 }
+
 /**
  * Resume the currently running sonification. Requires series.sonify or
  * chart.sonify to have been played at some point earlier.
@@ -1034,6 +1048,7 @@ function resume(onEnd) {
         this.sonification.timeline.play(onEnd);
     }
 }
+
 /**
  * Play backwards from cursor. Requires series.sonify or chart.sonify to have
  * been played at some point earlier.
@@ -1052,6 +1067,7 @@ function rewind(onEnd) {
         this.sonification.timeline.rewind(onEnd);
     }
 }
+
 /**
  * Cancel current sonification and reset cursor.
  *
@@ -1068,6 +1084,7 @@ function cancel(fadeOut) {
     this.pauseSonify(fadeOut);
     this.resetSonifyCursor();
 }
+
 /**
  * Reset cursor to start. Requires series.sonify or chart.sonify to have been
  * played at some point earlier.
@@ -1083,6 +1100,7 @@ function resetCursor() {
         this.sonification.timeline.resetCursor();
     }
 }
+
 /**
  * Reset cursor to end. Requires series.sonify or chart.sonify to have been
  * played at some point earlier.
@@ -1098,6 +1116,7 @@ function resetCursorEnd() {
         this.sonification.timeline.resetCursorEnd();
     }
 }
+
 // Export functions
 var chartSonifyFunctions = {
     chartSonify: chartSonify,

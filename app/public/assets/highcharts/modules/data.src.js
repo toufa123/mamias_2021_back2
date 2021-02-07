@@ -23,6 +23,7 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
@@ -116,6 +117,7 @@
                     // @todo Maybe emit a highcharts error event here
                 }
             }
+
             if (!options.url) {
                 return false;
             }
@@ -934,6 +936,7 @@
                         '\t': 0
                     };
                 columns = this.columns = [];
+
                 /*
                     This implementation is quite verbose. It will be shortened once
                     it's stable and passes all the test.
@@ -977,6 +980,7 @@
                  */
                 function parseRow(columnStr, rowNumber, noAdd, callbacks) {
                     var i = 0, c = '', cl = '', cn = '', token = '', actualColumn = 0, column = 0;
+
                     /**
                      * @private
                      */
@@ -985,6 +989,7 @@
                         cl = columnStr[j - 1];
                         cn = columnStr[j + 1];
                     }
+
                     /**
                      * @private
                      */
@@ -996,6 +1001,7 @@
                             dataTypes[column].push(type);
                         }
                     }
+
                     /**
                      * @private
                      */
@@ -1027,6 +1033,7 @@
                         ++column;
                         ++actualColumn;
                     }
+
                     if (!columnStr.trim().length) {
                         return;
                     }
@@ -1067,6 +1074,7 @@
                     }
                     push();
                 }
+
                 /**
                  * Attempt to guess the delimiter. We do a separate parse pass here
                  * because we need to count potential delimiters softly without making
@@ -1158,6 +1166,7 @@
                     }
                     return guessed;
                 }
+
                 /**
                  * Tries to guess the date format
                  *  - Check if either month candidate exceeds 12
@@ -1260,6 +1269,7 @@
                     }
                     return format;
                 }
+
                 /**
                  * @todo
                  * Figure out the best axis types for the data
@@ -1270,6 +1280,7 @@
                  */
                 function deduceAxisTypes() {
                 }
+
                 if (csv && options.beforeParse) {
                     csv = options.beforeParse.call(this, csv);
                 }
@@ -1410,6 +1421,7 @@
                 delete options.csvURL;
                 delete options.rowsURL;
                 delete options.columnsURL;
+
                 /**
                  * @private
                  */
@@ -1429,6 +1441,7 @@
                             clearTimeout(data.liveDataTimeout);
                             chart.liveDataURL = url;
                         }
+
                         /**
                          * @private
                          */
@@ -1459,6 +1472,7 @@
                         });
                         return true;
                     }
+
                     if (!request(originalOptions.csvURL, function (res) {
                         chart.update({
                             data: {
@@ -1512,6 +1526,7 @@
                 if (refreshRate < 4000) {
                     refreshRate = 4000;
                 }
+
                 /**
                  * Fetch the actual spreadsheet using XMLHttpRequest.
                  * @private
@@ -1539,6 +1554,7 @@
                         }
                     });
                 }
+
                 if (googleSpreadsheetKey) {
                     delete options.googleSpreadsheetKey;
                     fetchSheet(function (json) {

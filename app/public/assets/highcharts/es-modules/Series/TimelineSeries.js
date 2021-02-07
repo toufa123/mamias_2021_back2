@@ -342,7 +342,7 @@ seriesType('timeline', 'line',
                 series.yData[i] = 1;
             }
             Series.prototype.processData.call(this, arguments);
-            return;
+
         },
         getXExtremes: function (xData) {
             var series = this, filteredData = xData.filter(function (x, i) {

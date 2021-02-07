@@ -11,8 +11,8 @@
             association mapping  : http://www.doctrine-project.org/projects/orm/2.0/docs/reference/association-mapping/en
     -->
     <entity
-        name="App\Application\Sonata\MediaBundle\Entity\Media"
-        table="media__media"
+            name="App\Application\Sonata\MediaBundle\Entity\Media"
+            table="media__media"
     >
 
         <id name="id" type="integer" column="id">

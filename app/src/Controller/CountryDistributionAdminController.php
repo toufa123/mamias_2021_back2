@@ -14,6 +14,7 @@ use App\Entity\SuccessType;
 use App\Entity\VectorName;
 use CrEOF\Geo\WKT\Parser;
 use CrEOF\Spatial\PHP\Types\Geometry\Point;
+use DateTime;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx as XlsxReader;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sonata\AdminBundle\Controller\CRUDController;
@@ -31,8 +32,8 @@ final class CountryDistributionAdminController extends CRUDController
         $session = $request->getSession();
         //$tmp_name = $_FILES['catalogue']['tmp_name'];
         //dump($request);die;
-        $fp = fopen($_SERVER['DOCUMENT_ROOT'].'/cd-import-'.date('d-m-y-H_i').'.txt', 'wb');
-        $url = '/cd-import-'.date('d-m-y-H_i').'.txt';
+        $fp = fopen($_SERVER['DOCUMENT_ROOT'] . '/cd-import-' . date('d-m-y-H_i') . '.txt', 'wb');
+        $url = '/cd-import-' . date('d-m-y-H_i') . '.txt';
         $request->request->set('_sonata_admin', 'admin.template');
         if (isset($_POST['submit'])) {
             $tmp_name = $_FILES['nc']['tmp_name'];
@@ -63,7 +64,7 @@ final class CountryDistributionAdminController extends CRUDController
                 //$highestColumn = $worksheet->getHighestColumn();
                 //$highestColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn); // e.g. 5
                 //$highestColumn++;
-                fwrite($fp, $_FILES['nc']['name']."\n");
+                fwrite($fp, $_FILES['nc']['name'] . "\n");
                 for ($row = 1; $row <= $highestRow; ++$row) {
                     //dd($sheetData[$row][0],$sheetData[$row][1], $sheetData[$row][2], $sheetData[$row][3], $sheetData[$row][4], $sheetData[$row][5], $sheetData[$row][6]  );
                     $species = $this->getDoctrine()->getManager()->getRepository(Catalogue::class)->findOneBy(['Species' => $sheetData[$row][0]]);
@@ -85,28 +86,28 @@ final class CountryDistributionAdminController extends CRUDController
                             $CD = new CountryDistribution();
                             $CD->setMamias($s->setRelation($species));
                             $CD->setCountry($country);
-                            $CD->setAreaSighting((string) $sheetData[$row][2]);
+                            $CD->setAreaSighting((string)$sheetData[$row][2]);
                             $CD->setNationalstatus($ns);
                             $CD->setAreaSuccess($as);
                             $CD->setStatus('Non Validated');
-                            fwrite($fp, $sheetData[$row][0].'::::::exits in MAMIAS geodatabase and data added'."\n");
+                            fwrite($fp, $sheetData[$row][0] . '::::::exits in MAMIAS geodatabase and data added' . "\n");
                             //fwrite($fp, $sheetData[$row][0] . '----added' . "\n");
                             if ('' != $sheetData[$row][7] & '' != $sheetData[$row][8]) {
                                 $GO = new GeoOccurence();
                                 $GO->setCountry($country);
                                 $GO->setMamias($s->setRelation($species));
-                                $GO->setDateOccurence(\DateTime::createFromFormat('Y', (string) $sheetData[$row][2]));
-                                $parser = new Parser('Point('.$sheetData[$row][7].' '.$sheetData[$row][8].')');
+                                $GO->setDateOccurence(DateTime::createFromFormat('Y', (string)$sheetData[$row][2]));
+                                $parser = new Parser('Point(' . $sheetData[$row][7] . ' ' . $sheetData[$row][8] . ')');
                                 //dd($parser);
                                 $geo = $parser->parse();
-                                $g = new \CrEOF\Spatial\PHP\Types\Geometry\Point($geo['value'], '4326');
+                                $g = new Point($geo['value'], '4326');
                                 $GO->setLocation($g);
                                 $GO->setStatus('Submitted');
                                 $em2->persist($GO);
                             }
                             $em2->persist($CD);
                         } else {
-                            fwrite($fp, $sheetData[$row][0].':::::::not in Mamias'."\n");
+                            fwrite($fp, $sheetData[$row][0] . ':::::::not in Mamias' . "\n");
                             $em1 = $this->getDoctrine()->getManager();
                             $sp = new Mamias();
                             $sp->setRelation($species);
@@ -138,7 +139,7 @@ final class CountryDistributionAdminController extends CRUDController
                         $em2->flush();
                     }
                 }
-                $request->getSession()->getFlashBag()->add('success', 'File is valid, and was successfully processed.!'.'<br>'.'<a href='.$url.'>Log Link</a>');
+                $request->getSession()->getFlashBag()->add('success', 'File is valid, and was successfully processed.!' . '<br>' . '<a href=' . $url . '>Log Link</a>');
                 fclose($fp);
 
                 return $this->redirect($this->generateUrl('CountryD_list'));

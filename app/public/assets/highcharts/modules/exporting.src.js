@@ -23,6 +23,7 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
@@ -2102,6 +2103,7 @@
             iframeDoc.open();
             iframeDoc.write('<svg xmlns="http://www.w3.org/2000/svg"></svg>');
             iframeDoc.close();
+
             /**
              * Make hyphenated property names out of camelCase
              * @private
@@ -2115,6 +2117,7 @@
                     return '-' + b.toLowerCase();
                 });
             }
+
             /**
              * Call this on all elements and recurse to children
              * @private
@@ -2182,6 +2185,7 @@
                         }
                     }
                 }
+
                 if (node.nodeType === 1 &&
                     unstyledElements.indexOf(node.nodeName) === -1) {
                     styles = win.getComputedStyle(node, null);
@@ -2234,6 +2238,7 @@
                     [].forEach.call(node.children || node.childNodes, recurse);
                 }
             }
+
             /**
              * Remove the dummy objects used to get defaults
              * @private
@@ -2242,6 +2247,7 @@
             function tearDown() {
                 dummySVG.parentNode.removeChild(dummySVG);
             }
+
             recurse(this.container.querySelector('svg'));
             tearDown();
         };
@@ -2311,6 +2317,7 @@
         // function.
         addEvent(Chart, 'init', function () {
             var chart = this;
+
             /**
              * @private
              * @param {"exporting"|"navigation"} prop
@@ -2328,6 +2335,7 @@
                     chart.redraw();
                 }
             }
+
             chart.exporting = {
                 update: function (options, redraw) {
                     update('exporting', options, redraw);

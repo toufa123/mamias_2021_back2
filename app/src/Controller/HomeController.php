@@ -57,7 +57,7 @@ class HomeController extends AbstractController
         foreach ($cumulative as $values) {
             $cat[] = [$values['first_med_sighting']];
             $a = [$values['first_med_sighting'], $values['cumulative']];
-            $b = [(int) $values['first_med_sighting'], (int) $values['cumulative']];
+            $b = [(int)$values['first_med_sighting'], (int)$values['cumulative']];
 
             array_push($datacu, $a);
             array_push($datareg, $b);

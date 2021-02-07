@@ -133,7 +133,7 @@ class Country
 
     public function __toString()
     {
-        return (string) $this->getCountry();   // TODO: Implement __toString() method.
+        return (string)$this->getCountry();   // TODO: Implement __toString() method.
     }
 
     public function getCountry(): ?string

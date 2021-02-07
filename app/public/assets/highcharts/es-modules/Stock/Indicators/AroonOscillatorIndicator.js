@@ -74,7 +74,7 @@ seriesType('aroonoscillator', 'aroon',
             var args = arguments, ctx = this;
             requiredIndicator.isParentLoaded(AROON, 'aroon', ctx.type, function (indicator) {
                 indicator.prototype.init.apply(ctx, args);
-                return;
+
             });
         },
         getValues: function (series, params) {

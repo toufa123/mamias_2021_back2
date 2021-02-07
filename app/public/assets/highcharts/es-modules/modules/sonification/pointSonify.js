@@ -198,6 +198,7 @@ var defaultInstrumentOptions = {
     minFrequency: 220,
     maxFrequency: 2200
 };
+
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Sonify a single point.
@@ -316,6 +317,7 @@ function pointSonify(options) {
         }
     });
 }
+
 /**
  * Cancel sonification of a point. Calls onEnd functions.
  *
@@ -339,6 +341,7 @@ function pointCancelSonify(fadeOut) {
         this.sonification.signalHandler.emitSignal('onEnd', 'cancelled');
     }
 }
+
 var pointSonifyFunctions = {
     pointSonify: pointSonify,
     pointCancelSonify: pointCancelSonify

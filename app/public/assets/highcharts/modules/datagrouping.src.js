@@ -23,6 +23,7 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
@@ -198,6 +199,7 @@
                 valuesLen,
                 i,
                 j;
+
             /**
              * @private
              */
@@ -211,6 +213,7 @@
                 return approximations[(series.getDGApproximation && series.getDGApproximation()) ||
                 'average'];
             }
+
             approximationFn = getApproximation(approximation);
             // Calculate values array size from pointArrayMap length
             if (pointArrayMapLength) {

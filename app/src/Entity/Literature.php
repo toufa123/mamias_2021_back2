@@ -192,7 +192,7 @@ class Literature
 
     public function __toString()
     {
-        return (string) $this->getAuthors().','.$this->getYear().','.$this->getCountry();   // TODO: Implement __toString() method.
+        return (string)$this->getAuthors() . ',' . $this->getYear() . ',' . $this->getCountry();   // TODO: Implement __toString() method.
     }
 
     public function getAuthors(): ?string

@@ -28,7 +28,7 @@ class SearchController extends AbstractController
     public function index(Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->prependRouteItem('Home', 'home');
-        $breadcrumbs->addItem('MAMIAS services/Mamias search', $this->get('router')->generate('search'));
+        $breadcrumbs->addItem('MAMIAS services/search Mamias', $this->get('router')->generate('search'));
         $sId = null;
         $eco = null;
         $origin = null;
@@ -94,13 +94,13 @@ class SearchController extends AbstractController
 
             $species = $em->getRepository(Mamias::class)->findSpeciesByParametres(
                 $sId, $eco, $origin, $su, $year, $country, $ecapmed, $status, $pathway);
-        //dump ($species); die;
+            //dump ($species); die;
         } else {
             $em = $this->getDoctrine()->getManager();
             $species = $em->getRepository(Mamias::class)->findAllS();
             //dump($species);die;
         }
-        $data = (object) [
+        $data = (object)[
             'data' => [[
                 $species,
             ]],

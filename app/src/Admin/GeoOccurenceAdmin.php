@@ -6,6 +6,7 @@ namespace App\Admin;
 
 use App\Application\Sonata\UserBundle\Entity\User;
 use CrEOF\Geo\WKT\Parser;
+use CrEOF\Spatial\PHP\Types\Geometry\Point;
 use Doctrine\ORM\EntityRepository;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -28,18 +29,18 @@ final class GeoOccurenceAdmin extends AbstractAdmin
     {
         $user = $this->getConfigurationPool()->getContainer()->get('security.token_storage')->getToken()->getUser();
         $object->setUser($user);
-        $parser = new Parser('Point('.$object->getLocation().')');
+        $parser = new Parser('Point(' . $object->getLocation() . ')');
         $geo = $parser->parse();
-        $g = new \CrEOF\Spatial\PHP\Types\Geometry\Point($geo['value'], '4326');
+        $g = new Point($geo['value'], '4326');
         $object->setLocation($g);
         //dump ('prepersist',$geo,$g);die;
     }
 
     public function preUpdate($object)
     {
-        $parser = new Parser('Point('.$object->getLocation().')');
+        $parser = new Parser('Point(' . $object->getLocation() . ')');
         $geo = $parser->parse();
-        $g = new \CrEOF\Spatial\PHP\Types\Geometry\Point($geo['value'], '4326');
+        $g = new Point($geo['value'], '4326');
         $object->setLocation($g);
         //dump ('preupdate',$geo,$g);die;
         $user = $this->getConfigurationPool()->getContainer()->get('security.token_storage')->getToken()->getUser();
@@ -132,7 +133,7 @@ final class GeoOccurenceAdmin extends AbstractAdmin
                     ->add('date_occurence', DatePickerType::class,
                         ['label' => 'Reporting Date', 'disabled' => false],
                         ['format' => 'dd/mm/yyyy', 'dp_use_current' => true, 'dp_show_today' => true, 'dp_view_timezone' => 'Europe/Paris', 'dp_model_timezone' => 'Europe/Paris',
-                            'dp_collapse' => true, 'dp_view_mode' => 'decades', 'dp_min_view_mode' => 'years', ])
+                            'dp_collapse' => true, 'dp_view_mode' => 'decades', 'dp_min_view_mode' => 'years',])
                     ->add(
                         'imageFile',
                         VichImageType::class, [
@@ -148,14 +149,14 @@ final class GeoOccurenceAdmin extends AbstractAdmin
                     ->add('depth', IntegerType::class, ['label' => 'Depth', 'required' => false,
                     ])
                     ->add('PlantsAnimals', ChoiceType::class, ['choices' => ['' => '', 'Coverage in m2' => 'Coverage in m2',
-                        'Numbre of indivudals' => 'Numbre of indivudals', ],
+                        'Numbre of indivudals' => 'Numbre of indivudals',],
                         'label' => 'Type of observation',
-                        'required' => false, ])
+                        'required' => false,])
                     ->add('nvalues', IntegerType::class, ['label' => 'Values', 'required' => false,
                         ]
                     )
                     ->add('EstimatedMeasured', ChoiceType::class, ['choices' => ['Estimated' => 'Estimated',
-                        'Measured' => 'Measured', ], 'expanded' => false, 'multiple' => false,
+                        'Measured' => 'Measured',], 'expanded' => false, 'multiple' => false,
                         'label_attr' => [
                             'class' => 'radio-inline radio-primary',
                         ], 'label' => 'Accuracy',
@@ -183,8 +184,8 @@ final class GeoOccurenceAdmin extends AbstractAdmin
                         'query_builder' => function (EntityRepository $er) {
                             return $er->createQueryBuilder('d')
                                 ->where('d.roles  LIKE :ROLE')
-                                ->setParameter('ROLE', '%"'.'ROLE_S'.'"%');
-                        }, ])
+                                ->setParameter('ROLE', '%"' . 'ROLE_S' . '"%');
+                        },])
                     ->add('notes', null, ['label' => 'Comments by the Admin']);
             } else {
                 //added through Geo
@@ -221,14 +222,14 @@ final class GeoOccurenceAdmin extends AbstractAdmin
                     ->add('depth', IntegerType::class, ['label' => 'Depth', 'required' => false,
                     ])
                     ->add('PlantsAnimals', ChoiceType::class, ['choices' => ['' => '', 'Coverage in m2' => 'Coverage in m2',
-                        'Numbre of indivudals' => 'Numbre of indivudals', ],
+                        'Numbre of indivudals' => 'Numbre of indivudals',],
                         'label' => 'Type of observation',
-                        'required' => false, ])
+                        'required' => false,])
                     ->add('nvalues', IntegerType::class, ['label' => 'Values', 'required' => false,
                         ]
                     )
                     ->add('EstimatedMeasured', ChoiceType::class, ['choices' => ['Estimated' => 'Estimated',
-                        'Measured' => 'Measured', ], 'expanded' => false, 'multiple' => false,
+                        'Measured' => 'Measured',], 'expanded' => false, 'multiple' => false,
                         'label_attr' => [
                             'class' => 'radio-inline radio-primary',
                         ], 'label' => 'Accuracy',
@@ -257,8 +258,8 @@ final class GeoOccurenceAdmin extends AbstractAdmin
                         'query_builder' => function (EntityRepository $er) {
                             return $er->createQueryBuilder('d')
                                 ->where('d.roles  LIKE :ROLE')
-                                ->setParameter('ROLE', '%"'.'ROLE_S'.'"%');
-                        }, ])
+                                ->setParameter('ROLE', '%"' . 'ROLE_S' . '"%');
+                        },])
                     ->add('notes', null, ['label' => 'Comments by the Admin']);
             }
         } else {
@@ -277,7 +278,7 @@ final class GeoOccurenceAdmin extends AbstractAdmin
                         'dp_collapse' => true,
                         'dp_view_mode' => 'years',
                         'dp_min_view_mode' => 'years',
-                        'dp_view_timezone' => 'Europe/Paris', 'dp_model_timezone' => 'Europe/Paris', ]
+                        'dp_view_timezone' => 'Europe/Paris', 'dp_model_timezone' => 'Europe/Paris',]
                 )
                 ->add(
                     'imageFile',
@@ -294,14 +295,14 @@ final class GeoOccurenceAdmin extends AbstractAdmin
                 ->add('depth', IntegerType::class, ['label' => 'Depth', 'required' => false,
                 ])
                 ->add('PlantsAnimals', ChoiceType::class, ['choices' => ['' => '', 'Coverage in m2' => 'Coverage in m2',
-                    'Numbre of indivudals' => 'Numbre of indivudals', ],
+                    'Numbre of indivudals' => 'Numbre of indivudals',],
                     'label' => 'Type of observation',
-                    'required' => false, ])
+                    'required' => false,])
                 ->add('nvalues', IntegerType::class, ['label' => 'Values', 'required' => false,
                     ]
                 )
                 ->add('EstimatedMeasured', ChoiceType::class, ['choices' => ['Estimated' => 'Estimated',
-                    'Measured' => 'Measured', ], 'expanded' => false, 'multiple' => false,
+                    'Measured' => 'Measured',], 'expanded' => false, 'multiple' => false,
                     'label_attr' => [
                         'class' => 'radio-inline radio-primary',
                     ], 'label' => 'Accuracy',
@@ -329,8 +330,8 @@ final class GeoOccurenceAdmin extends AbstractAdmin
                     'query_builder' => function (EntityRepository $er) {
                         return $er->createQueryBuilder('d')
                             ->where('d.roles  LIKE :ROLE')
-                            ->setParameter('ROLE', '%"'.'ROLE_S'.'"%');
-                    }, ])
+                            ->setParameter('ROLE', '%"' . 'ROLE_S' . '"%');
+                    },])
                 ->add('notes', null, ['label' => 'Comments by the Admin']);
         }
     }

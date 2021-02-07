@@ -24,6 +24,7 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
@@ -575,6 +576,7 @@
                         chart.canvas.getContext('2d').clearRect(0, 0, chart.canvas.width, chart.canvas.height);
                     }
                 }
+
                 addEvent(chart, 'predraw', clear);
                 addEvent(chart, 'render', canvasToSVG);
             });

@@ -52,7 +52,7 @@ seriesType('dema', 'ema',
             var args = arguments, ctx = this;
             requiredIndicator.isParentLoaded(EMAindicator, 'ema', ctx.type, function (indicator) {
                 indicator.prototype.init.apply(ctx, args);
-                return;
+
             });
         },
         getEMA: function (yVal, prevEMA, SMA, index, i, xVal) {

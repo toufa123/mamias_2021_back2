@@ -10,14 +10,19 @@ use Ob\HighchartsBundle\Highcharts\Highchart;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
 class NationallevController extends AbstractController
 {
     /**
      * @Route("services/dash/nat/", name="nat",  options={"sitemap" = true})
      */
-    public function index(Request $request)
+    public function index(Request $request, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->addItem('Home', $this->get('router')->generate('home'));
+        $breadcrumbs->addItem('National level', $this->get('router')->generate('nat'));
+        $em = $this->getDoctrine()->getManager();
+
         $n1 = null;
         $n2 = null;
         $n3 = null;
@@ -56,7 +61,7 @@ class NationallevController extends AbstractController
             foreach ($n4 as $values) {
                 $cat[] = [$values['first_med_sighting']];
                 $a = [$values['first_med_sighting'], $values['cumulative']];
-                $b = [(int) $values['first_med_sighting'], (int) $values['cumulative']];
+                $b = [(int)$values['first_med_sighting'], (int)$values['cumulative']];
                 array_push($datacu, $a);
                 array_push($datareg, $b);
             }
@@ -173,19 +178,19 @@ class NationallevController extends AbstractController
             $ob4->series([['type' => 'bar', 'name' => 'Number of NIS', 'color' => '#00AEEF', 'data' => $data4]]);
 
             return $this->render(
-            'nationallev/index.html.twig',
-            [
-                //'form1' => $form1->createView(),//'form2' => $form2->createView (),
-                'n1' => $n1,
-                'n2' => $n2,
-                'n3' => $n3,
-                'linechart' => $ob,
-                'piechart' => $ob2,
-                'barchart1' => $ob3,
-                'barchart2' => $ob4,
-                'name' => $c,
-            ]
-        );
+                'nationallev/index.html.twig',
+                [
+                    //'form1' => $form1->createView(),//'form2' => $form2->createView (),
+                    'n1' => $n1,
+                    'n2' => $n2,
+                    'n3' => $n3,
+                    'linechart' => $ob,
+                    'piechart' => $ob2,
+                    'barchart1' => $ob3,
+                    'barchart2' => $ob4,
+                    'name' => $c,
+                ]
+            );
         } else {
             $search = new SearchCountry();
             $form1 = $this->createForm(CountrySearchType::class, $search);
@@ -215,7 +220,7 @@ class NationallevController extends AbstractController
                 foreach ($n4 as $values) {
                     $cat[] = [$values['first_med_sighting']];
                     $a = [$values['first_med_sighting'], $values['cumulative']];
-                    $b = [(int) $values['first_med_sighting'], (int) $values['cumulative']];
+                    $b = [(int)$values['first_med_sighting'], (int)$values['cumulative']];
                     array_push($datacu, $a);
                     array_push($datareg, $b);
                 }

@@ -21,6 +21,7 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
@@ -68,6 +69,7 @@
          * @private
          * @function rotate3D
          */
+
         /* eslint-enable max-len */
         /**
          * @private
@@ -91,6 +93,7 @@
                     angles.cosA * angles.cosB * z
             };
         }
+
         /**
          * Perspective3D function is available in global Highcharts scope because is
          * needed also outside of perspective() function (#8042).
@@ -360,6 +363,7 @@
                 cy + (ry * Math.sin(end)) + dy
             ]];
         }
+
         SVGRenderer.prototype.toLinePath = function (points, closed) {
             var result = [];
             // Put "L x y" for each point
@@ -902,6 +906,7 @@
                 }
                 return hasCA ? [ca, params] : false;
             }
+
             attribs = merge(attribs);
             attribs.alpha = (attribs.alpha || 0) * deg2rad;
             attribs.beta = (attribs.beta || 0) * deg2rad;
@@ -4344,6 +4349,7 @@
                 seriesOptions.zIndex = z;
             }
         });
+
         // eslint-disable-next-line valid-jsdoc
         /**
          * @private
@@ -4358,6 +4364,7 @@
             }
             return attr;
         }
+
         // eslint-disable-next-line valid-jsdoc
         /**
          * In 3D mode, all column-series are rendered in one main group. Because of that
@@ -4374,6 +4381,7 @@
                 this.options.inactiveOtherPoints = false;
             }
         }
+
         // eslint-disable-next-line valid-jsdoc
         /**
          * In 3D mode, simple checking for a new shape to animate is not enough.
@@ -4389,6 +4397,7 @@
                 this.graphic && this.graphic.element.nodeName !== 'g' :
                 proceed.apply(this, args);
         }
+
         wrap(seriesTypes.column.prototype, 'pointAttribs', pointAttribs);
         wrap(seriesTypes.column.prototype, 'setState', setState);
         wrap(seriesTypes.column.prototype.pointClass.prototype, 'hasNewShapeType', hasNewShapeType);

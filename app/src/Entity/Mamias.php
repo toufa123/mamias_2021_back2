@@ -444,7 +444,7 @@ class Mamias
 
     public function __toString()
     {
-        return (string) $this->getRelation();   // TODO: Implement __toString() method.
+        return (string)$this->getRelation();   // TODO: Implement __toString() method.
     }
 
     public function getRelation(): ?Catalogue

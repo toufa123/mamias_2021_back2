@@ -31,16 +31,16 @@
 
         </div>
         <!-- end page title end breadcrumb -->
-    {% if form1.vars.submitted and form1.country.vars.value !='Select A country' %}
-        <div class="row">
-            <div class="col-lg-4 col-md-6">
-                <div class="card-box widget-box-two widget-two-info">
-                    <i class="mdi mdi-database widget-two-icon"></i>
-                    <div class="wigdet-two-content text-white">
-                        <p class="m-0 text-uppercase font-600 font-secondary text-overflow" title="Statistics">Total
-                            Species
-                            introduced</p>
-                        <h2 class="text-white"><span data-plugin="counterup">
+        {% if form1.vars.submitted and form1.country.vars.value !='Select A country' %}
+            <div class="row">
+                <div class="col-lg-4 col-md-6">
+                    <div class="card-box widget-box-two widget-two-info">
+                        <i class="mdi mdi-database widget-two-icon"></i>
+                        <div class="wigdet-two-content text-white">
+                            <p class="m-0 text-uppercase font-600 font-secondary text-overflow" title="Statistics">Total
+                                Species
+                                introduced</p>
+                            <h2 class="text-white"><span data-plugin="counterup">
                                 {% if n1 is empty %}
                                     0
                                 {% else %}
@@ -48,19 +48,19 @@
                                 {% endif %}
                             </span>
 
-                        </h2>
+                            </h2>
 
+                        </div>
                     </div>
-                </div>
-            </div><!-- end col -->
+                </div><!-- end col -->
 
-            <div class="col-lg-4 col-md-6">
-                <div class="card-box widget-box-two widget-two-orange">
-                    <i class="mdi mdi-layers widget-two-icon"></i>
-                    <div class="wigdet-two-content text-white">
-                        <p class="m-0 text-uppercase font-600 font-secondary text-overflow">
-                            Total Species Established</p>
-                        <h2 class="text-white"><span data-plugin="counterup">
+                <div class="col-lg-4 col-md-6">
+                    <div class="card-box widget-box-two widget-two-orange">
+                        <i class="mdi mdi-layers widget-two-icon"></i>
+                        <div class="wigdet-two-content text-white">
+                            <p class="m-0 text-uppercase font-600 font-secondary text-overflow">
+                                Total Species Established</p>
+                            <h2 class="text-white"><span data-plugin="counterup">
 
                                  {% if n1 is empty %}
                                      0
@@ -70,19 +70,19 @@
 
                             </span>
 
-                        </h2>
+                            </h2>
 
+                        </div>
                     </div>
-                </div>
-            </div><!-- end col -->
+                </div><!-- end col -->
 
-            <div class="col-lg-4 col-md-6">
-                <div class="card-box widget-box-two widget-two-danger">
-                    <i class="mdi mdi-clipboard-alert widget-two-icon"></i>
-                    <div class="wigdet-two-content text-white">
-                        <p class="m-0 text-uppercase font-600 font-secondary text-overflow">
-                            Toatl Species invasive</p>
-                        <h2 class="text-white"><span data-plugin="counterup">
+                <div class="col-lg-4 col-md-6">
+                    <div class="card-box widget-box-two widget-two-danger">
+                        <i class="mdi mdi-clipboard-alert widget-two-icon"></i>
+                        <div class="wigdet-two-content text-white">
+                            <p class="m-0 text-uppercase font-600 font-secondary text-overflow">
+                                Toatl Species invasive</p>
+                            <h2 class="text-white"><span data-plugin="counterup">
                                 {% if n1 is empty %}
                                     0
                                 {% else %}
@@ -91,51 +91,51 @@
 
                             </span>
 
-                        </h2>
+                            </h2>
 
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="property-card bg-white">
-                    <div class="property-content">
-                        <div id="linechart"
-                             style="min-width: 500px; max-width: 100%;height: 500px; margin: 0 auto; "></div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="property-card bg-white">
+                        <div class="property-content">
+                            <div id="linechart"
+                                 style="min-width: 500px; max-width: 100%;height: 500px; margin: 0 auto; "></div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-md-6">
-                <div class="property-card bg-white">
-                    <div class="property-content">
-                        <div id="piechart"
-                             style="min-width: 500px; max-width: 100%;height: 500px; margin: 0 auto; "></div>
+                <div class="col-md-6">
+                    <div class="property-card bg-white">
+                        <div class="property-content">
+                            <div id="piechart"
+                                 style="min-width: 500px; max-width: 100%;height: 500px; margin: 0 auto; "></div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="property-card bg-white">
-                    <div class="property-content">
-                        <div id="barchart1"
-                             style="min-width: 500px; max-width: 100%;height: 500px; margin: 0 auto; "></div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="property-card bg-white">
+                        <div class="property-content">
+                            <div id="barchart1"
+                                 style="min-width: 500px; max-width: 100%;height: 500px; margin: 0 auto; "></div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-lg-6">
-                <div class="property-card bg-white">
-                    <div class="property-content">
-                        <div id="barchart2"
-                             style="min-width: 500px; max-width: 100%;height: 500px; margin: 0 auto; "></div>
+                <div class="col-lg-6">
+                    <div class="property-card bg-white">
+                        <div class="property-content">
+                            <div id="barchart2"
+                                 style="min-width: 500px; max-width: 100%;height: 500px; margin: 0 auto; "></div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    {% endif %}
+        {% endif %}
     {% else %}
 
         <!-- end page title end breadcrumb -->

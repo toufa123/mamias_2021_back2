@@ -68,7 +68,7 @@ var Fibonacci = /** @class */ (function (_super) {
     Fibonacci.prototype.linkPoints = function () {
         _super.prototype.linkPoints.call(this);
         this.linkRetracementsPoints();
-        return;
+
     };
     Fibonacci.prototype.linkRetracementsPoints = function () {
         var points = this.points, startDiff = points[0].y - points[3].y, endDiff = points[1].y - points[2].y,

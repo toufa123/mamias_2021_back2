@@ -50,7 +50,7 @@ class Ecofunctional
 
     public function __toString()
     {
-        return (string) $this->getEcofunctional();   // TODO: Implement __toString() method.
+        return (string)$this->getEcofunctional();   // TODO: Implement __toString() method.
     }
 
     public function getEcofunctional(): ?string

@@ -943,6 +943,7 @@
             fireEvent(this, 'afterGetTable', e);
             return e.html;
         };
+
         /**
          * Get a blob object from content, if blob is supported
          *

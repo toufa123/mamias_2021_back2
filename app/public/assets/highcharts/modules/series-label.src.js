@@ -21,6 +21,7 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
@@ -192,6 +193,7 @@
                 }
             }
         });
+
         /* eslint-disable valid-jsdoc */
         /**
          * Counter-clockwise, part of the fast line intersection logic.
@@ -203,6 +205,7 @@
             var cw = ((y3 - y1) * (x2 - x1)) - ((y2 - y1) * (x3 - x1));
             return cw > 0 ? true : !(cw < 0);
         }
+
         /**
          * Detect if two lines intersect.
          *
@@ -213,6 +216,7 @@
             return ccw(x1, y1, x3, y3, x4, y4) !== ccw(x2, y2, x3, y3, x4, y4) &&
                 ccw(x1, y1, x2, y2, x3, y3) !== ccw(x1, y1, x2, y2, x4, y4);
         }
+
         /**
          * Detect if a box intersects with a line.
          *
@@ -226,6 +230,7 @@
                 intersectLine(x, y, x, y + h, x1, y1, x2, y2) // left of label
             );
         }
+
         /**
          * General symbol definition for labels with connector.
          *
@@ -313,6 +318,7 @@
                     interpolated.push(point);
                 }
             }
+
             // For splines, get the point at length (possible caveat: peaks are not
             // correctly detected)
             if (this.getPointSpline &&
@@ -436,6 +442,7 @@
                 yDist,
                 i,
                 j;
+
             /**
              * @private
              */
@@ -445,6 +452,7 @@
                     r2.top > r1.bottom ||
                     r2.bottom < r1.top);
             }
+
             /**
              * Get the weight in order to determine the ideal position. Larger distance
              * to other series gives more weight. Smaller distance to the actual point
@@ -454,6 +462,7 @@
             function getWeight(distToOthersSquared, distToPointSquared) {
                 return distToOthersSquared - distToPointSquared;
             }
+
             // First check for collision with existing labels
             for (i = 0; i < chart.boxesToAvoid.length; i += 1) {
                 if (intersectRect(chart.boxesToAvoid[i], {
@@ -578,6 +587,7 @@
                     areaMin = Math.min.apply(Math, dataExtremes);
                     areaMax = Math.max.apply(Math, dataExtremes);
                 }
+
                 /**
                  * @private
                  */
@@ -592,6 +602,7 @@
                         y >= paneTop &&
                         y <= paneTop + paneHeight - bBox.height);
                 }
+
                 /**
                  * @private
                  */
@@ -600,6 +611,7 @@
                         series.labelBySeries = label.destroy();
                     }
                 }
+
                 if (series.visible && !series.isSeriesBoosting && points) {
                     if (!label) {
                         var labelText = series.name;
@@ -779,6 +791,7 @@
             fireEvent(chart, 'afterDrawSeriesLabels');
             // console.timeEnd('drawSeriesLabels');
         };
+
         /* eslint-disable no-invalid-this */
         /**
          * Prepare drawing series labels.
@@ -834,6 +847,7 @@
                 }, chart.renderer.forExport || !delay ? 0 : delay);
             }
         }
+
         // Leave both events, we handle animation differently (#9815)
         addEvent(Chart, 'load', drawLabels);
         addEvent(Chart, 'redraw', drawLabels);

@@ -1,6 +1,15 @@
 orbitale_cms:
     page_class: App\Entity\Page
     category_class: App\Entity\Category
-# Define your layout here if you need a custom layout for your CMS
-#    layouts:
-#         main: { resource: base.html.twig }
+    # Define your layout here if you need a custom layout for your CMS
+    #    layouts:
+    #         main: { resource: base.html.twig }
+    design:
+        breadcrumbs_class:           "breadcrumb"  # The default value automatically suits to Bootstrap
+        breadcrumbs_link_class:      ""
+        breadcrumbs_current_class:   ""
+        breadcrumbs_separator:       ">"
+        breadcrumbs_separator_class: "breadcrumb-separator"
+    cache:
+        enabled: false
+        ttl: 300

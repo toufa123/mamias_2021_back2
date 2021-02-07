@@ -81,7 +81,7 @@ file that was distributed with this source code.
         {% set localeForSelect2 = canonicalize_locale_for_select2() %}
         {% if localeForSelect2 %}
         <script
-            src="{{ asset('bundles/sonatacore/vendor/select2/select2_locale_' ~ localeForSelect2 ~ '.js') }}"></script>
+                src="{{ asset('bundles/sonatacore/vendor/select2/select2_locale_' ~ localeForSelect2 ~ '.js') }}"></script>
         {% endif %}
         {% endif %}
         <script src="{{ asset('assets/plugins/toastr/toastr.min.js') }}"></script>
@@ -117,12 +117,12 @@ file that was distributed with this source code.
     </title>
 </head>
 <body
-    {% block body_attributes -%}
-        class="sonata-bc skin-blue fixed
+        {% block body_attributes -%}
+            class="sonata-bc skin-blue fixed
                 {% if app.request.cookies.get('sonata_sidebar_hide') -%}
                     sidebar-collapse
                 {%- endif -%}"
-    {%- endblock -%}
+        {%- endblock -%}
 >
 
 <div class="wrapper">
@@ -206,16 +206,16 @@ file that was distributed with this source code.
                                         <li>
                                             <a href="{{ path('home') }}" target="_blank"
                                                class="btn btn-link btn-flat text-primary"><span
-                                                    class="hidden-xs"></span><i class="fa fa-laptop"
-                                                                                aria-hidden="true"> Frontend</i>
+                                                        class="hidden-xs"></span><i class="fa fa-laptop"
+                                                                                    aria-hidden="true"> Frontend</i>
                                             </a>
 
                                         </li>
                                         <li>
                                             <a href="{{ path('elfinder') }}?conf=default"
                                                class="btn btn-link btn-flat text-primary" target="_blank"><span
-                                                    class="hidden-xs"></span><i class="fa fa-folder"
-                                                                                aria-hidden="true"> File Manager</i>
+                                                        class="hidden-xs"></span><i class="fa fa-folder"
+                                                                                    aria-hidden="true"> File Manager</i>
                                             </a>
 
                                         </li>
@@ -225,7 +225,7 @@ file that was distributed with this source code.
                                         <li class="dropdown">
                                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                                                 <i class="fa fa-plus-square fa-fw" aria-hidden="true"></i> <i
-                                                    class="fa fa-caret-down" aria-hidden="true"></i>
+                                                        class="fa fa-caret-down" aria-hidden="true"></i>
                                             </a>
                                             {% include get_global_template('add_block') %}
                                         </li>
@@ -234,7 +234,7 @@ file that was distributed with this source code.
                                         <li class="dropdown user-menu">
                                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                                                 <i class="fa fa-user fa-fw" aria-hidden="true"></i> <i
-                                                    class="fa fa-caret-down" aria-hidden="true"></i>
+                                                        class="fa fa-caret-down" aria-hidden="true"></i>
                                             </a>
                                             <ul class="dropdown-menu dropdown-user">
                                                 {% include get_global_template('user_block') %}
@@ -321,7 +321,7 @@ file that was distributed with this source code.
                                                     {% for mode, settings in admin.listModes %}
                                                         <a href="{{ admin.generateUrl('list', app.request.query.all|merge({_list_mode: mode})) }}"
                                                            class="btn btn-default navbar-btn btn-sm{% if admin.getListMode() == mode %} active{% endif %}"><i
-                                                                class="{{ settings.class }}"></i></a>
+                                                                    class="{{ settings.class }}"></i></a>
                                                     {% endfor %}
                                                 </div>
                                             {% endif %}

@@ -410,7 +410,7 @@ class Catalogue
 
     public function __toString()
     {
-        return (string) $this->getSpecies();   // TODO: Implement __toString() method.
+        return (string)$this->getSpecies();   // TODO: Implement __toString() method.
     }
 
     public function getSpecies(): ?string

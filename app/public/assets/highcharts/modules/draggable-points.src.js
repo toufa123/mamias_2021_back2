@@ -21,6 +21,7 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
@@ -225,6 +226,7 @@
                 bottom: 'top'
             }[side];
         }
+
         /* @todo
         Add drag/drop support to specific data props for different series types.
 
@@ -1239,6 +1241,7 @@
          * @requires  modules/draggable-points
          * @apioption plotOptions.series.point.events.drop
          */
+
         /**
          * Point specific options for the draggable-points module. Overrides options on
          * `series.dragDrop`.
@@ -1277,6 +1280,7 @@
                 }
             }
         }
+
         /**
          * Utility function to test if a chart should have drag/drop enabled, looking at
          * its options.
@@ -1299,6 +1303,7 @@
                 }
             }
         }
+
         /**
          * Utility function to test if a point is movable (any of its props can be
          * dragged by a move, not just individually).
@@ -1334,6 +1339,7 @@
                 series.yAxis &&
                 series.xAxis);
         }
+
         /**
          * Take a mouse/touch event and return the event object with chartX/chartY.
          *
@@ -1352,6 +1358,7 @@
                 chart.pointer.normalize(e) :
                 e);
         }
+
         /**
          * Add multiple event listeners with the same handler to the same element.
          *
@@ -1385,6 +1392,7 @@
                 });
             };
         }
+
         /**
          * In mousemove events, check that we have dragged mouse further than the
          * dragSensitivity before we call mouseMove handler.
@@ -1415,6 +1423,7 @@
                     (newY - oldY) * (newY - oldY));
             return distance > sensitivity;
         }
+
         /**
          * Get a snapshot of points, mouse position, and guide box dimensions
          *
@@ -1469,6 +1478,7 @@
             });
             return res;
         }
+
         /**
          * Get a list of points that are grouped with this point. If only one point is
          * in the group, that point is returned by itself in an array.
@@ -1502,6 +1512,7 @@
                 // Otherwise return the point by itself only
                 [point];
         }
+
         /**
          * Resize a rect element on one side. The element is modified.
          *
@@ -1546,6 +1557,7 @@
             }
             rect.attr(resizeAttrs);
         }
+
         /**
          * Prepare chart.dragDropData with origin info, and show the guide box.
          *
@@ -1577,6 +1589,7 @@
                 isDragging: true
             };
         }
+
         /**
          * Calculate new point options from points being dragged.
          *
@@ -1634,6 +1647,7 @@
             });
             return hashmap;
         }
+
         /**
          * Update the points in a chart from dragDropData.newPoints.
          *
@@ -1666,6 +1680,7 @@
                 }
             }, animOptions.duration);
         }
+
         /**
          * Resize the guide box according to point options and a difference in mouse
          * positions. Handles reversed axes.
@@ -1704,6 +1719,7 @@
                     dY - (dragDropData.origin.prevdY || 0) : 0
             });
         }
+
         /**
          * Default mouse move handler while dragging. Handles updating points or guide
          * box.
@@ -1753,6 +1769,7 @@
             origin.prevdX = dX;
             origin.prevdY = dY;
         }
+
         /**
          * Set the state of the guide box.
          *
@@ -1901,6 +1918,7 @@
             });
             return changed ? chart.renderer.rect(minX, minY, maxX - minX, maxY - minY) : chart.renderer.g();
         };
+
         /**
          * On point mouse out. Hide drag handles, depending on state.
          *
@@ -1921,6 +1939,7 @@
                 chart.hideDragHandles();
             }
         }
+
         /**
          * Mouseout on resize handle. Handle states, and possibly run mouseOut on point.
          *
@@ -1939,6 +1958,7 @@
                 mouseOut(point);
             }
         }
+
         /**
          * Mousedown on resize handle. Init a drag if the conditions are right.
          *
@@ -2076,6 +2096,7 @@
                 delete chart.dragHandles;
             }
         };
+
         /**
          * Utility function to count the number of props in an object.
          *
@@ -2097,6 +2118,7 @@
             }
             return count;
         }
+
         /**
          * Utility function to get the value of the first prop of an object. (Note that
          * the order of keys in an object is usually not guaranteed.)
@@ -2116,6 +2138,7 @@
                 }
             }
         }
+
         /**
          * Mouseover on a point. Show drag handles if the conditions are right.
          *
@@ -2144,6 +2167,7 @@
                 point.showDragHandles();
             }
         }
+
         /**
          * On container mouse move. Handle drag sensitivity and fire drag event.
          *
@@ -2202,6 +2226,7 @@
                 }
             }
         }
+
         /**
          * On container mouse up. Fire drop event and reset state.
          *
@@ -2252,6 +2277,7 @@
                 delete chart.dragGuideBox;
             }
         }
+
         /**
          * On container mouse down. Init dragdrop if conditions are right.
          *
@@ -2292,6 +2318,7 @@
                 dragPoint.firePointEvent('dragStart', e);
             }
         }
+
         /* eslint-disable no-invalid-this */
         // Point hover event. We use a short timeout due to issues with coordinating
         // point mouseover/out events on dragHandles and points. Particularly arearange
@@ -2338,6 +2365,7 @@
                 zoomKey = chartOptions.zoomKey && chartOptions.zoomKey + 'Key';
             return (e[zoomKey] || e[panKey]);
         };
+
         /**
          * Add events to document and chart if the chart is draggable.
          *
@@ -2373,6 +2401,7 @@
                 });
             }
         }
+
         // Add event listener to Chart.render that checks whether or not we should add
         // dragdrop.
         addEvent(H.Chart, 'render', function () {

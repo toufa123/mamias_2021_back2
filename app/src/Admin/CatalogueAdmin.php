@@ -28,11 +28,16 @@ use UniqueConstraintViolationException;
  */
 final class CatalogueAdmin extends AbstractAdmin
 {
-    protected function configureRoutes(RouteCollection $collection)
-    {
-        parent::configureRoutes($collection);
-        $collection->add('importcatalogue');
-    }
+    protected $perPageOptions = [10, 20, 50, 100, 'All'];
+    protected $maxPerPage = '50';
+    protected $datagridValues = [
+        '_page' => 1,
+        '_sort_order' => 'ASC',
+        '_sort_by' => 'Species',
+        '_per_page' => '20',
+    ];
+    protected $baseRouteName = 'Catalogue';
+    protected $classnameLabel = 'Non-Indigenous Species';
 
     public function configureActionButtons($action, $object = null)
     {
@@ -57,18 +62,6 @@ final class CatalogueAdmin extends AbstractAdmin
         return $actions;
     }
 
-    protected $perPageOptions = [10, 20, 50, 100, 'All'];
-    protected $maxPerPage = '50';
-    protected $datagridValues = [
-        '_page' => 1,
-        '_sort_order' => 'ASC',
-        '_sort_by' => 'Species',
-        '_per_page' => '20',
-    ];
-
-    protected $baseRouteName = 'Catalogue';
-    protected $classnameLabel = 'Non-Indigenous Species';
-
     public function getExportFormats()
     {
         return ['xls', 'xml', 'json'];
@@ -77,7 +70,7 @@ final class CatalogueAdmin extends AbstractAdmin
     public function prePersist($object)
     {
         $Species = '';
-        $Aphia = (int) $object->getAphia();
+        $Aphia = (int)$object->getAphia();
         $S = $object->getSpecies();
 
         $result = urlencode($S);
@@ -86,37 +79,37 @@ final class CatalogueAdmin extends AbstractAdmin
         $client = new Client(['http_errors' => false]);
         $res = $client->request(
             'GET',
-            'http://www.marinespecies.org/rest/AphiaRecordsByMatchNames?scientificnames%5B%5D='.$Species.'&marine_only=true'
+            'http://www.marinespecies.org/rest/AphiaRecordsByMatchNames?scientificnames%5B%5D=' . $Species . '&marine_only=true'
         );
         $code = $res->getStatusCode();
         $body = $res->getBody()->getContents();
-        $d = (array) json_decode($body, true);
+        $d = (array)json_decode($body, true);
         if ('204' == $code or '400' == $code) {
             $object->setRefTax('');
             $object->setStatus('Pending');
             $this->getRequest()->getSession()->getFlashBag()->add(
                 'error',
-                'Nothing found or Bad or missing properties in WoRMS, for <i>'.$S.'</i>'
+                'Nothing found or Bad or missing properties in WoRMS, for <i>' . $S . '</i>'
             );
         } else {
             $AphiaID = $d[0][0]['AphiaID'];
             //classification
-            $res2 = $client->request('GET', 'http://www.marinespecies.org/rest/AphiaRecordByAphiaID/'.$AphiaID);
+            $res2 = $client->request('GET', 'http://www.marinespecies.org/rest/AphiaRecordByAphiaID/' . $AphiaID);
             $body2 = $res2->getBody()->getContents();
             $data2 = json_decode($body2, true);
             $code = $res2->getStatusCode();
             //synonyms
             $res3 = $client->request(
                 'GET',
-                'http://www.marinespecies.org/rest/AphiaSynonymsByAphiaID/'.$AphiaID
+                'http://www.marinespecies.org/rest/AphiaSynonymsByAphiaID/' . $AphiaID
             );
             $body3 = $res3->getBody()->getContents();
-            $data3 = (array) json_decode($body3);
+            $data3 = (array)json_decode($body3);
 
             //Itis ITIS Taxonomic Serial Number
             $resitis = $client->request(
                 'GET',
-                'http://www.marinespecies.org/rest/AphiaExternalIDByAphiaID/'.$AphiaID.'?type=tsn'
+                'http://www.marinespecies.org/rest/AphiaExternalIDByAphiaID/' . $AphiaID . '?type=tsn'
             );
             $codeitis = $resitis->getStatusCode();
             //$bodyitis = $resitis->getBody()->getContents();
@@ -129,7 +122,7 @@ final class CatalogueAdmin extends AbstractAdmin
                 $n1 = str_replace('&quot;', '', $n);
                 //dump($n1);die;
                 $object->setItisLink(
-                    'https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value='.$n1.'#null'
+                    'https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=' . $n1 . '#null'
                 );
             } else {
                 //$n1 = null;
@@ -139,7 +132,7 @@ final class CatalogueAdmin extends AbstractAdmin
             //Eol Encyclopedia of Life (EoL) page identifier
             $reseol = $client->request(
                 'GET',
-                'http://www.marinespecies.org/rest/AphiaExternalIDByAphiaID/'.$AphiaID.'?type=eol'
+                'http://www.marinespecies.org/rest/AphiaExternalIDByAphiaID/' . $AphiaID . '?type=eol'
             );
             $codeeol = $reseol->getStatusCode();
             $bodyeol = $reseol->getBody()->getContents();
@@ -152,15 +145,15 @@ final class CatalogueAdmin extends AbstractAdmin
             //col Catologue of life
             $rescol = $client->request(
                 'GET',
-                'http://webservice.catalogueoflife.org/col/webservice?name='.$Species.'&format=json'
+                'http://webservice.catalogueoflife.org/col/webservice?name=' . $Species . '&format=json'
             );
             $codecol = $rescol->getStatusCode();
             $bodycol = $rescol->getBody()->getContents();
-            $data4 = (array) json_decode($bodycol, true);
-
+            $data4 = (array)json_decode($bodycol, true);
+            //dd($data4);
             if (0 != $data4['number_of_results_returned']) {
-                $uui = $data4['results'][0]['url'];
-            //dump($uui);die;
+                $uui = $data4['result'][0]['url'];
+                //dump($uui);die;
             } else {
                 $uui = null;
             }
@@ -185,11 +178,11 @@ final class CatalogueAdmin extends AbstractAdmin
                 $s = new Synonym();
                 //$a->unacceptreason = null;
                 if (null == $a->unacceptreason) {
-                    $object->addSynonym($s->setSpeciesSynonym($a->scientificname.' '.$a->authority));
+                    $object->addSynonym($s->setSpeciesSynonym($a->scientificname . ' ' . $a->authority));
                 } else {
                     $object->addSynonym(
                         $s->setSpeciesSynonym(
-                            $a->scientificname.' '.$a->authority.' ('.$a->unacceptreason.')'
+                            $a->scientificname . ' ' . $a->authority . ' (' . $a->unacceptreason . ')'
                         )
                     );
                 }
@@ -201,9 +194,9 @@ final class CatalogueAdmin extends AbstractAdmin
             //flushing
             $pos = strpos($Species, '%20');
             if (null != $Species[$pos + 3] && $Species[$pos + 4] && $Species[$pos + 5]) {
-                $codespecies = $Species[0].$Species[1].$Species[2].$Species[3].$Species[$pos + 3].$Species[$pos + 4].$Species[$pos + 5];
+                $codespecies = $Species[0] . $Species[1] . $Species[2] . $Species[3] . $Species[$pos + 3] . $Species[$pos + 4] . $Species[$pos + 5];
             } else {
-                $codespecies = $Species[0].$Species[1].$Species[2].$Species[3];
+                $codespecies = $Species[0] . $Species[1] . $Species[2] . $Species[3];
             }
             //$codespecies = $Species[0].$Species[1].$Species[2].$Species[3].$Species[$pos + 3].$Species[$pos + 4].$Species[$pos + 5];
             //dump ( $S,$Species, $pos, $codespecies);
@@ -217,14 +210,14 @@ final class CatalogueAdmin extends AbstractAdmin
             $object->setClass($data2['class']);
             $object->setOrdersp($data2['order']);
             $object->setFamily($data2['family']);
-            $object->setWormsUrl('http://www.marinespecies.org/aphia.php?p=taxdetails&id='.$AphiaID);
+            $object->setWormsUrl('http://www.marinespecies.org/aphia.php?p=taxdetails&id=' . $AphiaID);
             //$object->setCoLlink($uui);
             //$object->setItisLink('https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value='.$n1.'#null');
             //$object->setEoLlink('' . $n3 );
             $object->setGBIFlink(
-                'https://www.gbif.org/species/search?q='.$Species.'&rank=SPECIES&name_type=SCIENTIFIC&qField=SCIENTIFIC&status=ACCEPTED&advanced=1'
+                'https://www.gbif.org/species/search?q=' . $Species . '&rank=SPECIES&name_type=SCIENTIFIC&qField=SCIENTIFIC&status=ACCEPTED&advanced=1'
             );
-            $href = 'http://www.marinespecies.org/aphia.php?p=taxlist&tName='.$AphiaID;
+            $href = 'http://www.marinespecies.org/aphia.php?p=taxlist&tName=' . $AphiaID;
 
             if ('200' == $code) {
                 $object->setRefTax('WoRMS');
@@ -250,17 +243,17 @@ final class CatalogueAdmin extends AbstractAdmin
             $client = new Client(['http_errors' => false]);
             $res = $client->request(
                 'GET',
-                'http://www.marinespecies.org/rest/AphiaRecordsByMatchNames?scientificnames%5B%5D='.$Species.'&marine_only=true'
+                'http://www.marinespecies.org/rest/AphiaRecordsByMatchNames?scientificnames%5B%5D=' . $Species . '&marine_only=true'
             );
             $code = $res->getStatusCode();
             $body = $res->getBody()->getContents();
-            $d = (array) json_decode($body, true);
+            $d = (array)json_decode($body, true);
             if ('204' == $code or '400' == $code) {
                 $object->setRefTax('');
                 $object->setStatus('Pending');
                 $this->getRequest()->getSession()->getFlashBag()->add(
                     'error',
-                    'Nothing found or Bad or missing properties in WoRMS, for <i>'.$S.'</i>'
+                    'Nothing found or Bad or missing properties in WoRMS, for <i>' . $S . '</i>'
                 );
             } else {
                 $AphiaID = $d[0][0]['AphiaID'];
@@ -268,7 +261,7 @@ final class CatalogueAdmin extends AbstractAdmin
                 //classification
                 $res2 = $client->request(
                     'GET',
-                    'http://www.marinespecies.org/rest/AphiaRecordByAphiaID/'.$AphiaID
+                    'http://www.marinespecies.org/rest/AphiaRecordByAphiaID/' . $AphiaID
                 );
                 $body2 = $res2->getBody()->getContents();
                 $data2 = json_decode($body2, true);
@@ -276,15 +269,15 @@ final class CatalogueAdmin extends AbstractAdmin
                 //synonyms
                 $res3 = $client->request(
                     'GET',
-                    'http://www.marinespecies.org/rest/AphiaSynonymsByAphiaID/'.$AphiaID
+                    'http://www.marinespecies.org/rest/AphiaSynonymsByAphiaID/' . $AphiaID
                 );
                 $body3 = $res3->getBody()->getContents();
-                $data3 = (array) json_decode($body3);
+                $data3 = (array)json_decode($body3);
 
                 //Itis ITIS Taxonomic Serial Number
                 $resitis = $client->request(
                     'GET',
-                    'http://www.marinespecies.org/rest/AphiaExternalIDByAphiaID/'.$AphiaID.'?type=tsn'
+                    'http://www.marinespecies.org/rest/AphiaExternalIDByAphiaID/' . $AphiaID . '?type=tsn'
                 );
                 $codeitis = $resitis->getStatusCode();
                 //$bodyitis = $resitis->getBody()->getContents();
@@ -297,7 +290,7 @@ final class CatalogueAdmin extends AbstractAdmin
                     $n1 = str_replace('&quot;', '', $n);
                     //dump($n1);die;
                     $object->setItisLink(
-                        'https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value='.$n1.'#null'
+                        'https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=' . $n1 . '#null'
                     );
                 } else {
                     //$n1 = null;
@@ -307,7 +300,7 @@ final class CatalogueAdmin extends AbstractAdmin
                 //Eol Encyclopedia of Life (EoL) page identifier
                 $reseol = $client->request(
                     'GET',
-                    'http://www.marinespecies.org/rest/AphiaExternalIDByAphiaID/'.$AphiaID.'?type=eol'
+                    'http://www.marinespecies.org/rest/AphiaExternalIDByAphiaID/' . $AphiaID . '?type=eol'
                 );
                 $codeeol = $reseol->getStatusCode();
                 $bodyeol = $reseol->getBody()->getContents();
@@ -320,15 +313,15 @@ final class CatalogueAdmin extends AbstractAdmin
                 //col Catologue of life
                 $rescol = $client->request(
                     'GET',
-                    'http://webservice.catalogueoflife.org/col/webservice?name='.$Species.'&format=json'
+                    'http://webservice.catalogueoflife.org/col/webservice?name=' . $Species . '&format=json'
                 );
                 $codecol = $rescol->getStatusCode();
                 $bodycol = $rescol->getBody()->getContents();
-                $data4 = (array) json_decode($bodycol, true);
+                $data4 = (array)json_decode($bodycol, true);
 
                 if (0 != $data4['number_of_results_returned']) {
-                    $uui = $data4['results'][0]['url'];
-                //dump($uui);die;
+                    $uui = $data4['result'][0]['url'];
+                    //dump($uui);die;
                 } else {
                     $uui = null;
                 }
@@ -353,11 +346,11 @@ final class CatalogueAdmin extends AbstractAdmin
                     $s = new Synonym();
                     //$a->unacceptreason = null;
                     if (null == $a->unacceptreason) {
-                        $object->addSynonym($s->setSpeciesSynonym($a->scientificname.' '.$a->authority));
+                        $object->addSynonym($s->setSpeciesSynonym($a->scientificname . ' ' . $a->authority));
                     } else {
                         $object->addSynonym(
                             $s->setSpeciesSynonym(
-                                $a->scientificname.' '.$a->authority.' ('.$a->unacceptreason.')'
+                                $a->scientificname . ' ' . $a->authority . ' (' . $a->unacceptreason . ')'
                             )
                         );
                     }
@@ -368,9 +361,9 @@ final class CatalogueAdmin extends AbstractAdmin
                 //flushing
                 $pos = strpos($Species, '%20');
                 if (null != $Species[$pos + 3] && $Species[$pos + 4] && $Species[$pos + 5]) {
-                    $codespecies = $Species[0].$Species[1].$Species[2].$Species[3].$Species[$pos + 3].$Species[$pos + 4].$Species[$pos + 5];
+                    $codespecies = $Species[0] . $Species[1] . $Species[2] . $Species[3] . $Species[$pos + 3] . $Species[$pos + 4] . $Species[$pos + 5];
                 } else {
-                    $codespecies = $Species[0].$Species[1].$Species[2].$Species[3];
+                    $codespecies = $Species[0] . $Species[1] . $Species[2] . $Species[3];
                 }
                 //$codespecies = $Species[0].$Species[1].$Species[2].$Species[3].$Species[$pos + 3].$Species[$pos + 4].$Species[$pos + 5];
                 //dump ( $S,$Species, $pos, $codespecies);
@@ -384,14 +377,14 @@ final class CatalogueAdmin extends AbstractAdmin
                 $object->setClass($data2['class']);
                 $object->setOrdersp($data2['order']);
                 $object->setFamily($data2['family']);
-                $object->setWormsUrl('http://www.marinespecies.org/aphia.php?p=taxdetails&id='.$AphiaID);
+                $object->setWormsUrl('http://www.marinespecies.org/aphia.php?p=taxdetails&id=' . $AphiaID);
                 //$object->setCoLlink($uui);
                 //$object->setItisLink('https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value='.$n1.'#null');
                 //$object->setEoLlink('' . $n3 );
                 $object->setGBIFlink(
-                    'https://www.gbif.org/species/search?q='.$Species.'&rank=SPECIES&name_type=SCIENTIFIC&qField=SCIENTIFIC&status=ACCEPTED&advanced=1'
+                    'https://www.gbif.org/species/search?q=' . $Species . '&rank=SPECIES&name_type=SCIENTIFIC&qField=SCIENTIFIC&status=ACCEPTED&advanced=1'
                 );
-                $href = 'http://www.marinespecies.org/aphia.php?p=taxlist&tName='.$AphiaID;
+                $href = 'http://www.marinespecies.org/aphia.php?p=taxlist&tName=' . $AphiaID;
 
                 if ('200' == $code) {
                     $object->setRefTax('WoRMS');
@@ -406,7 +399,7 @@ final class CatalogueAdmin extends AbstractAdmin
             return new RedirectResponse($this->generateUrl('create'));
         } else {
             $Species = '';
-            $Aphia = (int) $object->getAphia();
+            $Aphia = (int)$object->getAphia();
             $S = $object->getSpecies();
             $result = urlencode($S);
             $Species = str_replace('%C2%A0', '%20', $result);
@@ -423,19 +416,19 @@ final class CatalogueAdmin extends AbstractAdmin
             //    $AphiaID = $d[0][0]['AphiaID'];
             //dump($Species,$AphiaID);die;
             //classification
-            $res2 = $client->request('GET', 'http://www.marinespecies.org/rest/AphiaRecordByAphiaID/'.$Aphia);
+            $res2 = $client->request('GET', 'http://www.marinespecies.org/rest/AphiaRecordByAphiaID/' . $Aphia);
             $body2 = $res2->getBody()->getContents();
             $data2 = json_decode($body2, true);
             $code = $res2->getStatusCode();
             //synonyms
-            $res3 = $client->request('GET', 'http://www.marinespecies.org/rest/AphiaSynonymsByAphiaID/'.$Aphia);
+            $res3 = $client->request('GET', 'http://www.marinespecies.org/rest/AphiaSynonymsByAphiaID/' . $Aphia);
             $body3 = $res3->getBody()->getContents();
-            $data3 = (array) json_decode($body3);
+            $data3 = (array)json_decode($body3);
 
             //Itis ITIS Taxonomic Serial Number
             $resitis = $client->request(
                 'GET',
-                'http://www.marinespecies.org/rest/AphiaExternalIDByAphiaID/'.$Aphia.'?type=tsn'
+                'http://www.marinespecies.org/rest/AphiaExternalIDByAphiaID/' . $Aphia . '?type=tsn'
             );
             $codeitis = $resitis->getStatusCode();
             //$bodyitis = $resitis->getBody()->getContents();
@@ -448,7 +441,7 @@ final class CatalogueAdmin extends AbstractAdmin
                 $n1 = str_replace('&quot;', '', $n);
                 //dump($n1);die;
                 $object->setItisLink(
-                    'https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value='.$n1.'#null'
+                    'https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=' . $n1 . '#null'
                 );
             } else {
                 //$n1 = null;
@@ -458,7 +451,7 @@ final class CatalogueAdmin extends AbstractAdmin
             //Eol Encyclopedia of Life (EoL) page identifier
             $reseol = $client->request(
                 'GET',
-                'http://www.marinespecies.org/rest/AphiaExternalIDByAphiaID/'.$Aphia.'?type=eol'
+                'http://www.marinespecies.org/rest/AphiaExternalIDByAphiaID/' . $Aphia . '?type=eol'
             );
             $codeeol = $reseol->getStatusCode();
             $bodyeol = $reseol->getBody()->getContents();
@@ -471,15 +464,15 @@ final class CatalogueAdmin extends AbstractAdmin
             //col Catologue of life
             $rescol = $client->request(
                 'GET',
-                'http://webservice.catalogueoflife.org/col/webservice?name='.$Species.'&format=json'
+                'http://webservice.catalogueoflife.org/col/webservice?name=' . $Species . '&format=json'
             );
             $codecol = $rescol->getStatusCode();
             $bodycol = $rescol->getBody()->getContents();
-            $data4 = (array) json_decode($bodycol, true);
+            $data4 = (array)json_decode($bodycol, true);
 
             if (0 != $data4['number_of_results_returned']) {
-                $uui = $data4['results'][0]['url'];
-            //dump($uui);die;
+                $uui = $data4['result'][0]['url'];
+                //dump($uui);die;
             } else {
                 $uui = null;
             }
@@ -503,11 +496,11 @@ final class CatalogueAdmin extends AbstractAdmin
                 $s = new Synonym();
                 //$a->unacceptreason = null;
                 if (null == $a->unacceptreason) {
-                    $object->addSynonym($s->setSpeciesSynonym($a->scientificname.' '.$a->authority));
+                    $object->addSynonym($s->setSpeciesSynonym($a->scientificname . ' ' . $a->authority));
                 } else {
                     $object->addSynonym(
                         $s->setSpeciesSynonym(
-                            $a->scientificname.' '.$a->authority.' ('.$a->unacceptreason.')'
+                            $a->scientificname . ' ' . $a->authority . ' (' . $a->unacceptreason . ')'
                         )
                     );
                 }
@@ -519,9 +512,9 @@ final class CatalogueAdmin extends AbstractAdmin
             //flushing
             $pos = strpos($Species, '%20');
             if (null != $Species[$pos + 3] && $Species[$pos + 4] && $Species[$pos + 5]) {
-                $codespecies = $Species[0].$Species[1].$Species[2].$Species[3].$Species[$pos + 3].$Species[$pos + 4].$Species[$pos + 5];
+                $codespecies = $Species[0] . $Species[1] . $Species[2] . $Species[3] . $Species[$pos + 3] . $Species[$pos + 4] . $Species[$pos + 5];
             } else {
-                $codespecies = $Species[0].$Species[1].$Species[2].$Species[3];
+                $codespecies = $Species[0] . $Species[1] . $Species[2] . $Species[3];
             }
             //$codespecies = $Species[0].$Species[1].$Species[2].$Species[3].$Species[$pos + 3].$Species[$pos + 4].$Species[$pos + 5];
             //dump ( $S,$Species, $pos, $codespecies);
@@ -535,14 +528,14 @@ final class CatalogueAdmin extends AbstractAdmin
             $object->setClass($data2['class']);
             $object->setOrdersp($data2['order']);
             $object->setFamily($data2['family']);
-            $object->setWormsUrl('http://www.marinespecies.org/aphia.php?p=taxdetails&id='.$Aphia);
+            $object->setWormsUrl('http://www.marinespecies.org/aphia.php?p=taxdetails&id=' . $Aphia);
             //$object->setCoLlink($uui);
             //$object->setItisLink('https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value='.$n1.'#null');
             //$object->setEoLlink('' . $n3 );
             $object->setGBIFlink(
-                'https://www.gbif.org/species/search?q='.$Species.'&rank=SPECIES&name_type=SCIENTIFIC&qField=SCIENTIFIC&status=ACCEPTED&advanced=1'
+                'https://www.gbif.org/species/search?q=' . $Species . '&rank=SPECIES&name_type=SCIENTIFIC&qField=SCIENTIFIC&status=ACCEPTED&advanced=1'
             );
-            $href = 'http://www.marinespecies.org/aphia.php?p=taxlist&tName='.$Aphia;
+            $href = 'http://www.marinespecies.org/aphia.php?p=taxlist&tName=' . $Aphia;
 
             //if ('200' == $code) {
             $object->setRefTax('WoRMS');
@@ -563,14 +556,14 @@ final class CatalogueAdmin extends AbstractAdmin
         $Aphia = '';
         $object = $this->admin->getSubject();
         $Species = '';
-        $Aphia = (int) $object->getAphia();
+        $Aphia = (int)$object->getAphia();
         $S = $object->getSpecies();
         $result = urlencode($S);
         $Species = str_replace('%C2%A0', '%20', $result);
         $client = new Client(['http_errors' => false]);
 
         //classification
-        $res2 = $client->request('GET', 'http://www.marinespecies.org/rest/AphiaRecordByAphiaID/'.$Aphia);
+        $res2 = $client->request('GET', 'http://www.marinespecies.org/rest/AphiaRecordByAphiaID/' . $Aphia);
         $body2 = $res2->getBody()->getContents();
         $data2 = json_decode($body2, true);
         $code = $res2->getStatusCode();
@@ -590,23 +583,23 @@ final class CatalogueAdmin extends AbstractAdmin
         $object->setClass($data2['class']);
         $object->setOrdersp($data2['order']);
         $object->setFamily($data2['family']);
-        $object->setWormsUrl('http://www.marinespecies.org/aphia.php?p=taxdetails&id='.$Aphia);
+        $object->setWormsUrl('http://www.marinespecies.org/aphia.php?p=taxdetails&id=' . $Aphia);
         $object->setGBIFlink(
-            'https://www.gbif.org/species/search?q='.$Species.'&rank=SPECIES&name_type=SCIENTIFIC&qField=SCIENTIFIC&status=ACCEPTED&advanced=1'
+            'https://www.gbif.org/species/search?q=' . $Species . '&rank=SPECIES&name_type=SCIENTIFIC&qField=SCIENTIFIC&status=ACCEPTED&advanced=1'
         );
-        $href = 'http://www.marinespecies.org/aphia.php?p=taxlist&tName='.$Aphia;
+        $href = 'http://www.marinespecies.org/aphia.php?p=taxlist&tName=' . $Aphia;
         $object->setRefTax('WoRMS');
         $object->setStatus('Validated');
 
         //synonyms
-        $res3 = $client->request('GET', 'http://www.marinespecies.org/rest/AphiaSynonymsByAphiaID/'.$Aphia);
+        $res3 = $client->request('GET', 'http://www.marinespecies.org/rest/AphiaSynonymsByAphiaID/' . $Aphia);
         $body3 = $res3->getBody()->getContents();
-        $data3 = (array) json_decode($body3);
+        $data3 = (array)json_decode($body3);
 
         //Itis ITIS Taxonomic Serial Number
         $resitis = $client->request(
             'GET',
-            'http://www.marinespecies.org/rest/AphiaExternalIDByAphiaID/'.$Aphia.'?type=tsn'
+            'http://www.marinespecies.org/rest/AphiaExternalIDByAphiaID/' . $Aphia . '?type=tsn'
         );
         $codeitis = $resitis->getStatusCode();
         //$bodyitis = $resitis->getBody()->getContents();
@@ -619,7 +612,7 @@ final class CatalogueAdmin extends AbstractAdmin
             $n1 = str_replace('&quot;', '', $n);
             //dump($n1);die;
             $object->setItisLink(
-                'https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value='.$n1.'#null'
+                'https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=' . $n1 . '#null'
             );
         } else {
             //$n1 = null;
@@ -629,7 +622,7 @@ final class CatalogueAdmin extends AbstractAdmin
         //Eol Encyclopedia of Life (EoL) page identifier
         $reseol = $client->request(
             'GET',
-            'http://www.marinespecies.org/rest/AphiaExternalIDByAphiaID/'.$Aphia.'?type=eol'
+            'http://www.marinespecies.org/rest/AphiaExternalIDByAphiaID/' . $Aphia . '?type=eol'
         );
         $codeeol = $reseol->getStatusCode();
         $bodyeol = $reseol->getBody()->getContents();
@@ -642,15 +635,15 @@ final class CatalogueAdmin extends AbstractAdmin
         //col Catologue of life
         $rescol = $client->request(
             'GET',
-            'http://webservice.catalogueoflife.org/col/webservice?name='.$Species.'&format=json'
+            'http://webservice.catalogueoflife.org/col/webservice?name=' . $Species . '&format=json'
         );
         $codecol = $rescol->getStatusCode();
         $bodycol = $rescol->getBody()->getContents();
-        $data4 = (array) json_decode($bodycol, true);
+        $data4 = (array)json_decode($bodycol, true);
 
         if (0 != $data4['number_of_results_returned']) {
-            $uui = $data4['results'][0]['url'];
-        //dump($uui);die;
+            $uui = $data4['result'][0]['url'];
+            //dump($uui);die;
         } else {
             $uui = null;
         }
@@ -673,11 +666,11 @@ final class CatalogueAdmin extends AbstractAdmin
                 $s = new Synonym();
                 //$a->unacceptreason = null;
                 if (null == $a->unacceptreason) {
-                    $object->addSynonym($s->setSpeciesSynonym($a->scientificname.' '.$a->authority));
+                    $object->addSynonym($s->setSpeciesSynonym($a->scientificname . ' ' . $a->authority));
                 } else {
                     $object->addSynonym(
                         $s->setSpeciesSynonym(
-                            $a->scientificname.' '.$a->authority.' ('.$a->unacceptreason.')'
+                            $a->scientificname . ' ' . $a->authority . ' (' . $a->unacceptreason . ')'
                         )
                     );
                 }
@@ -720,6 +713,12 @@ final class CatalogueAdmin extends AbstractAdmin
         return $actions;
     }
 
+    protected function configureRoutes(RouteCollection $collection)
+    {
+        parent::configureRoutes($collection);
+        $collection->add('importcatalogue');
+    }
+
     protected function configureDatagridFilters(DatagridMapper $datagridMapper): void
     {
         $datagridMapper
@@ -749,14 +748,14 @@ final class CatalogueAdmin extends AbstractAdmin
     {
         $listMapper
             ->add('id', IntegerType::class, ['label' => 'ID',
-                'header_style' => 'width: 3%', 'template' => 'admin/catalogue/id.html.twig', ])
+                'header_style' => 'width: 3%', 'template' => 'admin/catalogue/id.html.twig',])
             ->add('Species', null, ['label' => 'Species Name',
-                'template' => 'admin/catalogue/species.html.twig', ])
+                'template' => 'admin/catalogue/species.html.twig',])
             //->add('speciesCode', null, array('label' => 'Species Code'))
             //->add('authority', null, ['label' => 'Authority'])
             //->add('Aphia',null, array('label' => 'Aphia Code'))
             ->add('WormsUrl', null, ['label' => 'WoRMS link',
-                'template' => 'admin/catalogue/link.html.twig', 'header_style' => 'width: 3%', ])
+                'template' => 'admin/catalogue/link.html.twig', 'header_style' => 'width: 3%',])
             ->add('kingdom', null, ['label' => 'Kingdom', 'header_style' => 'width: 3%'])
             ->add('phylum', null, ['label' => 'Phylum', 'header_style' => 'width: 3%'])
             ->add('class', null, ['label' => 'Class', 'header_style' => 'width: 3%'])
@@ -766,7 +765,7 @@ final class CatalogueAdmin extends AbstractAdmin
                 'status',
                 null,
                 ['label' => 'Catalogue Status',
-                    'template' => 'admin/catalogue/status.html.twig', 'header_style' => 'width: 3%', ]
+                    'template' => 'admin/catalogue/status.html.twig', 'header_style' => 'width: 3%',]
             )
             //->add('refTax',null, array('label' => 'Taxonomic Reference'))
             ->add(

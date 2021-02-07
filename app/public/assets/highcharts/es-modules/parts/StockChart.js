@@ -659,7 +659,7 @@ seriesProto.processData = function (force) {
             }
         }
     }
-    return;
+
 };
 // Modify series extremes
 addEvent(Series, 'afterGetExtremes', function () {

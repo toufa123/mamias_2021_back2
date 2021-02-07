@@ -22,6 +22,7 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
@@ -196,6 +197,7 @@
                 decimals);
             return Math.round(x * a) / a;
         }
+
         /**
          * Calculates the area of a circle based on its radius.
          * @private
@@ -210,6 +212,7 @@
             }
             return Math.PI * r * r;
         }
+
         /**
          * Calculates the area of a circular segment based on the radius of the circle
          * and the height of the segment.
@@ -225,6 +228,7 @@
         function getCircularSegmentArea(r, h) {
             return r * r * Math.acos(1 - h / r) - (r - h) * Math.sqrt(h * (2 * r - h));
         }
+
         /**
          * Calculates the area of overlap between two circles based on their radiuses
          * and the distance between them.
@@ -261,6 +265,7 @@
             }
             return overlap;
         }
+
         /**
          * Calculates the intersection points of two circles.
          *
@@ -303,6 +308,7 @@
             }
             return points;
         }
+
         /**
          * Calculates all the intersection points for between a list of circles.
          * @private
@@ -328,6 +334,7 @@
                 return points.concat(additional);
             }, []);
         }
+
         /**
          * Tests wether the first circle is completely overlapping the second circle.
          *
@@ -341,6 +348,7 @@
             return getDistanceBetweenPoints(circle1, circle2) + circle2.r <
                 circle1.r + 1e-10;
         }
+
         /**
          * Tests wether a point lies within a given circle.
          * @private
@@ -354,6 +362,7 @@
         function isPointInsideCircle(point, circle) {
             return getDistanceBetweenPoints(point, circle) <= circle.r + 1e-10;
         }
+
         /**
          * Tests wether a point lies within a set of circles.
          * @private
@@ -369,6 +378,7 @@
                 return !isPointInsideCircle(point, circle);
             });
         }
+
         /**
          * Tests wether a point lies outside a set of circles.
          *
@@ -386,6 +396,7 @@
                 return isPointInsideCircle(point, circle);
             });
         }
+
         /**
          * Calculates the points for the polygon of the intersection area between a set
          * of circles.
@@ -402,6 +413,7 @@
                     return isPointInsideAllCircles(p, circles);
                 });
         }
+
         /**
          * Calculate the path for the area of overlap between a set of circles.
          * @todo handle cases with only 1 or 0 arcs.
@@ -1025,6 +1037,7 @@
             // Find the smallest distance of left and right.
             return Math.min(findDistance(radius, -1), findDistance(radius, 1)) * 2;
         };
+
         /**
          * Calulates data label values for a given relations object.
          *
@@ -1070,6 +1083,7 @@
                 width: width
             };
         }
+
         /**
          * Takes an array of relations and adds the properties `totalOverlap` and
          * `overlapping` to each set. The property `totalOverlap` is the sum of value
@@ -1258,6 +1272,7 @@
             // Return the positions of each set.
             return mapOfIdToCircles;
         };
+
         /**
          * Calculates the positions, and the label values of all the sets in the venn
          * diagram.
@@ -1295,6 +1310,7 @@
             }
             return {mapOfIdToShape: mapOfIdToShape, mapOfIdToLabelValues: mapOfIdToLabelValues};
         }
+
         var isValidRelation = function (x) {
             var map = {};
             return (isObject(x) &&

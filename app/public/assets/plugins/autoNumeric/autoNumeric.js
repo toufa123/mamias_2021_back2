@@ -1139,7 +1139,7 @@
                 if ($this.val() !== '' || $this.text() !== '') {
                     return $this.autoNumeric('set', strip);
                 }
-                return;
+
             });
         },
 

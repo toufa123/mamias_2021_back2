@@ -37,12 +37,12 @@ class CatalogueRepository extends ServiceEntityRepository
     public function findOneBySpecies($value): ?Catalogue
     {
         return $this->createQueryBuilder('c')
-                ->andWhere('c.Species = :val')
-                ->setParameter('val', $value)
-                //->select('c.Species')
-                //->orderBy('c.id', 'ASC')
-                ->getQuery()
-                ->getOneOrNullResult();
+            ->andWhere('c.Species = :val')
+            ->setParameter('val', $value)
+            //->select('c.Species')
+            //->orderBy('c.id', 'ASC')
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     public function getNb()

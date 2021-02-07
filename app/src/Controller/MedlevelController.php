@@ -8,26 +8,27 @@ use Ob\HighchartsBundle\Highcharts\Highchart;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
 class MedlevelController extends AbstractController
 {
     /**
      * @Route("services/dash/med", name="med",  options={"sitemap" = true})
      */
-    public function index(Request $request)
+    public function index(Request $request, Breadcrumbs $breadcrumbs)
     {
-        $em = $this->getDoctrine()->getManager();
+        $breadcrumbs->addItem('Home', $this->get('router')->generate('home'));
+        $breadcrumbs->addItem('Mediterranean Level', $this->get('router')->generate('med'));
 
+        $em = $this->getDoctrine()->getManager();
         //Number of Species in the Catalogue
         $Species_catalogues = $em->getRepository(Catalogue::class)->getNb();
         //dump($Species_catalogues);die;
         $Species_MAMIAS = $em->getRepository(Mamias::class)->findAllSpecies();
         //Number of Established Species
         $Species_established = $em->getRepository(Mamias::class)->getNbEstablished();
-
         //Number of Invasive Species
         $Species_invasive = $em->getRepository(Mamias::class)->getNbInvasive();
-
         //Number NIS/Country
         $country = $em->getRepository(Mamias::class)->getSpeciesPerCountry();
         //dump($country); die;
@@ -326,7 +327,7 @@ class MedlevelController extends AbstractController
         foreach ($cumulative as $values) {
             $cat[] = [$values['first_med_sighting']];
             $a = [$values['first_med_sighting'], $values['cumulative']];
-            $b = [(int) $values['first_med_sighting'], (int) $values['cumulative']];
+            $b = [(int)$values['first_med_sighting'], (int)$values['cumulative']];
 
             array_push($datacu, $a);
             array_push($datareg, $b);

@@ -23,6 +23,7 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
@@ -1488,6 +1489,7 @@
                     afterRender = true;
                 }
             }
+
             if (this.graphLayoutsLookup) {
                 setAnimation(false, this);
                 // Start simulation

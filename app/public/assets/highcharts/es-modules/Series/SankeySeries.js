@@ -204,7 +204,7 @@ seriesType('sankey', 'column',
              * @type {Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction}
              */
             formatter: function () {
-                return;
+
             },
             inside: true
         },

@@ -8,9 +8,13 @@ use App\Entity\Mamias;
 use App\Form\GeoOccurenceType;
 use CrEOF\Geo\WKT\Parser;
 use CrEOF\Spatial\PHP\Types\Geometry\Point;
+use DateTime;
+use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
 use PhpOffice\PhpSpreadsheet\Reader\Xls;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx as XlsxReader;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx as Xlsxwriter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Swift_Mailer;
@@ -92,7 +96,7 @@ class SpeciesDeclarationController extends Controller
             $declaration->setPlantsAnimals($data->getPlantsAnimals());
             $declaration->setNvalues($data->getNvalues());
             $declaration->setEstimatedMeasured($data->getEstimatedMeasured());
-            $parser = new Parser('Point('.$data->getLocation().')');
+            $parser = new Parser('Point(' . $data->getLocation() . ')');
             $geo = $parser->parse();
             $g = new Point($geo['value'], '4326');
             $declaration->setLocation($g);
@@ -122,8 +126,8 @@ class SpeciesDeclarationController extends Controller
                     $this->renderView('declaration/sendemail.html.twig', ['User' => $user, 'dec' => $dec]),
                     'text/html')
                 ->addPart(
-                    'Hi '.$user.' ! Your report of the occurencce of '.$dec.' is successfully
-                        Submitted on'.$data->getCreatedAt()->format('d-m-Y').
+                    'Hi ' . $user . ' ! Your report of the occurencce of ' . $dec . ' is successfully
+                        Submitted on' . $data->getCreatedAt()->format('d-m-Y') .
                     '<br>Check your  reporting table soon!<br>Thanks!', 'text/plain');
             //->embed(\Swift_Image::fromPath('public/resources/logo/Logo-Mamias-web.png'));
             $mailer->send($message);
@@ -175,8 +179,8 @@ class SpeciesDeclarationController extends Controller
     {
         $session = $request->getSession();
         $tmp_name = $_FILES['file']['tmp_name'];
-        $destination = $this->getParameter('kernel.project_dir').'/public/upload/import/';
-        $uploadfile = $destination.basename($_FILES['file']['name']);
+        $destination = $this->getParameter('kernel.project_dir') . '/public/upload/import/';
+        $uploadfile = $destination . basename($_FILES['file']['name']);
         $arr_file = explode('.', $_FILES['file']['name']);
         $extension = end($arr_file);
 
@@ -223,7 +227,7 @@ class SpeciesDeclarationController extends Controller
             ->setDescription('MAMIAS GeoOccurences Template')
             ->setKeywords('MAMIAS, GeoOccurences, Template');
 
-        /* @var $sheet1 \PhpOffice\PhpSpreadsheet\Writer\Xlsx\Worksheet */
+        /* @var $sheet1 Xlsxwriter\Worksheet */
         $sheet1 = $spreadsheet->getActiveSheet();
         //$sheet1->setCellValue('A1', 'ID');
         //$sheet1->getColumnDimension('A');
@@ -238,18 +242,18 @@ class SpeciesDeclarationController extends Controller
         $sheet1->getColumnDimension('C')
             ->setAutoSize(true);
         $sheet1->getStyle('C:C')
-            ->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY);
+            ->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_DATE_DDMMYYYY);
 
         $sheet1->setCellValue('D1', 'Latitude');
         $sheet1->getColumnDimension('D')
             ->setAutoSize(true);
         $sheet1->getStyle('D:D')
-            ->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_00);
+            ->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
         $sheet1->setCellValue('E1', 'Longitude');
         $sheet1->getColumnDimension('E')
             ->setAutoSize(true);
         $sheet1->getStyle('E:E')
-            ->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_00);
+            ->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
         $sheet1->setCellValue('G1', 'Coverage/Nb of Inviduals');
         $sheet1->getColumnDimension('G')->setAutoSize(true);
         $sheet1->setCellValue('F1', 'Values');
@@ -282,7 +286,7 @@ class SpeciesDeclarationController extends Controller
         //    ->setSheetState(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::SHEETSTATE_HIDDEN);
         //$spreadsheet->setActiveSheetIndex(1);
         //$spreadsheet->getActiveSheet()->setTitle('NIS');
-        $sheet2 = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, 'NIS List');
+        $sheet2 = new Worksheet($spreadsheet, 'NIS List');
         $spreadsheet->addSheet($sheet2, 2);
 
         $sheet2->setCellValue('A1', 'ID');
@@ -297,8 +301,8 @@ class SpeciesDeclarationController extends Controller
         foreach ($species as $e) {
             //$spreadsheet->setActiveSheetIndex(1)
             $sheet2
-                ->setCellValue('A'.$row, $e->getRelation()->getId())
-                ->setCellValue('B'.$row, $e->getRelation()->getSpecies());
+                ->setCellValue('A' . $row, $e->getRelation()->getId())
+                ->setCellValue('B' . $row, $e->getRelation()->getSpecies());
             ++$row;
         }
 
@@ -309,7 +313,7 @@ class SpeciesDeclarationController extends Controller
         //$spreadsheet->setActiveSheetIndex(2);
         //$spreadsheet->getActiveSheet()->setTitle('Countries');
 
-        $sheet3 = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, 'country');
+        $sheet3 = new Worksheet($spreadsheet, 'country');
         $spreadsheet->addSheet($sheet3, 3);
 
         $sheet3->setCellValue('A1', 'ID');
@@ -321,8 +325,8 @@ class SpeciesDeclarationController extends Controller
         $row2 = 2;
         foreach ($country as $c) {
             $sheet3
-                ->setCellValue('A'.$row2, $c->getId())
-                ->setCellValue('B'.$row2, $c->getCountry());
+                ->setCellValue('A' . $row2, $c->getId())
+                ->setCellValue('B' . $row2, $c->getCountry());
             ++$row2;
         }
 
@@ -331,9 +335,9 @@ class SpeciesDeclarationController extends Controller
         $col_count = 10000;
         for ($i = 2; $i <= $col_count; ++$i) {
             //Country List
-            $validation = $spreadsheet->getActiveSheet()->getCell('A'.$i)->getDataValidation();
-            $validation->setType(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST);
-            $validation->setErrorStyle(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION);
+            $validation = $spreadsheet->getActiveSheet()->getCell('A' . $i)->getDataValidation();
+            $validation->setType(DataValidation::TYPE_LIST);
+            $validation->setErrorStyle(DataValidation::STYLE_INFORMATION);
             $validation->setAllowBlank(false);
             $validation->setShowInputMessage(true);
             $validation->setShowErrorMessage(true);
@@ -343,13 +347,13 @@ class SpeciesDeclarationController extends Controller
             $validation->setPromptTitle('Pick from list');
             $validation->setPrompt('Please pick a value from the drop-down list.');
             $validation->setShowDropDown('true');
-            $validation->setFormula1('\'country\'!$B$2:$B$'.$row2);
+            $validation->setFormula1('\'country\'!$B$2:$B$' . $row2);
             $sheet1->getColumnDimension('B')->setWidth(20);
 
             //NIS List
-            $validation1 = $spreadsheet->getActiveSheet()->getCell('B'.$i)->getDataValidation();
-            $validation1->setType(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST);
-            $validation1->setErrorStyle(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION);
+            $validation1 = $spreadsheet->getActiveSheet()->getCell('B' . $i)->getDataValidation();
+            $validation1->setType(DataValidation::TYPE_LIST);
+            $validation1->setErrorStyle(DataValidation::STYLE_INFORMATION);
             $validation1->setAllowBlank(false);
             $validation1->setShowInputMessage(true);
             $validation1->setShowErrorMessage(true);
@@ -360,13 +364,13 @@ class SpeciesDeclarationController extends Controller
             $validation1->setPrompt('Please pick a value from the drop-down list.');
             $validation1->setShowDropDown('true');
 
-            $validation1->setFormula1('\'NIS List\'!$B$2:$B$'.$row);
+            $validation1->setFormula1('\'NIS List\'!$B$2:$B$' . $row);
             $sheet1->getColumnDimension('B')->setWidth(30);
 
-            $validation2 = $spreadsheet->getActiveSheet()->getCell('G'.$i)
+            $validation2 = $spreadsheet->getActiveSheet()->getCell('G' . $i)
                 ->getDataValidation();
-            $validation2->setType(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST);
-            $validation2->setErrorStyle(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION);
+            $validation2->setType(DataValidation::TYPE_LIST);
+            $validation2->setErrorStyle(DataValidation::STYLE_INFORMATION);
             $validation2->setAllowBlank(false);
             $validation2->setShowInputMessage(true);
             $validation2->setShowErrorMessage(true);
@@ -377,10 +381,10 @@ class SpeciesDeclarationController extends Controller
             $validation2->setPrompt('Please pick a value from the drop-down list.');
             $validation2->setFormula1('"Individuals, m2"');
 
-            $validation3 = $spreadsheet->getActiveSheet()->getCell('I'.$i)
+            $validation3 = $spreadsheet->getActiveSheet()->getCell('I' . $i)
                 ->getDataValidation();
-            $validation3->setType(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST);
-            $validation3->setErrorStyle(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION);
+            $validation3->setType(DataValidation::TYPE_LIST);
+            $validation3->setErrorStyle(DataValidation::STYLE_INFORMATION);
             $validation3->setAllowBlank(false);
             $validation3->setShowInputMessage(true);
             $validation3->setShowErrorMessage(true);
@@ -394,11 +398,11 @@ class SpeciesDeclarationController extends Controller
 
         // Create your Office 2007 Excel (XLSX Format)
         $writer = new Xlsxwriter($spreadsheet);
-        $date = new \DateTime('now');
+        $date = new DateTime('now');
         $name = $date->format('d-m-yy');
 
         // Create a Temporary file in the system
-        $fileName = 'Template_geo_MAMIAS_'.$name.'.xlsx';
+        $fileName = 'Template_geo_MAMIAS_' . $name . '.xlsx';
         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
 
         // Create the excel file in the tmp directory of the system

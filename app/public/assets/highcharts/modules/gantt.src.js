@@ -4356,6 +4356,7 @@
             }
             return left > 0 ? left - 1 : 0;
         }
+
         /**
          * Test if a point lays within an obstacle.
          *
@@ -4377,6 +4378,7 @@
                 point.y <= obstacle.yMax &&
                 point.y >= obstacle.yMin);
         }
+
         /**
          * Find the index of an obstacle that wraps around a point.
          * Returns -1 if not found.
@@ -4405,6 +4407,7 @@
             }
             return -1;
         }
+
         /**
          * Get SVG path array from array of line segments.
          *
@@ -4427,6 +4430,7 @@
             }
             return path;
         }
+
         /**
          * Limits obstacle max/mins in all directions to bounds. Modifies input
          * obstacle.
@@ -5325,6 +5329,7 @@
          * @requires  highcharts-gantt
          * @apioption series.xrange.data.connect
          */
+
         /**
          * The ID of the point to connect to.
          *
@@ -5367,6 +5372,7 @@
                 yMax: point.plotY + bb.height / 2
             } : null;
         }
+
         /**
          * Calculate margin to place around obstacles for the pathfinder in pixels.
          * Returns a minimum of 1 pixel margin.
@@ -5430,6 +5436,7 @@
                 ), 1 // 1 is the minimum margin
             );
         }
+
         /* eslint-disable no-invalid-this, valid-jsdoc */
         /**
          * The Pathfinder class.
@@ -5853,6 +5860,7 @@
                 return markerPoint;
             }
         });
+
         /**
          * Warn if using legacy options. Copy the options over. Note that this will
          * still break if using the legacy options in chart.update, addSeries etc.
@@ -5872,6 +5880,7 @@
                     'Use "chart.connectors" or "series.connectors" instead.');
             }
         }
+
         // Initialize Pathfinder for charts
         Chart.prototype.callbacks.push(function (chart) {
             var options = chart.options;
@@ -5947,6 +5956,7 @@
                 color: color
             };
         }
+
         /**
          * @private
          * @class
@@ -9177,6 +9187,7 @@
                         }
                     }
                 }
+
                 // Create the text label
                 this[name + 'Label'] = label = renderer
                     .label(lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'], this.inputGroup.offset)
@@ -9905,6 +9916,7 @@
                         legend.align(alignTo);
                     }
                 }
+
                 if (rangeSelector) {
                     // redraw the scroller on setExtremes
                     unbindSetExtremes = addEvent(chart.xAxis[0], 'afterSetExtremes', function (e) {

@@ -23,6 +23,7 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
+
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
@@ -205,66 +206,66 @@
                                 height: 1
                             };
                             // Draw the links from this node
-                        node.linksFrom.forEach(function (point) {
-                            if (point.linkBase) {
-                                var distance;
-                                var corners = point.linkBase.map(function (top,
-                                                                           i) {
-                                    var angle = factor * top,
-                                        x = Math.cos(startAngle + angle) * (innerR + 1),
-                                        y = Math.sin(startAngle + angle) * (innerR + 1),
-                                        curveFactor = options.curveFactor;
-                                    // The distance between the from and to node
-                                    // along the perimeter. This affect how curved
-                                    // the link is, so that links between neighbours
-                                    // don't extend too far towards the center.
-                                    distance = Math.abs(point.linkBase[3 - i] * factor - angle);
-                                    if (distance > Math.PI) {
-                                        distance = 2 * Math.PI - distance;
-                                    }
-                                    distance = distance * innerR;
-                                    if (distance < innerR) {
-                                        curveFactor *= (distance / innerR);
-                                    }
-                                    return {
-                                        x: centerX + x,
-                                        y: centerY + y,
-                                        cpX: centerX + (1 - curveFactor) * x,
-                                        cpY: centerY + (1 - curveFactor) * y
+                            node.linksFrom.forEach(function (point) {
+                                if (point.linkBase) {
+                                    var distance;
+                                    var corners = point.linkBase.map(function (top,
+                                                                               i) {
+                                        var angle = factor * top,
+                                            x = Math.cos(startAngle + angle) * (innerR + 1),
+                                            y = Math.sin(startAngle + angle) * (innerR + 1),
+                                            curveFactor = options.curveFactor;
+                                        // The distance between the from and to node
+                                        // along the perimeter. This affect how curved
+                                        // the link is, so that links between neighbours
+                                        // don't extend too far towards the center.
+                                        distance = Math.abs(point.linkBase[3 - i] * factor - angle);
+                                        if (distance > Math.PI) {
+                                            distance = 2 * Math.PI - distance;
+                                        }
+                                        distance = distance * innerR;
+                                        if (distance < innerR) {
+                                            curveFactor *= (distance / innerR);
+                                        }
+                                        return {
+                                            x: centerX + x,
+                                            y: centerY + y,
+                                            cpX: centerX + (1 - curveFactor) * x,
+                                            cpY: centerY + (1 - curveFactor) * y
+                                        };
+                                    });
+                                    point.shapeArgs = {
+                                        d: [[
+                                            'M',
+                                            corners[0].x, corners[0].y
+                                        ], [
+                                            'A',
+                                            innerR, innerR,
+                                            0,
+                                            0,
+                                            1,
+                                            corners[1].x, corners[1].y
+                                        ], [
+                                            'C',
+                                            corners[1].cpX, corners[1].cpY,
+                                            corners[2].cpX, corners[2].cpY,
+                                            corners[2].x, corners[2].y
+                                        ], [
+                                            'A',
+                                            innerR, innerR,
+                                            0,
+                                            0,
+                                            1,
+                                            corners[3].x, corners[3].y
+                                        ], [
+                                            'C',
+                                            corners[3].cpX, corners[3].cpY,
+                                            corners[0].cpX, corners[0].cpY,
+                                            corners[0].x, corners[0].y
+                                        ]]
                                     };
-                                });
-                                point.shapeArgs = {
-                                    d: [[
-                                        'M',
-                                        corners[0].x, corners[0].y
-                                    ], [
-                                        'A',
-                                        innerR, innerR,
-                                        0,
-                                        0,
-                                        1,
-                                        corners[1].x, corners[1].y
-                                    ], [
-                                        'C',
-                                        corners[1].cpX, corners[1].cpY,
-                                        corners[2].cpX, corners[2].cpY,
-                                        corners[2].x, corners[2].y
-                                    ], [
-                                        'A',
-                                        innerR, innerR,
-                                        0,
-                                        0,
-                                        1,
-                                        corners[3].x, corners[3].y
-                                    ], [
-                                        'C',
-                                        corners[3].cpX, corners[3].cpY,
-                                        corners[0].cpX, corners[0].cpY,
-                                        corners[0].x, corners[0].y
-                                    ]]
-                                };
-                            }
-                        });
+                                }
+                            });
                         }
                     });
                 },

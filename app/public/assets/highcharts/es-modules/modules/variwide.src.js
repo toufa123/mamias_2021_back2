@@ -73,7 +73,7 @@ seriesType('variwide', 'column'
                 this.xAxis.variwide = true;
                 this.xAxis.zData = this.zData; // Used for label rank
             }
-            return;
+
         },
         /* eslint-disable valid-jsdoc */
         /**

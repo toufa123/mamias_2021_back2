@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\CountryDistributionRepository;
+use Certainty;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -87,7 +88,7 @@ class CountryDistribution
     private $VectorName;
 
     /**
-     * @var \Certainty
+     * @var Certainty
      * @ORM\Column(name="Certainty", type="text", nullable=true)
      */
     private $Certainty;
@@ -263,7 +264,7 @@ class CountryDistribution
 
     public function __toString()
     {
-        return (string) $this->getMamias().'/'.$this->getCountry();   // TODO: Implement __toString() method.
+        return (string)$this->getMamias() . '/' . $this->getCountry();   // TODO: Implement __toString() method.
     }
 
     public function getMamias(): ?Mamias

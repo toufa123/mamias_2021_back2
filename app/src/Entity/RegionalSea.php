@@ -50,7 +50,7 @@ class RegionalSea
 
     public function __toString()
     {
-        return (string) $this->getRegionalSea();        // TODO: Implement __toString() method.
+        return (string)$this->getRegionalSea();        // TODO: Implement __toString() method.
     }
 
     public function getRegionalSea(): ?string

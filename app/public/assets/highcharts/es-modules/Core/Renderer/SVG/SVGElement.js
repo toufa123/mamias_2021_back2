@@ -1055,7 +1055,7 @@ var SVGElement = /** @class */ (function () {
             // Delete all properties
             delete wrapper[key];
         });
-        return;
+
     };
     /**
      * Destroy shadows on the element.

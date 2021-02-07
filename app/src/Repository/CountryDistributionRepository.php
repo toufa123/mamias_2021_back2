@@ -59,9 +59,9 @@ class CountryDistributionRepository extends ServiceEntityRepository
     public function findSpeciesByParametres($id)
     {
         $rawSql = 'SELECT country.country, 	SUM(CASE WHEN mamias_id = :id THEN 1 ELSE 0 END) as count '
-            .' FROM country_distribution INNER JOIN country ON	country_distribution.country_id = country.id '
-            .' INNER JOIN mamias ON country_distribution.mamias_id = mamias.id INNER JOIN catalogue ON mamias.relation_id = catalogue.id '
-            .' GROUP BY country.country ORDER BY country.country ASC ';
+            . ' FROM country_distribution INNER JOIN country ON	country_distribution.country_id = country.id '
+            . ' INNER JOIN mamias ON country_distribution.mamias_id = mamias.id INNER JOIN catalogue ON mamias.relation_id = catalogue.id '
+            . ' GROUP BY country.country ORDER BY country.country ASC ';
 
         $stmt = $this->getEntityManager()->getConnection()->prepare($rawSql);
         $stmt->execute(['id' => $id]);

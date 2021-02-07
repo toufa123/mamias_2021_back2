@@ -403,15 +403,15 @@
                         {icon: pulsingIcon})
                     {% elseif item.status == 'Validated' %}
                     {
-                        icon: greenIcon
+                        greenIcon
                     }
                 );
                 {% else %}
                 {
-                    icon: greyIcon
+                    greyIcon
                 }
                 )
-                ;
+
                 {% endif %}
                 marker.bindPopup(customPopup, {maxWidth: "auto"});
 
