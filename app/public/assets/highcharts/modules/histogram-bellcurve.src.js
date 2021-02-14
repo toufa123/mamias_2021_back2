@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v8.2.0 (2020-08-20)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
  * (c) 2010-2019 Highsoft AS
  * Author: Sebastian Domas
@@ -22,23 +22,21 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Mixins/DerivedSeries.js', [_modules['Core/Globals.js'], _modules['Core/Utilities.js']], function (H, U) {
+    _registerModule(_modules, 'Mixins/DerivedSeries.js', [_modules['Core/Globals.js'], _modules['Core/Series/Series.js'], _modules['Core/Utilities.js']], function (H, Series, U) {
         /* *
          *
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
+        var noop = H.noop;
         var addEvent = U.addEvent,
             defined = U.defined;
-        var Series = H.Series,
-            noop = H.noop;
         /* ************************************************************************** *
          *
          * DERIVED SERIES MIXIN
@@ -154,10 +152,10 @@
 
         return derivedSeriesMixin;
     });
-    _registerModule(_modules, 'Series/HistogramSeries.js', [_modules['Core/Utilities.js'], _modules['Mixins/DerivedSeries.js']], function (U, derivedSeriesMixin) {
+    _registerModule(_modules, 'Series/Histogram/HistogramSeries.js', [_modules['Mixins/DerivedSeries.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (DerivedSeriesMixin, SeriesRegistry, U) {
         /* *
          *
-         *  Copyright (c) 2010-2017 Highsoft AS
+         *  Copyright (c) 2010-2021 Highsoft AS
          *  Author: Sebastian Domas
          *
          *  License: www.highcharts.com/license
@@ -165,13 +163,38 @@
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
+        var __extends = (this && this.__extends) || (function () {
+            var extendStatics = function (d,
+                                          b) {
+                extendStatics = Object.setPrototypeOf ||
+                    ({__proto__: []} instanceof Array && function (d,
+                                                                   b) {
+                        d.__proto__ = b;
+                    }) ||
+                    function (d,
+                              b) {
+                        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+                    };
+                return extendStatics(d, b);
+            };
+            return function (d, b) {
+                extendStatics(d, b);
+
+                function __() {
+                    this.constructor = d;
+                }
+
+                d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+            };
+        })();
+        var ColumnSeries = SeriesRegistry.seriesTypes.column;
         var arrayMax = U.arrayMax,
             arrayMin = U.arrayMin,
             correctFloat = U.correctFloat,
+            extend = U.extend,
             isNumber = U.isNumber,
             merge = U.merge,
-            objectEach = U.objectEach,
-            seriesType = U.seriesType;
+            objectEach = U.objectEach;
         /* ************************************************************************** *
          *  HISTOGRAM
          * ************************************************************************** */
@@ -190,7 +213,6 @@
                 return Math.ceil(2 * Math.pow(baseSeries.options.data.length, 1 / 3));
             }
         };
-
         /**
          * Returns a function for mapping number to the closed (right opened) bins
          * @private
@@ -207,6 +229,11 @@
             };
         }
 
+        /* *
+         *
+         *  Class
+         *
+         * */
         /**
          * Histogram class
          * @private
@@ -214,7 +241,111 @@
          * @name Highcharts.seriesTypes.histogram
          * @augments Highcharts.Series
          */
-        seriesType('histogram', 'column',
+        var HistogramSeries = /** @class */ (function (_super) {
+            __extends(HistogramSeries, _super);
+
+            function HistogramSeries() {
+                /* *
+                 *
+                 *  Static Properties
+                 *
+                 * */
+                var _this = _super !== null && _super.apply(this,
+                    arguments) || this;
+                _this.data = void 0;
+                _this.options = void 0;
+                _this.points = void 0;
+                _this.userOptions = void 0;
+                return _this;
+                /* eslint-enable valid-jsdoc */
+            }
+
+            /* *
+             *
+             *  Functions
+             *
+             * */
+            /* eslint-disable valid-jsdoc */
+            HistogramSeries.prototype.binsNumber = function () {
+                var binsNumberOption = this.options.binsNumber;
+                var binsNumber = binsNumberFormulas[binsNumberOption] ||
+                    // #7457
+                    (typeof binsNumberOption === 'function' && binsNumberOption);
+                return Math.ceil((binsNumber && binsNumber(this.baseSeries)) ||
+                    (isNumber(binsNumberOption) ?
+                        binsNumberOption :
+                        binsNumberFormulas['square-root'](this.baseSeries)));
+            };
+            HistogramSeries.prototype.derivedData = function (baseData, binsNumber, binWidth) {
+                var series = this,
+                    max = correctFloat(arrayMax(baseData)),
+                    // Float correction needed, because first frequency value is not
+                    // corrected when generating frequencies (within for loop).
+                    min = correctFloat(arrayMin(baseData)),
+                    frequencies = [],
+                    bins = {},
+                    data = [],
+                    x,
+                    fitToBin;
+                binWidth = series.binWidth = (correctFloat(isNumber(binWidth) ?
+                    (binWidth || 1) :
+                    (max - min) / binsNumber));
+                // #12077 negative pointRange causes wrong calculations,
+                // browser hanging.
+                series.options.pointRange = Math.max(binWidth, 0);
+                // If binWidth is 0 then max and min are equaled,
+                // increment the x with some positive value to quit the loop
+                for (x = min;
+                    // This condition is needed because of the margin of error while
+                    // operating on decimal numbers. Without that, additional bin
+                    // was sometimes noticeable on the graph, because of too small
+                    // precision of float correction.
+                     x < max &&
+                     (series.userOptions.binWidth ||
+                         correctFloat(max - x) >= binWidth ||
+                         // #13069 - Every add and subtract operation should
+                         // be corrected, due to general problems with
+                         // operations on float numbers in JS.
+                         correctFloat(correctFloat(min + (frequencies.length * binWidth)) -
+                             x) <= 0); x = correctFloat(x + binWidth)) {
+                    frequencies.push(x);
+                    bins[x] = 0;
+                }
+                if (bins[min] !== 0) {
+                    frequencies.push(min);
+                    bins[min] = 0;
+                }
+                fitToBin = fitToBinLeftClosed(frequencies.map(function (elem) {
+                    return parseFloat(elem);
+                }));
+                baseData.forEach(function (y) {
+                    var x = correctFloat(fitToBin(y));
+                    bins[x]++;
+                });
+                objectEach(bins, function (frequency, x) {
+                    data.push({
+                        x: Number(x),
+                        y: frequency,
+                        x2: correctFloat(Number(x) + binWidth)
+                    });
+                });
+                data.sort(function (a, b) {
+                    return a.x - b.x;
+                });
+                data[data.length - 1].x2 = max;
+                return data;
+            };
+            HistogramSeries.prototype.setDerivedData = function () {
+                var yData = this.baseSeries.yData;
+                if (!yData.length) {
+                    this.setData([]);
+                    return;
+                }
+                var data = this.derivedData(yData,
+                    this.binsNumber(),
+                    this.options.binWidth);
+                this.setData(data, false);
+            };
             /**
              * A histogram is a column series which represents the distribution of the
              * data set in the base series. Histogram splits data into bins and shows
@@ -231,7 +362,7 @@
              * @requires     modules/histogram
              * @optionparent plotOptions.histogram
              */
-            {
+            HistogramSeries.defaultOptions = merge(ColumnSeries.defaultOptions, {
                 /**
                  * A preferable number of bins. It is a suggestion, so a histogram may
                  * have a different number of bins. By default it is set to the square
@@ -262,86 +393,28 @@
                         '<span style="color:{point.color}">\u25CF</span>' +
                         ' {series.name} <b>{point.y}</b><br/>')
                 }
-            }, merge(derivedSeriesMixin, {
-                setDerivedData: function () {
-                    var yData = this.baseSeries.yData;
-                    if (!yData.length) {
-                        return;
-                    }
-                    var data = this.derivedData(yData,
-                        this.binsNumber(),
-                        this.options.binWidth);
-                    this.setData(data, false);
-                },
-                derivedData: function (baseData, binsNumber, binWidth) {
-                    var series = this,
-                        max = arrayMax(baseData),
-                        // Float correction needed, because first frequency value is not
-                        // corrected when generating frequencies (within for loop).
-                        min = correctFloat(arrayMin(baseData)),
-                        frequencies = [],
-                        bins = {},
-                        data = [],
-                        x,
-                        fitToBin;
-                    binWidth = series.binWidth = (correctFloat(isNumber(binWidth) ?
-                        (binWidth || 1) :
-                        (max - min) / binsNumber));
-                    // #12077 negative pointRange causes wrong calculations,
-                    // browser hanging.
-                    series.options.pointRange = Math.max(binWidth, 0);
-                    // If binWidth is 0 then max and min are equaled,
-                    // increment the x with some positive value to quit the loop
-                    for (x = min;
-                        // This condition is needed because of the margin of error while
-                        // operating on decimal numbers. Without that, additional bin
-                        // was sometimes noticeable on the graph, because of too small
-                        // precision of float correction.
-                         x < max &&
-                         (series.userOptions.binWidth ||
-                             correctFloat(max - x) >= binWidth ||
-                             // #13069 - Every add and subtract operation should
-                             // be corrected, due to general problems with
-                             // operations on float numbers in JS.
-                             correctFloat(correctFloat(min + (frequencies.length * binWidth)) -
-                                 x) <= 0); x = correctFloat(x + binWidth)) {
-                        frequencies.push(x);
-                        bins[x] = 0;
-                    }
-                    if (bins[min] !== 0) {
-                        frequencies.push(correctFloat(min));
-                        bins[correctFloat(min)] = 0;
-                    }
-                    fitToBin = fitToBinLeftClosed(frequencies.map(function (elem) {
-                        return parseFloat(elem);
-                    }));
-                    baseData.forEach(function (y) {
-                        var x = correctFloat(fitToBin(y));
-                        bins[x]++;
-                    });
-                    objectEach(bins, function (frequency, x) {
-                        data.push({
-                            x: Number(x),
-                            y: frequency,
-                            x2: correctFloat(Number(x) + binWidth)
-                        });
-                    });
-                    data.sort(function (a, b) {
-                        return a.x - b.x;
-                    });
-                    return data;
-                },
-                binsNumber: function () {
-                    var binsNumberOption = this.options.binsNumber;
-                    var binsNumber = binsNumberFormulas[binsNumberOption] ||
-                        // #7457
-                        (typeof binsNumberOption === 'function' && binsNumberOption);
-                    return Math.ceil((binsNumber && binsNumber(this.baseSeries)) ||
-                        (isNumber(binsNumberOption) ?
-                            binsNumberOption :
-                            binsNumberFormulas['square-root'](this.baseSeries)));
-                }
-            }));
+            });
+            return HistogramSeries;
+        }(ColumnSeries));
+        extend(HistogramSeries.prototype, {
+            addBaseSeriesEvents: DerivedSeriesMixin.addBaseSeriesEvents,
+            addEvents: DerivedSeriesMixin.addEvents,
+            destroy: DerivedSeriesMixin.destroy,
+            hasDerivedData: DerivedSeriesMixin.hasDerivedData,
+            init: DerivedSeriesMixin.init,
+            setBaseSeries: DerivedSeriesMixin.setBaseSeries
+        });
+        SeriesRegistry.registerSeriesType('histogram', HistogramSeries);
+        /* *
+         *
+         *  Default Export
+         *
+         * */
+        /* *
+         *
+         *  API Options
+         *
+         * */
         /**
          * A `histogram` series. If the [type](#series.histogram.type) option is not
          * specified, it is inherited from [chart.type](#chart.type).
@@ -362,11 +435,12 @@
          */
         ''; // adds doclets above to transpiled file
 
+        return HistogramSeries;
     });
-    _registerModule(_modules, 'Series/BellcurveSeries.js', [_modules['Core/Utilities.js'], _modules['Mixins/DerivedSeries.js']], function (U, derivedSeriesMixin) {
+    _registerModule(_modules, 'Series/Bellcurve/BellcurveSeries.js', [_modules['Mixins/DerivedSeries.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (DerivedSeriesMixin, SeriesRegistry, U) {
         /* *
          *
-         *  (c) 2010-2020 Highsoft AS
+         *  (c) 2010-2021 Highsoft AS
          *
          *  Author: Sebastian Domas
          *
@@ -375,51 +449,35 @@
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
+        var __extends = (this && this.__extends) || (function () {
+            var extendStatics = function (d,
+                                          b) {
+                extendStatics = Object.setPrototypeOf ||
+                    ({__proto__: []} instanceof Array && function (d,
+                                                                   b) {
+                        d.__proto__ = b;
+                    }) ||
+                    function (d,
+                              b) {
+                        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+                    };
+                return extendStatics(d, b);
+            };
+            return function (d, b) {
+                extendStatics(d, b);
+
+                function __() {
+                    this.constructor = d;
+                }
+
+                d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+            };
+        })();
+        var AreaSplineSeries = SeriesRegistry.seriesTypes.areaspline;
         var correctFloat = U.correctFloat,
+            extend = U.extend,
             isNumber = U.isNumber,
-            merge = U.merge,
-            seriesType = U.seriesType;
-        /* ************************************************************************** *
-         *  BELL CURVE                                                                *
-         * ************************************************************************** */
-
-        /* eslint-disable valid-jsdoc */
-        /**
-         * @private
-         */
-        function mean(data) {
-            var length = data.length,
-                sum = data.reduce(function (sum,
-                                            value) {
-                    return (sum += value);
-                }, 0);
-            return length > 0 && sum / length;
-        }
-
-        /**
-         * @private
-         */
-        function standardDeviation(data, average) {
-            var len = data.length,
-                sum;
-            average = isNumber(average) ? average : mean(data);
-            sum = data.reduce(function (sum, value) {
-                var diff = value - average;
-                return (sum += diff * diff);
-            }, 0);
-            return len > 1 && Math.sqrt(sum / (len - 1));
-        }
-
-        /**
-         * @private
-         */
-        function normalDensity(x, mean, standardDeviation) {
-            var translation = x - mean;
-            return Math.exp(-(translation * translation) /
-                (2 * standardDeviation * standardDeviation)) / (standardDeviation * Math.sqrt(2 * Math.PI));
-        }
-
-        /* eslint-enable valid-jsdoc */
+            merge = U.merge;
         /**
          * Bell curve class
          *
@@ -429,7 +487,102 @@
          *
          * @augments Highcharts.Series
          */
-        seriesType('bellcurve', 'areaspline'
+        var BellcurveSeries = /** @class */ (function (_super) {
+            __extends(BellcurveSeries, _super);
+
+            function BellcurveSeries() {
+                /* *
+                 *
+                 *  Static Properties
+                 *
+                 * */
+                var _this = _super !== null && _super.apply(this,
+                    arguments) || this;
+                /* eslint-enable valid-jsdoc */
+                /* *
+                 *
+                 *  Properties
+                 *
+                 * */
+                _this.data = void 0;
+                _this.options = void 0;
+                _this.points = void 0;
+                return _this;
+                /* eslint-enable valid-jsdoc */
+            }
+
+            /* *
+             *
+             *  Static Functions
+             *
+             * */
+            /* eslint-disable valid-jsdoc */
+            /**
+             * @private
+             */
+            BellcurveSeries.mean = function (data) {
+                var length = data.length,
+                    sum = data.reduce(function (sum,
+                                                value) {
+                        return (sum += value);
+                    }, 0);
+                return length > 0 && sum / length;
+            };
+            /**
+             * @private
+             */
+            BellcurveSeries.standardDeviation = function (data, average) {
+                var len = data.length,
+                    sum;
+                average = isNumber(average) ? average : BellcurveSeries.mean(data);
+                sum = data.reduce(function (sum, value) {
+                    var diff = value - average;
+                    return (sum += diff * diff);
+                }, 0);
+                return len > 1 && Math.sqrt(sum / (len - 1));
+            };
+            /**
+             * @private
+             */
+            BellcurveSeries.normalDensity = function (x, mean, standardDeviation) {
+                var translation = x - mean;
+                return Math.exp(-(translation * translation) /
+                    (2 * standardDeviation * standardDeviation)) / (standardDeviation * Math.sqrt(2 * Math.PI));
+            };
+            /* *
+             *
+             *  Functions
+             *
+             * */
+            /* eslint-disable valid-jsdoc */
+            BellcurveSeries.prototype.derivedData = function (mean, standardDeviation) {
+                var intervals = this.options.intervals,
+                    pointsInInterval = this.options.pointsInInterval,
+                    x = mean - intervals * standardDeviation,
+                    stop = intervals * pointsInInterval * 2 + 1,
+                    increment = standardDeviation / pointsInInterval,
+                    data = [],
+                    i;
+                for (i = 0; i < stop; i++) {
+                    data.push([x, BellcurveSeries.normalDensity(x, mean, standardDeviation)]);
+                    x += increment;
+                }
+                return data;
+            };
+            BellcurveSeries.prototype.setDerivedData = function () {
+                if (this.baseSeries.yData.length > 1) {
+                    this.setMean();
+                    this.setStandardDeviation();
+                    this.setData(this.derivedData(this.mean, this.standardDeviation), false);
+                }
+                return (void 0);
+            };
+            BellcurveSeries.prototype.setMean = function () {
+                this.mean = correctFloat(BellcurveSeries.mean(this.baseSeries.yData));
+            };
+            BellcurveSeries.prototype.setStandardDeviation = function () {
+                this.standardDeviation = correctFloat(BellcurveSeries.standardDeviation(this.baseSeries.yData, this.mean));
+            };
             /**
              * A bell curve is an areaspline series which represents the probability
              * density function of the normal distribution. It calculates mean and
@@ -447,7 +600,27 @@
              * @requires     modules/bellcurve
              * @optionparent plotOptions.bellcurve
              */
-            , {
+            BellcurveSeries.defaultOptions = merge(AreaSplineSeries.defaultOptions, {
+                /**
+                 * @see [fillColor](#plotOptions.bellcurve.fillColor)
+                 * @see [fillOpacity](#plotOptions.bellcurve.fillOpacity)
+                 *
+                 * @apioption plotOptions.bellcurve.color
+                 */
+                /**
+                 * @see [color](#plotOptions.bellcurve.color)
+                 * @see [fillOpacity](#plotOptions.bellcurve.fillOpacity)
+                 *
+                 * @apioption plotOptions.bellcurve.fillColor
+                 */
+                /**
+                 * @see [color](#plotOptions.bellcurve.color)
+                 * @see [fillColor](#plotOptions.bellcurve.fillColor)
+                 *
+                 * @default   {highcharts} 0.75
+                 * @default   {highstock} 0.75
+                 * @apioption plotOptions.bellcurve.fillOpacity
+                 */
                 /**
                  * This option allows to define the length of the bell curve. A unit of
                  * the length of the bell curve is standard deviation.
@@ -467,36 +640,27 @@
                 marker: {
                     enabled: false
                 }
-            }, merge(derivedSeriesMixin, {
-                setMean: function () {
-                    this.mean = correctFloat(mean(this.baseSeries.yData));
-                },
-                setStandardDeviation: function () {
-                    this.standardDeviation = correctFloat(standardDeviation(this.baseSeries.yData, this.mean));
-                },
-                setDerivedData: function () {
-                    if (this.baseSeries.yData.length > 1) {
-                        this.setMean();
-                        this.setStandardDeviation();
-                        this.setData(this.derivedData(this.mean, this.standardDeviation), false);
-                    }
-                    return (void 0);
-                },
-                derivedData: function (mean, standardDeviation) {
-                    var intervals = this.options.intervals,
-                        pointsInInterval = this.options.pointsInInterval,
-                        x = mean - intervals * standardDeviation,
-                        stop = intervals * pointsInInterval * 2 + 1,
-                        increment = standardDeviation / pointsInInterval,
-                        data = [],
-                        i;
-                    for (i = 0; i < stop; i++) {
-                        data.push([x, normalDensity(x, mean, standardDeviation)]);
-                        x += increment;
-                    }
-                    return data;
-                }
-            }));
+            });
+            return BellcurveSeries;
+        }(AreaSplineSeries));
+        extend(BellcurveSeries.prototype, {
+            addBaseSeriesEvents: DerivedSeriesMixin.addBaseSeriesEvents,
+            addEvents: DerivedSeriesMixin.addEvents,
+            destroy: DerivedSeriesMixin.destroy,
+            init: DerivedSeriesMixin.init,
+            setBaseSeries: DerivedSeriesMixin.setBaseSeries
+        });
+        SeriesRegistry.registerSeriesType('bellcurve', BellcurveSeries);
+        /* *
+         *
+         *  Default Export
+         *
+         * */
+        /* *
+         *
+         *  API Options
+         *
+         * */
         /**
          * A `bellcurve` series. If the [type](#series.bellcurve.type) option is not
          * specified, it is inherited from [chart.type](#chart.type).
@@ -520,8 +684,29 @@
          * @type      {number|string}
          * @apioption series.bellcurve.baseSeries
          */
+        /**
+         * @see [fillColor](#series.bellcurve.fillColor)
+         * @see [fillOpacity](#series.bellcurve.fillOpacity)
+         *
+         * @apioption series.bellcurve.color
+         */
+        /**
+         * @see [color](#series.bellcurve.color)
+         * @see [fillOpacity](#series.bellcurve.fillOpacity)
+         *
+         * @apioption series.bellcurve.fillColor
+         */
+        /**
+         * @see [color](#series.bellcurve.color)
+         * @see [fillColor](#series.bellcurve.fillColor)
+         *
+         * @default   {highcharts} 0.75
+         * @default   {highstock} 0.75
+         * @apioption series.bellcurve.fillOpacity
+         */
         ''; // adds doclets above to transpiled file
 
+        return BellcurveSeries;
     });
     _registerModule(_modules, 'masters/modules/histogram-bellcurve.src.js', [], function () {
 

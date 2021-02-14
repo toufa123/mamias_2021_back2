@@ -2,7 +2,7 @@
  *
  *  Exporting module
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -13,11 +13,10 @@
 import Chart from '../Core/Chart/Chart.js';
 import chartNavigationMixin from '../Mixins/Navigation.js';
 import H from '../Core/Globals.js';
-
 var doc = H.doc, isTouchDevice = H.isTouchDevice, win = H.win;
 import O from '../Core/Options.js';
-
 var defaultOptions = O.defaultOptions;
+import palette from '../Core/Color/Palette.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 
@@ -90,9 +89,6 @@ var addEvent = U.addEvent, css = U.css, createElement = U.createElement, discard
  *
  * @typedef {"image/png"|"image/jpeg"|"application/pdf"|"image/svg+xml"} Highcharts.ExportingMimeTypeValue
  */
-// create shortcuts
-var userAgent = win.navigator.userAgent, symbols = H.Renderer.prototype.symbols,
-    isMSBrowser = /Edge\/|Trident\/|MSIE /.test(userAgent), isFirefoxBrowser = /firefox/i.test(userAgent);
 // Add language
 extend(defaultOptions.lang
     /**
@@ -331,9 +327,9 @@ merge(true, defaultOptions.navigation
          */
         menuStyle: {
             /** @ignore-option */
-            border: '1px solid #999999',
+            border: "1px solid " + palette.neutralColor40,
             /** @ignore-option */
-            background: '#ffffff',
+            background: palette.backgroundColor,
             /** @ignore-option */
             padding: '5px 0'
         },
@@ -359,7 +355,7 @@ merge(true, defaultOptions.navigation
             /** @ignore-option */
             padding: '0.5em 1em',
             /** @ignore-option */
-            color: '#333333',
+            color: palette.neutralColor80,
             /** @ignore-option */
             background: 'none',
             /** @ignore-option */
@@ -386,9 +382,9 @@ merge(true, defaultOptions.navigation
          */
         menuItemHoverStyle: {
             /** @ignore-option */
-            background: '#335cad',
+            background: palette.highlightColor80,
             /** @ignore-option */
-            color: '#ffffff'
+            color: palette.backgroundColor
         },
         /**
          * A collection of options for buttons appearing in the exporting
@@ -411,7 +407,7 @@ merge(true, defaultOptions.navigation
              * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 2.0
              */
-            symbolFill: '#666666',
+            symbolFill: palette.neutralColor60,
             /**
              * The color of the symbol's stroke or line.
              *
@@ -421,7 +417,7 @@ merge(true, defaultOptions.navigation
              * @type  {Highcharts.ColorString}
              * @since 2.0
              */
-            symbolStroke: '#666666',
+            symbolStroke: palette.neutralColor60,
             /**
              * The pixel stroke width of the symbol on the button.
              *
@@ -449,7 +445,7 @@ merge(true, defaultOptions.navigation
                  * The default fill exists only to capture hover events.
                  *
                  * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-                 * @default   #ffffff
+                 * @default   ${palette.backgroundColor}
                  * @apioption navigation.buttonOptions.theme.fill
                  */
                 /**
@@ -1122,7 +1118,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             }
         });
         // generate the chart copy
-        chartCopy = new H.Chart(options, chart.callback);
+        chartCopy = new Chart(options, chart.callback);
         // Axis options and series options  (#2022, #3900, #5982)
         if (chartOptions) {
             ['xAxis', 'yAxis', 'series'].forEach(function (coll) {
@@ -1476,6 +1472,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     if (item.separator) {
                         element = createElement('hr', null, null, innerMenu);
                     } else {
+                        // When chart initialized with the table,
+                        // wrong button text displayed, #14352.
+                        if (item.textKey === 'viewData' && chart.isDataTableVisible) {
+                            item.textKey = 'hideData';
+                        }
                         element = createElement('li', {
                             className: 'highcharts-menu-item',
                             onclick: function (e) {
@@ -1487,10 +1488,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                                     item.onclick
                                         .apply(chart, arguments);
                                 }
-                            },
-                            innerHTML: (item.text ||
-                                chart.options.lang[item.textKey])
+                            }
                         }, null, innerMenu);
+                        element.appendChild(doc.createTextNode(item.text ||
+                            chart.options.lang[item.textKey]));
                         if (!chart.styledMode) {
                             element.onmouseover = function () {
                                 css(this, navOptions.menuItemHoverStyle);
@@ -1559,7 +1560,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         var attr = btnOptions.theme, states = attr.states, hover = states && states.hover,
             select = states && states.select, callback;
         if (!chart.styledMode) {
-            attr.fill = pick(attr.fill, '#ffffff');
+            attr.fill = pick(attr.fill, palette.backgroundColor);
             attr.stroke = pick(attr.stroke, 'none');
         }
         delete attr.states;
@@ -1581,7 +1582,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             };
         }
         if (btnOptions.text && btnOptions.symbol) {
-            attr.paddingLeft = pick(attr.paddingLeft, 25);
+            attr.paddingLeft = pick(attr.paddingLeft, 30);
         } else if (!btnOptions.text) {
             extend(attr, {
                 width: btnOptions.width,
@@ -1591,7 +1592,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
         if (!chart.styledMode) {
             attr['stroke-linecap'] = 'round';
-            attr.fill = pick(attr.fill, '#ffffff');
+            attr.fill = pick(attr.fill, palette.backgroundColor);
             attr.stroke = pick(attr.stroke, 'none');
         }
         button = renderer
@@ -1748,7 +1749,6 @@ Chart.prototype.inlineStyles = function () {
     iframeDoc.open();
     iframeDoc.write('<svg xmlns="http://www.w3.org/2000/svg"></svg>');
     iframeDoc.close();
-
     /**
      * Make hyphenated property names out of camelCase
      * @private
@@ -1762,7 +1762,6 @@ Chart.prototype.inlineStyles = function () {
             return '-' + b.toLowerCase();
         });
     }
-
     /**
      * Call this on all elements and recurse to children
      * @private
@@ -1772,7 +1771,6 @@ Chart.prototype.inlineStyles = function () {
      */
     function recurse(node) {
         var styles, parentStyles, cssText = '', dummy, styleAttr, blacklisted, whitelisted, i;
-
         /**
          * Check computed styles and whether they are in the white/blacklist for
          * styles or atttributes.
@@ -1823,7 +1821,6 @@ Chart.prototype.inlineStyles = function () {
                 }
             }
         }
-
         if (node.nodeType === 1 &&
             unstyledElements.indexOf(node.nodeName) === -1) {
             styles = win.getComputedStyle(node, null);
@@ -1852,7 +1849,7 @@ Chart.prototype.inlineStyles = function () {
                 dummySVG.removeChild(dummy);
             }
             // Loop through all styles and add them inline if they are ok
-            if (isFirefoxBrowser || isMSBrowser) {
+            if (H.isFirefox || H.isMS) {
                 // Some browsers put lots of styles on the prototype
                 for (var p in styles) { // eslint-disable-line guard-for-in
                     filterStyles(styles[p], p);
@@ -1876,20 +1873,20 @@ Chart.prototype.inlineStyles = function () {
             [].forEach.call(node.children || node.childNodes, recurse);
         }
     }
-
     /**
      * Remove the dummy objects used to get defaults
      * @private
      * @return {void}
      */
     function tearDown() {
-        dummySVG.parentNode.removeChild(dummySVG);
+        dummySVG.parentNode.remove();
+        // Remove trash from DOM that stayed after each exporting
+        iframe.remove();
     }
-
     recurse(this.container.querySelector('svg'));
     tearDown();
 };
-symbols.menu = function (x, y, width, height) {
+H.Renderer.prototype.symbols.menu = function (x, y, width, height) {
     var arr = [
         ['M', x, y + 2.5],
         ['L', x + width, y + 2.5],
@@ -1900,7 +1897,7 @@ symbols.menu = function (x, y, width, height) {
     ];
     return arr;
 };
-symbols.menuball = function (x, y, width, height) {
+H.Renderer.prototype.symbols.menuball = function (x, y, width, height) {
     var path = [], h = (height / 3) - 2;
     path = path.concat(this.circle(width - h, y, h, h), this.circle(width - h, y + h + 4, h, h), this.circle(width - h, y + 2 * (h + 4), h, h));
     return path;
@@ -1930,8 +1927,6 @@ Chart.prototype.renderExporting = function () {
         });
         chart.isDirtyExporting = false;
     }
-    // Destroy the export elements at chart destroy
-    addEvent(chart, 'destroy', chart.destroyExport);
 };
 /* eslint-disable no-invalid-this */
 // Add update methods to handle chart.update and chart.exporting.update and
@@ -1940,7 +1935,6 @@ Chart.prototype.renderExporting = function () {
 // function.
 addEvent(Chart, 'init', function () {
     var chart = this;
-
     /**
      * @private
      * @param {"exporting"|"navigation"} prop
@@ -1958,7 +1952,6 @@ addEvent(Chart, 'init', function () {
             chart.redraw();
         }
     }
-
     chart.exporting = {
         update: function (options, redraw) {
             update('exporting', options, redraw);
@@ -1975,6 +1968,8 @@ addEvent(Chart, 'init', function () {
 Chart.prototype.callbacks.push(function (chart) {
     chart.renderExporting();
     addEvent(chart, 'redraw', chart.renderExporting);
+    // Destroy the export elements at chart destroy
+    addEvent(chart, 'destroy', chart.destroyExport);
     // Uncomment this to see a button directly below the chart, for quick
     // testing of export
     /*

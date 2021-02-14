@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v8.2.0 (2020-08-20)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  * @module highcharts/themes/dark-unica
  * @requires highcharts
  *

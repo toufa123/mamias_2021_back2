@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -9,7 +9,6 @@
  * */
 import H from '../Globals.js';
 import U from '../Utilities.js';
-
 var addEvent = U.addEvent, defined = U.defined, pick = U.pick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -20,7 +19,6 @@ var addEvent = U.addEvent, defined = U.defined, pick = U.pick;
 var ScrollbarAxis = /** @class */ (function () {
     function ScrollbarAxis() {
     }
-
     /**
      * Attaches to axis events to create scrollbars if enabled.
      *
@@ -65,9 +63,10 @@ var ScrollbarAxis = /** @class */ (function () {
                     if (pick(this.options.liveRedraw, H.svg && !H.isTouchDevice && !this.chart.isBoosting) ||
                         // Mouseup always should change extremes
                         e.DOMType === 'mouseup' ||
+                        e.DOMType === 'touchend' ||
                         // Internal events
                         !defined(e.DOMType)) {
-                        axis.setExtremes(from, to, true, e.DOMType !== 'mousemove', e);
+                        axis.setExtremes(from, to, true, e.DOMType !== 'mousemove' && e.DOMType !== 'touchmove', e);
                     } else {
                         // When live redraw is disabled, don't change extremes
                         // Only change the position of the scollbar thumb

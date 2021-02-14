@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v8.2.0 (2020-08-20)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  * @module highcharts/modules/streamgraph
  * @requires highcharts
  *
@@ -10,4 +10,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Series/StreamgraphSeries.js';
+import '../../Series/Streamgraph/StreamgraphSeries.js';

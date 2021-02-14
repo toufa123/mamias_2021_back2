@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v8.2.0 (2020-08-20)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
  * Client side exporting module
  *
@@ -23,17 +23,15 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
-
     _registerModule(_modules, 'Extensions/DownloadURL.js', [_modules['Core/Globals.js']], function (Highcharts) {
         /* *
          *
-         *  (c) 2015-2020 Oystein Moseng
+         *  (c) 2015-2021 Oystein Moseng
          *
          *  License: www.highcharts.com/license
          *
@@ -43,10 +41,8 @@
          *
          * */
         var win = Highcharts.win,
-            nav = win.navigator,
             doc = win.document,
-            domurl = win.URL || win.webkitURL || win,
-            isEdgeBrowser = /Edge\/\d+/.test(nav.userAgent);
+            domurl = win.URL || win.webkitURL || win;
         /**
          * Convert base64 dataURL to Blob if supported, otherwise returns undefined.
          * @private
@@ -57,7 +53,9 @@
          *         Blob
          */
         var dataURLtoBlob = Highcharts.dataURLtoBlob = function (dataURL) {
-            var parts = dataURL.match(/data:([^;]*)(;base64)?,([0-9A-Za-z+/]+)/);
+            var parts = dataURL
+                .replace(/filename=.*;/, '')
+                .match(/data:([^;]*)(;base64)?,([0-9A-Za-z+/]+)/);
             if (parts &&
                 parts.length > 3 &&
                 win.atob &&
@@ -68,12 +66,11 @@
                 // Try to convert data URL to Blob
                 var binStr = win.atob(parts[3]),
                     buf = new win.ArrayBuffer(binStr.length),
-                    binary = new win.Uint8Array(buf),
-                    blob;
+                    binary = new win.Uint8Array(buf);
                 for (var i = 0; i < binary.length; ++i) {
                     binary[i] = binStr.charCodeAt(i);
                 }
-                blob = new win.Blob([binary], {'type': parts[1]});
+                var blob = new win.Blob([binary], {'type': parts[1]});
                 return domurl.createObjectURL(blob);
             }
         };
@@ -90,6 +87,7 @@
          */
         var downloadURL = Highcharts.downloadURL = function (dataURL,
                                                              filename) {
+            var nav = win.navigator;
             var a = doc.createElement('a'),
                 windowRef;
             // IE specific blob implementation
@@ -103,6 +101,7 @@
             dataURL = "" + dataURL;
             // Some browsers have limitations for data URL lengths. Try to convert to
             // Blob or fall back. Edge always needs that blob.
+            var isEdgeBrowser = /Edge\/\d+/.test(nav.userAgent);
             if (isEdgeBrowser || dataURL.length > 2000000) {
                 dataURL = dataURLtoBlob(dataURL) || '';
                 if (!dataURL) {
@@ -148,7 +147,6 @@
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
-        /* global MSBlobBuilder */
         var win = H.win,
             doc = H.doc;
         var addEvent = U.addEvent,
@@ -158,13 +156,10 @@
             merge = U.merge;
         var downloadURL = DownloadURL.downloadURL;
         var domurl = win.URL || win.webkitURL || win,
-            nav = win.navigator,
-            isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent),
             // Milliseconds to defer image load event handlers to offset IE bug
-            loadEventDeferDelay = isMSBrowser ? 150 : 0;
+            loadEventDeferDelay = H.isMS ? 150 : 0;
         // Dummy object so we can reuse our canvas-tools.js without errors
         H.CanVGRenderer = {};
-
         /* eslint-disable valid-jsdoc */
         /**
          * Downloads a script and executes a callback when done.
@@ -194,15 +189,16 @@
          * @param {string} svg
          * @return {string}
          */
-        H.svgToDataUrl = function (svg) {
+        function svgToDataUrl(svg) {
             // Webkit and not chrome
-            var webKit = (nav.userAgent.indexOf('WebKit') > -1 &&
-                nav.userAgent.indexOf('Chrome') < 0);
+            var userAgent = win.navigator.userAgent;
+            var webKit = (userAgent.indexOf('WebKit') > -1 &&
+                userAgent.indexOf('Chrome') < 0);
             try {
                 // Safari requires data URI since it doesn't allow navigation to blob
                 // URLs. Firefox has an issue with Blobs and internal references,
                 // leading to gradients not working using Blobs (#4550)
-                if (!webKit && nav.userAgent.toLowerCase().indexOf('firefox') < 0) {
+                if (!webKit && !H.isFirefox) {
                     return domurl.createObjectURL(new win.Blob([svg], {
                         type: 'image/svg+xml;charset-utf-16'
                     }));
@@ -211,7 +207,7 @@
                 // Ignore
             }
             return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
-        };
+        }
         /**
          * Get data:URL from image URL. Pass in callbacks to handle results.
          *
@@ -246,7 +242,7 @@
          *
          * @return {void}
          */
-        H.imageToDataUrl = function (imageURL, imageType, callbackArgs, scale, successCallback, taintedCallback, noCanvasSupportCallback, failedLoadCallback, finallyCallback) {
+        function imageToDataUrl(imageURL, imageType, callbackArgs, scale, successCallback, taintedCallback, noCanvasSupportCallback, failedLoadCallback, finallyCallback) {
             var img = new win.Image(), taintedHandler, loadHandler = function () {
                     setTimeout(function () {
                         var canvas = doc.createElement('canvas'), ctx = canvas.getContext && canvas.getContext('2d'),
@@ -296,7 +292,7 @@
             img.onload = loadHandler;
             img.onerror = errorHandler;
             img.src = imageURL;
-        };
+        }
         /* eslint-enable valid-jsdoc */
         /**
          * Get data URL to an image of an SVG and call download on it options object:
@@ -329,7 +325,7 @@
          *
          * @return {void}
          */
-        H.downloadSVGLocal = function (svg, options, failCallback, successCallback) {
+        function downloadSVGLocal(svg, options, failCallback, successCallback) {
             var svgurl, blob, objectURLRevoke = true, finallyHandler,
                 libURL = (options.libURL || getOptions().exporting.libURL),
                 dummySVGContainer = doc.createElement('div'), imageType = options.type || 'image/png',
@@ -357,10 +353,23 @@
                 [].forEach.call(svgElement.querySelectorAll('*[visibility="hidden"]'), function (node) {
                     node.parentNode.removeChild(node);
                 });
+                // Workaround for #13948, multiple stops in linear gradient set to 0
+                // causing error in Acrobat
+                var gradients = svgElement.querySelectorAll('linearGradient');
+                for (var index = 0; index < gradients.length; index++) {
+                    var gradient = gradients[index];
+                    var stops = gradient.querySelectorAll('stop');
+                    var i = 0;
+                    while (i < stops.length &&
+                    stops[i].getAttribute('offset') === '0' &&
+                    stops[i + 1].getAttribute('offset') === '0') {
+                        stops[i].remove();
+                        i++;
+                    }
+                }
                 win.svg2pdf(svgElement, pdf, {removeInvalid: true});
                 return pdf.output('datauristring');
             }
-
             /**
              * @private
              * @return {void}
@@ -412,19 +421,18 @@
                     failCallback(e);
                 }
             }
-
             /* eslint-enable valid-jsdoc */
             // Initiate download depending on file type
             if (imageType === 'image/svg+xml') {
                 // SVG download. In this case, we want to use Microsoft specific Blob if
                 // available
                 try {
-                    if (typeof nav.msSaveOrOpenBlob !== 'undefined') {
+                    if (typeof win.navigator.msSaveOrOpenBlob !== 'undefined') {
                         blob = new MSBlobBuilder();
                         blob.append(svg);
                         svgurl = blob.getBlob('image/svg+xml');
                     } else {
-                        svgurl = H.svgToDataUrl(svg);
+                        svgurl = svgToDataUrl(svg);
                     }
                     downloadURL(svgurl, filename);
                     if (successCallback) {
@@ -449,7 +457,7 @@
                 }
             } else {
                 // PNG/JPEG download - create bitmap from SVG
-                svgurl = H.svgToDataUrl(svg);
+                svgurl = svgToDataUrl(svg);
                 finallyHandler = function () {
                     try {
                         domurl.revokeObjectURL(svgurl);
@@ -458,7 +466,7 @@
                     }
                 };
                 // First, try to get PNG by rendering on canvas
-                H.imageToDataUrl(svgurl, imageType, {}, scale, function (imageURL) {
+                imageToDataUrl(svgurl, imageType, {}, scale, function (imageURL) {
                         // Success
                         try {
                             downloadURL(imageURL, filename);
@@ -477,7 +485,7 @@
                             downloadWithCanVG = function () {
                                 ctx.drawSvg(svg, 0, 0, imageWidth, imageHeight);
                                 try {
-                                    downloadURL(nav.msSaveOrOpenBlob ?
+                                    downloadURL(win.navigator.msSaveOrOpenBlob ?
                                         canvas.msToBlob() :
                                         canvas.toDataURL(imageType), filename);
                                     if (successCallback) {
@@ -518,7 +526,7 @@
                         }
                     });
             }
-        };
+        }
         /* eslint-disable valid-jsdoc */
         /**
          * Get SVG of chart prepared for client side export. This converts embedded
@@ -583,7 +591,7 @@
                     el = images[i];
                     href = el.getAttributeNS('http://www.w3.org/1999/xlink', 'href');
                     if (href) {
-                        H.imageToDataUrl(href, 'image/png', {imageElement: el}, options.scale, embeddedSuccess,
+                        imageToDataUrl(href, 'image/png', {imageElement: el}, options.scale, embeddedSuccess,
                             // Tainted canvas
                             failCallback,
                             // No canvas support
@@ -646,7 +654,7 @@
                         fallbackToExportServer('Image type not supported' +
                             'for charts with embedded HTML');
                     } else {
-                        H.downloadSVGLocal(svg, extend({filename: chart.getFilename()}, options), fallbackToExportServer);
+                        downloadSVGLocal(svg, extend({filename: chart.getFilename()}, options), fallbackToExportServer);
                     }
                 },
                 // Return true if the SVG contains images with external data. With the
@@ -661,7 +669,7 @@
             // If we are on IE and in styled mode, add a whitelist to the renderer for
             // inline styles that we want to pass through. There are so many styles by
             // default in IE that we don't want to blacklist them all.
-            if (isMSBrowser && chart.styledMode) {
+            if (H.isMS && chart.styledMode) {
                 SVGRenderer.prototype.inlineWhitelist = [
                     /^blockSize/,
                     /^border/,
@@ -696,7 +704,7 @@
             // Always fall back on:
             // - MS browsers: Embedded images JPEG/PNG, or any PDF
             // - Embedded images and PDF
-            if ((isMSBrowser &&
+            if ((H.isMS &&
                 (options.type === 'application/pdf' ||
                     chart.container.getElementsByTagName('image').length &&
                     options.type !== 'image/svg+xml')) || (options.type === 'application/pdf' &&
@@ -708,7 +716,7 @@
         };
         // Extend the default options to use the local exporter logic
         merge(true, getOptions().exporting, {
-            libURL: 'https://code.highcharts.com/8.2.0/lib/',
+            libURL: 'https://code.highcharts.com/9.0.0/lib/',
             // When offline-exporting is loaded, redefine the menu item definitions
             // related to download.
             menuItemDefinitions: {
@@ -744,6 +752,8 @@
                 }
             }
         });
+        // Compatibility
+        H.downloadSVGLocal = downloadSVGLocal;
 
     });
     _registerModule(_modules, 'masters/modules/offline-exporting.src.js', [], function () {

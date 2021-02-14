@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Utility functions for accessibility module.
  *
@@ -9,13 +9,12 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
+import H from '../../Core/Globals.js';
+
+var doc = H.doc, win = H.win;
 import U from '../../Core/Utilities.js';
 
 var merge = U.merge;
-import H from '../../Core/Globals.js';
-
-var win = H.win, doc = win.document;
 
 /* eslint-disable valid-jsdoc */
 /**
@@ -34,7 +33,6 @@ function addClass(el, className) {
         el.className += className;
     }
 }
-
 /**
  * @private
  * @param {string} str
@@ -49,7 +47,6 @@ function escapeStringForHTML(str) {
         .replace(/'/g, '&#x27;')
         .replace(/\//g, '&#x2F;');
 }
-
 /**
  * Get an element by ID
  * @param {string} id
@@ -59,7 +56,6 @@ function escapeStringForHTML(str) {
 function getElement(id) {
     return doc.getElementById(id);
 }
-
 /**
  * Get a fake mouse event of a given type
  * @param {string} type
@@ -89,7 +85,6 @@ function getFakeMouseEvent(type) {
     }
     return {type: type};
 }
-
 /**
  * Remove an element from the DOM.
  * @private
@@ -101,7 +96,6 @@ function removeElement(element) {
         element.parentNode.removeChild(element);
     }
 }
-
 /**
  * Utility function. Reverses child nodes of a DOM element.
  * @private
@@ -114,7 +108,6 @@ function reverseChildNodes(node) {
         node.appendChild(node.childNodes[i]);
     }
 }
-
 /**
  * Set attributes on element. Set to null to remove attribute.
  * @private
@@ -128,12 +121,10 @@ function setElAttrs(el, attrs) {
         if (val === null) {
             el.removeAttribute(attr);
         } else {
-            var cleanedVal = escapeStringForHTML('' + val);
-            el.setAttribute(attr, cleanedVal);
+            el.setAttribute(attr, val);
         }
     });
 }
-
 /**
  * Used for aria-label attributes, painting on a canvas will fail if the
  * text contains tags.
@@ -145,7 +136,6 @@ function stripHTMLTagsFromString(str) {
     return typeof str === 'string' ?
         str.replace(/<\/?[^>]+(>|$)/g, '') : str;
 }
-
 /**
  * Utility function for hiding an element visually, but still keeping it
  * available to screen reader users.
@@ -168,7 +158,6 @@ function visuallyHideElement(element) {
     };
     merge(true, element.style, hiddenStyle);
 }
-
 var HTMLUtilities = {
     addClass: addClass,
     escapeStringForHTML: escapeStringForHTML,

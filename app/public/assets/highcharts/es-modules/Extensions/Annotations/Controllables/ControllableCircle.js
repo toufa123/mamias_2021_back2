@@ -7,7 +7,6 @@
 import ControllableMixin from '../Mixins/ControllableMixin.js';
 import ControllablePath from './ControllablePath.js';
 import U from '../../../Core/Utilities.js';
-
 var merge = U.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -61,7 +60,6 @@ var ControllableCircle = /** @class */ (function () {
         this.init(annotation, options, index);
         this.collection = 'shapes';
     }
-
     /* *
      *
      *  Functions

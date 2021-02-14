@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -17,11 +17,14 @@ WIP on vertical scrollable plot area (#9378). To do:
 - API and demos
  */
 'use strict';
+import A from '../Core/Animation/AnimationUtilities.js';
+
+var stop = A.stop;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 
-var addEvent = U.addEvent, createElement = U.createElement, pick = U.pick, stop = U.stop;
+var addEvent = U.addEvent, createElement = U.createElement, pick = U.pick;
 /**
  * Options for a scrollable plot area. This feature provides a minimum size for
  * the plot area of the chart. If the size gets smaller than this, typically
@@ -237,7 +240,9 @@ Chart.prototype.moveFixedElements = function () {
     } else if (this.scrollablePixelsY && this.inverted) {
         axisClass = '.highcharts-yaxis';
     }
-    fixedSelectors.push(axisClass, axisClass + '-labels');
+    if (axisClass) {
+        fixedSelectors.push(axisClass + ":not(.highcharts-radial-axis)", axisClass + "-labels:not(.highcharts-radial-axis-labels)");
+    }
     fixedSelectors.forEach(function (className) {
         [].forEach.call(container.querySelectorAll(className), function (elem) {
             (elem.namespaceURI === fixedRenderer.SVG_NS ?
@@ -253,9 +258,9 @@ Chart.prototype.moveFixedElements = function () {
  * @return {void}
  */
 Chart.prototype.applyFixed = function () {
-    var _a, _b;
-    var fixedRenderer, scrollableWidth, scrollableHeight, firstTime = !this.fixedDiv,
-        scrollableOptions = this.options.chart.scrollablePlotArea;
+    var _a, _b, _c;
+    var fixedRenderer, scrollableWidth, scrollableHeight, firstTime = !this.fixedDiv, chartOptions = this.options.chart,
+        scrollableOptions = chartOptions.scrollablePlotArea;
     // First render
     if (firstTime) {
         this.fixedDiv = createElement('div', {
@@ -264,12 +269,12 @@ Chart.prototype.applyFixed = function () {
             position: 'absolute',
             overflow: 'hidden',
             pointerEvents: 'none',
-            zIndex: 2,
+            zIndex: (((_a = chartOptions.style) === null || _a === void 0 ? void 0 : _a.zIndex) || 0) + 2,
             top: 0
         }, null, true);
-        (_a = this.scrollingContainer) === null || _a === void 0 ? void 0 : _a.parentNode.insertBefore(this.fixedDiv, this.scrollingContainer);
+        (_b = this.scrollingContainer) === null || _b === void 0 ? void 0 : _b.parentNode.insertBefore(this.fixedDiv, this.scrollingContainer);
         this.renderTo.style.overflow = 'visible';
-        this.fixedRenderer = fixedRenderer = new H.Renderer(this.fixedDiv, this.chartWidth, this.chartHeight, (_b = this.options.chart) === null || _b === void 0 ? void 0 : _b.style);
+        this.fixedRenderer = fixedRenderer = new H.Renderer(this.fixedDiv, this.chartWidth, this.chartHeight, (_c = this.options.chart) === null || _c === void 0 ? void 0 : _c.style);
         // Mask
         this.scrollableMask = fixedRenderer
             .path()

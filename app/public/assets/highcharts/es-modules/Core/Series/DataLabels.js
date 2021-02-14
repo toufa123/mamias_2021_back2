@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -8,15 +8,22 @@
  *
  * */
 'use strict';
+import A from '../Animation/AnimationUtilities.js';
+
+var getDeferredAnimation = A.getDeferredAnimation;
 import H from '../Globals.js';
 
-var noop = H.noop, seriesTypes = H.seriesTypes;
+var noop = H.noop;
+import palette from '../Color/Palette.js';
+import Series from '../Series/Series.js';
+import SeriesRegistry from './SeriesRegistry.js';
+
+var seriesTypes = SeriesRegistry.seriesTypes;
 import U from '../Utilities.js';
 
 var arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent,
-    format = U.format, getDeferredAnimation = U.getDeferredAnimation, isArray = U.isArray, merge = U.merge,
-    objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat,
-    stableSort = U.stableSort;
+    format = U.format, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach, pick = U.pick,
+    relativeLength = U.relativeLength, splat = U.splat, stableSort = U.stableSort;
 /**
  * Callback JavaScript function to format the data label as a string. Note that
  * if a `format` is defined, the format takes precedence and the formatter is
@@ -38,9 +45,7 @@ var arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.exte
  *
  * @typedef {"allow"|"justify"} Highcharts.DataLabelsOverflowValue
  */
-import './Series.js';
-
-var Series = H.Series;
+''; // detach doclets above
 /* eslint-disable valid-jsdoc */
 /**
  * General distribution algorithm for distributing labels of differing size
@@ -60,14 +65,12 @@ H.distribute = function (boxes, len, maxDistance) {
     var i, overlapping = true, origBoxes = boxes, // Original array will be altered with added .pos
         restBoxes = [], // The outranked overshoot
         box, target, total = 0, reducedLen = origBoxes.reducedLen || len;
-
     /**
      * @private
      */
     function sortByTarget(a, b) {
         return a.target - b.target;
     }
-
     // If the total size exceeds the len, remove those boxes with the lowest
     // rank
     i = boxes.length;
@@ -184,7 +187,6 @@ Series.prototype.drawDataLabels = function () {
         dataLabelAnim = seriesDlOptions.animation, animationConfig = seriesDlOptions.defer ?
         getDeferredAnimation(chart, dataLabelAnim, series) :
         {defer: 0, duration: 0}, renderer = chart.renderer;
-
     /**
      * Handle the dataLabels.filter option.
      * @private
@@ -207,7 +209,6 @@ Series.prototype.drawDataLabels = function () {
         }
         return true;
     }
-
     /**
      * Merge two objects that can be arrays. If one of them is an array, the
      * other is merged into each element. If both are arrays, each element is
@@ -234,7 +235,6 @@ Series.prototype.drawDataLabels = function () {
         }
         return res;
     }
-
     // Merge in plotOptions.dataLabels for series
     seriesDlOptions = mergeArrays(mergeArrays(chart.options.plotOptions &&
         chart.options.plotOptions.series &&
@@ -289,7 +289,7 @@ Series.prototype.drawDataLabels = function () {
                     rotation = labelOptions.rotation;
                     if (!chart.styledMode) {
                         // Determine the color
-                        style.color = pick(labelOptions.color, style.color, series.color, '#000000');
+                        style.color = pick(labelOptions.color, style.color, series.color, palette.neutralColor100);
                         // Get automated contrast color
                         if (style.color === 'contrast') {
                             point.contrastColor = renderer.getContrast((point.color || series.color));
@@ -298,7 +298,7 @@ Series.prototype.drawDataLabels = function () {
                             labelDistance < 0 ||
                             !!seriesOptions.stacking ?
                                 point.contrastColor :
-                                '#000000';
+                                palette.neutralColor100;
                         } else {
                             delete point.contrastColor;
                         }
@@ -930,7 +930,7 @@ if (seriesTypes.pie) {
                                     'stroke-width': connectorWidth,
                                     'stroke': (pointDataLabelsOptions.connectorColor ||
                                         point.color ||
-                                        '#666666')
+                                        palette.neutralColor60)
                                 });
                             }
                         }

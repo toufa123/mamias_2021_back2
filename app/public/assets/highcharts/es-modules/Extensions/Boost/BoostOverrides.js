@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2020 Highsoft AS
+ *  Copyright (c) 2019-2021 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -11,21 +11,22 @@
  * */
 'use strict';
 import Chart from '../../Core/Chart/Chart.js';
-import H from '../../Core/Globals.js';
 import Point from '../../Core/Series/Point.js';
+import Series from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
+var seriesTypes = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 
 var addEvent = U.addEvent, error = U.error, getOptions = U.getOptions, isArray = U.isArray, isNumber = U.isNumber,
     pick = U.pick, wrap = U.wrap;
-import '../../Core/Series/Series.js';
 import '../../Core/Options.js';
-import '../../Core/Interaction.js';
 import butils from './BoostUtils.js';
 import boostable from './Boostables.js';
 import boostableMap from './BoostableMap.js';
 
 var boostEnabled = butils.boostEnabled, shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting,
-    Series = H.Series, seriesTypes = H.seriesTypes, plotOptions = getOptions().plotOptions;
+    plotOptions = getOptions().plotOptions;
 /**
  * Returns true if the chart is in series boost mode.
  *
@@ -64,10 +65,13 @@ Chart.prototype.getBoostClipRect = function (target) {
         height: this.plotHeight
     };
     if (target === this) {
-        this.yAxis.forEach(function (yAxis) {
-            clipBox.y = Math.min(yAxis.pos, clipBox.y);
-            clipBox.height = Math.max(yAxis.pos - this.plotTop + yAxis.len, clipBox.height);
-        }, this);
+        var verticalAxes = this.inverted ? this.xAxis : this.yAxis; // #14444
+        if (verticalAxes.length <= 1) {
+            clipBox.y = Math.min(verticalAxes[0].pos, clipBox.y);
+            clipBox.height = verticalAxes[0].pos - this.plotTop + verticalAxes[0].len;
+        } else {
+            clipBox.height = this.plotHeight;
+        }
     }
     return clipBox;
 };
@@ -199,7 +203,6 @@ wrap(Series.prototype, 'getExtremes', function (proceed) {
             this[method + 'Canvas']();
         }
     }
-
     wrap(Series.prototype, method, branch);
     // A special case for some types - their translate method is already wrapped
     if (method === 'translate') {
@@ -221,7 +224,6 @@ wrap(Series.prototype, 'getExtremes', function (proceed) {
 // do the default behaviour. Otherwise, process if the series has no extremes.
 wrap(Series.prototype, 'processData', function (proceed) {
     var series = this, dataToMeasure = this.options.data, firstPoint;
-
     /**
      * Used twice in this function, first on this.options.data, the second
      * time it runs the check again after processedXData is built.
@@ -232,7 +234,6 @@ wrap(Series.prototype, 'processData', function (proceed) {
         return series.chart.isChartSeriesBoosting() || ((data ? data.length : 0) >=
             (series.options.boostThreshold || Number.MAX_VALUE));
     }
-
     if (boostEnabled(this.chart) && boostableMap[this.type]) {
         // If there are no extremes given in the options, we also need to
         // process the data to read the data extremes. If this is a heatmap, do

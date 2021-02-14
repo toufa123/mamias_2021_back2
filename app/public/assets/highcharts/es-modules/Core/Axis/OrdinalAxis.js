@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,15 +10,14 @@
 'use strict';
 import Axis from './Axis.js';
 import H from '../Globals.js';
+import Series from '../Series/Series.js';
 import U from '../Utilities.js';
 
-var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick, timeUnits = U.timeUnits;
-import '../Chart/Chart.js';
+var addEvent = U.addEvent, css = U.css, defined = U.defined, error = U.error, pick = U.pick, timeUnits = U.timeUnits;
+import Chart from '../Chart/Chart.js';
 // Has a dependency on Navigator due to the use of Axis.toFixedRange
 import '../Navigator.js';
-import '../Series/Series.js';
 
-var Chart = H.Chart, Series = H.Series;
 /**
  * Extends the axis with ordinal support.
  * @private
@@ -46,7 +45,6 @@ var OrdinalAxis;
             this.index = {};
             this.axis = axis;
         }
-
         /* *
         *
         *  Functions
@@ -223,7 +221,7 @@ var OrdinalAxis;
                         xData: series.xData.slice(),
                         chart: chart,
                         destroyGroupedData: H.noop,
-                        getProcessedData: H.Series.prototype.getProcessedData
+                        getProcessedData: Series.prototype.getProcessedData
                     };
                     fakeSeries.xData = fakeSeries.xData.concat(ordinal.getOverscrollPositions());
                     fakeSeries.options = {
@@ -351,7 +349,6 @@ var OrdinalAxis;
         return Composition;
     }());
     OrdinalAxis.Composition = Composition;
-
     /* *
      *
      *  Functions
@@ -446,29 +443,33 @@ var OrdinalAxis;
             }
             // Get the grouping info from the last of the segments. The info is
             // the same for all segments.
-            info = segmentPositions.info;
-            // Optionally identify ticks with higher rank, for example when the
-            // ticks have crossed midnight.
-            if (findHigherRanks && info.unitRange <= timeUnits.hour) {
-                end = groupPositions.length - 1;
-                // Compare points two by two
-                for (start = 1; start < end; start++) {
-                    if (time.dateFormat('%d', groupPositions[start]) !==
-                        time.dateFormat('%d', groupPositions[start - 1])) {
-                        higherRanks[groupPositions[start]] = 'day';
-                        hasCrossedHigherRank = true;
+            if (segmentPositions) {
+                info = segmentPositions.info;
+                // Optionally identify ticks with higher rank, for example
+                // when the ticks have crossed midnight.
+                if (findHigherRanks && info.unitRange <= timeUnits.hour) {
+                    end = groupPositions.length - 1;
+                    // Compare points two by two
+                    for (start = 1; start < end; start++) {
+                        if (time.dateFormat('%d', groupPositions[start]) !==
+                            time.dateFormat('%d', groupPositions[start - 1])) {
+                            higherRanks[groupPositions[start]] = 'day';
+                            hasCrossedHigherRank = true;
+                        }
                     }
+                    // If the complete array has crossed midnight, we want
+                    // to mark the first positions also as higher rank
+                    if (hasCrossedHigherRank) {
+                        higherRanks[groupPositions[0]] = 'day';
+                    }
+                    info.higherRanks = higherRanks;
                 }
-                // If the complete array has crossed midnight, we want to mark
-                // the first positions also as higher rank
-                if (hasCrossedHigherRank) {
-                    higherRanks[groupPositions[0]] = 'day';
-                }
-                info.higherRanks = higherRanks;
+                // Save the info
+                info.segmentStarts = segmentStarts;
+                groupPositions.info = info;
+            } else {
+                error(12, false, this.chart);
             }
-            // Save the info
-            info.segmentStarts = segmentStarts;
-            groupPositions.info = info;
             // Don't show ticks within a gap in the ordinal axis, where the
             // space between two points is greater than a portion of the tick
             // pixel interval
@@ -778,7 +779,6 @@ var OrdinalAxis;
         });
         /* eslint-enable no-invalid-this */
     }
-
     OrdinalAxis.compose = compose;
 })(OrdinalAxis || (OrdinalAxis = {}));
 OrdinalAxis.compose(Axis, Chart, Series); // @todo move to StockChart, remove from master

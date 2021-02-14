@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -31,10 +31,29 @@ var glob = ( // @todo UMD variable named `window`, and glob named `win`
     isFirefox = userAgent.indexOf('Firefox') !== -1, isChrome = userAgent.indexOf('Chrome') !== -1,
     hasBidiBug = (isFirefox &&
         parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
-    );
+    ), noop = function () {
+    },
+// Checks whether the browser supports passive events, (#11353).
+    checkPassiveEvents = function () {
+        var supportsPassive = false;
+        // Object.defineProperty doesn't work on IE as well as passive events -
+        // instead of using polyfill, we can exclude IE totally.
+        if (!isMS) {
+            var opts = Object.defineProperty({}, 'passive', {
+                get: function () {
+                    supportsPassive = true;
+                }
+            });
+            if (glob.addEventListener && glob.removeEventListener) {
+                glob.addEventListener('testPassive', noop, opts);
+                glob.removeEventListener('testPassive', noop, opts);
+            }
+        }
+        return supportsPassive;
+    };
 var H = {
     product: 'Highcharts',
-    version: '8.2.0',
+    version: '9.0.0',
     deg2rad: Math.PI * 2 / 360,
     doc: doc,
     hasBidiBug: hasBidiBug,
@@ -48,12 +67,12 @@ var H = {
     SVG_NS: SVG_NS,
     chartCount: 0,
     seriesTypes: {},
+    supportsPassiveEvents: checkPassiveEvents(),
     symbolSizes: {},
     svg: svg,
     win: glob,
     marginNames: ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
-    noop: function () {
-    },
+    noop: noop,
     /**
      * Theme options that should get applied to the chart. In module mode it
      * might not be possible to change this property because of read-only

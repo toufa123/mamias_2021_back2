@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2020 Paweł Fus
+ *  (c) 2010-2021 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -10,12 +10,42 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({__proto__: []} instanceof Array && function (d, b) {
+                d.__proto__ = b;
+            }) ||
+            function (d, b) {
+                for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+            };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+
+        function __() {
+            this.constructor = d;
+        }
+
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import H from '../../Core/Globals.js';
 import NodesMixin from '../../Mixins/Nodes.js';
 import Point from '../../Core/Series/Point.js';
+import Series from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
+var seriesTypes = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 
-var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick, seriesType = U.seriesType;
+var addEvent = U.addEvent, css = U.css, defined = U.defined, extend = U.extend, merge = U.merge, pick = U.pick;
+import '../../Core/Options.js';
+import './Layouts.js';
+import './DraggableNodes.js';
+
+var dragNodesMixin = H.dragNodesMixin;
 /**
  * Formatter callback function.
  *
@@ -53,12 +83,11 @@ var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick, seri
  * @since 7.0.0
  */
 ''; // detach doclets above
-import '../../Core/Options.js';
-import './Layouts.js';
-import './DraggableNodes.js';
-import '../../Core/Series/Series.js';
-
-var seriesTypes = H.seriesTypes, Series = H.Series, dragNodesMixin = H.dragNodesMixin;
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * @private
  * @class
@@ -66,7 +95,28 @@ var seriesTypes = H.seriesTypes, Series = H.Series, dragNodesMixin = H.dragNodes
  *
  * @extends Highcharts.Series
  */
-seriesType('networkgraph', 'line',
+var NetworkgraphSeries = /** @class */ (function (_super) {
+    __extends(NetworkgraphSeries, _super);
+
+    function NetworkgraphSeries() {
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.nodes = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
+    }
+
     /**
      * A networkgraph is a type of relationship chart, where connnections
      * (links) attracts nodes (points) and other nodes repulse each other.
@@ -86,7 +136,7 @@ seriesType('networkgraph', 'line',
      * @requires     modules/networkgraph
      * @optionparent plotOptions.networkgraph
      */
-    {
+    NetworkgraphSeries.defaultOptions = merge(Series.defaultOptions, {
         stickyTracking: false,
         /**
          * @ignore-option
@@ -434,525 +484,569 @@ seriesType('networkgraph', 'line',
             friction: -0.981
         },
         showInLegend: false
-    }, {
-        /**
-         * Array of internal forces. Each force should be later defined in
-         * integrations.js.
-         * @private
-         */
-        forces: ['barycenter', 'repulsive', 'attractive'],
-        hasDraggableNodes: true,
-        drawGraph: null,
-        isCartesian: false,
-        requireSorting: false,
-        directTouch: true,
-        noSharedTooltip: true,
-        pointArrayMap: ['from', 'to'],
-        trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-        drawTracker: H.TrackerMixin.drawTrackerPoint,
-        // Animation is run in `series.simulation`.
-        animate: null,
-        buildKDTree: H.noop,
-        /**
-         * Create a single node that holds information on incoming and outgoing
-         * links.
-         * @private
-         */
-        createNode: NodesMixin.createNode,
-        destroy: function () {
-            if (this.layout) {
-                this.layout.removeElementFromCollection(this, this.layout.series);
-            }
-            NodesMixin.destroy.call(this);
-        },
-        /* eslint-disable no-invalid-this, valid-jsdoc */
-        /**
-         * Extend init with base event, which should stop simulation during
-         * update. After data is updated, `chart.render` resumes the simulation.
-         * @private
-         */
-        init: function () {
-            Series.prototype.init.apply(this, arguments);
-            addEvent(this, 'updatedData', function () {
-                if (this.layout) {
-                    this.layout.stop();
-                }
-            });
-            return this;
-        },
-        /**
-         * Extend generatePoints by adding the nodes, which are Point objects
-         * but pushed to the this.nodes array.
-         * @private
-         */
-        generatePoints: function () {
-            var node, i;
-            NodesMixin.generatePoints.apply(this, arguments);
-            // In networkgraph, it's fine to define stanalone nodes, create
-            // them:
-            if (this.options.nodes) {
-                this.options.nodes.forEach(function (nodeOptions) {
-                    if (!this.nodeLookup[nodeOptions.id]) {
-                        this.nodeLookup[nodeOptions.id] =
-                            this.createNode(nodeOptions.id);
-                    }
-                }, this);
-            }
-            for (i = this.nodes.length - 1; i >= 0; i--) {
-                node = this.nodes[i];
-                node.degree = node.getDegree();
-                node.radius = pick(node.marker && node.marker.radius, this.options.marker && this.options.marker.radius, 0);
-                // If node exists, but it's not available in nodeLookup,
-                // then it's leftover from previous runs (e.g. setData)
-                if (!this.nodeLookup[node.id]) {
-                    node.remove();
-                }
-            }
-            this.data.forEach(function (link) {
-                link.formatPrefix = 'link';
-            });
-            this.indexateNodes();
-        },
-        /**
-         * In networkgraph, series.points refers to links,
-         * but series.nodes refers to actual points.
-         * @private
-         */
-        getPointsCollection: function () {
-            return this.nodes || [];
-        },
-        /**
-         * Set index for each node. Required for proper `node.update()`.
-         * Note that links are indexated out of the box in `generatePoints()`.
-         *
-         * @private
-         */
-        indexateNodes: function () {
-            this.nodes.forEach(function (node, index) {
-                node.index = index;
-            });
-        },
-        /**
-         * Extend the default marker attribs by using a non-rounded X position,
-         * otherwise the nodes will jump from pixel to pixel which looks a bit
-         * jaggy when approaching equilibrium.
-         * @private
-         */
-        markerAttribs: function (point, state) {
-            var attribs = Series.prototype.markerAttribs.call(this, point, state);
-            // series.render() is called before initial positions are set:
-            if (!defined(point.plotY)) {
-                attribs.y = 0;
-            }
-            attribs.x = (point.plotX || 0) - (attribs.width / 2 || 0);
-            return attribs;
-        },
-        /**
-         * Run pre-translation and register nodes&links to the deffered layout.
-         * @private
-         */
-        translate: function () {
-            if (!this.processedXData) {
-                this.processData();
-            }
-            this.generatePoints();
-            this.deferLayout();
-            this.nodes.forEach(function (node) {
-                // Draw the links from this node
-                node.isInside = true;
-                node.linksFrom.forEach(function (point) {
-                    point.shapeType = 'path';
-                    // Pass test in drawPoints
-                    point.y = 1;
-                });
-            });
-        },
-        /**
-         * Defer the layout.
-         * Each series first registers all nodes and links, then layout
-         * calculates all nodes positions and calls `series.render()` in every
-         * simulation step.
-         *
-         * Note:
-         * Animation is done through `requestAnimationFrame` directly, without
-         * `Highcharts.animate()` use.
-         * @private
-         */
-        deferLayout: function () {
-            var layoutOptions = this.options.layoutAlgorithm, graphLayoutsStorage = this.chart.graphLayoutsStorage,
-                graphLayoutsLookup = this.chart.graphLayoutsLookup, chartOptions = this.chart.options.chart, layout;
-            if (!this.visible) {
-                return;
-            }
-            if (!graphLayoutsStorage) {
-                this.chart.graphLayoutsStorage = graphLayoutsStorage = {};
-                this.chart.graphLayoutsLookup = graphLayoutsLookup = [];
-            }
-            layout = graphLayoutsStorage[layoutOptions.type];
-            if (!layout) {
-                layoutOptions.enableSimulation =
-                    !defined(chartOptions.forExport) ?
-                        layoutOptions.enableSimulation :
-                        !chartOptions.forExport;
-                graphLayoutsStorage[layoutOptions.type] = layout =
-                    new H.layouts[layoutOptions.type]();
-                layout.init(layoutOptions);
-                graphLayoutsLookup.splice(layout.index, 0, layout);
-            }
-            this.layout = layout;
-            layout.setArea(0, 0, this.chart.plotWidth, this.chart.plotHeight);
-            layout.addElementsToCollection([this], layout.series);
-            layout.addElementsToCollection(this.nodes, layout.nodes);
-            layout.addElementsToCollection(this.points, layout.links);
-        },
-        /**
-         * Extend the render function to also render this.nodes together with
-         * the points.
-         * @private
-         */
-        render: function () {
-            var series = this, points = series.points, hoverPoint = series.chart.hoverPoint, dataLabels = [];
-            // Render markers:
-            series.points = series.nodes;
-            seriesTypes.line.prototype.render.call(this);
-            series.points = points;
-            points.forEach(function (point) {
-                if (point.fromNode && point.toNode) {
-                    point.renderLink();
-                    point.redrawLink();
-                }
-            });
-            if (hoverPoint && hoverPoint.series === series) {
-                series.redrawHalo(hoverPoint);
-            }
-            if (series.chart.hasRendered &&
-                !series.options.dataLabels.allowOverlap) {
-                series.nodes.concat(series.points).forEach(function (node) {
-                    if (node.dataLabel) {
-                        dataLabels.push(node.dataLabel);
-                    }
-                });
-                series.chart.hideOverlappingLabels(dataLabels);
-            }
-        },
-        // Networkgraph has two separate collecions of nodes and lines, render
-        // dataLabels for both sets:
-        drawDataLabels: function () {
-            var textPath = this.options.dataLabels.textPath;
-            // Render node labels:
-            Series.prototype.drawDataLabels.apply(this, arguments);
-            // Render link labels:
-            this.points = this.data;
-            this.options.dataLabels.textPath =
-                this.options.dataLabels.linkTextPath;
-            Series.prototype.drawDataLabels.apply(this, arguments);
-            // Restore nodes
-            this.points = this.nodes;
-            this.options.dataLabels.textPath = textPath;
-        },
-        // Return the presentational attributes.
-        pointAttribs: function (point, state) {
-            // By default, only `selected` state is passed on
-            var pointState = state || point && point.state || 'normal',
-                attribs = Series.prototype.pointAttribs.call(this, point, pointState),
-                stateOptions = this.options.states[pointState];
-            if (point && !point.isNode) {
-                attribs = point.getLinkAttributes();
-                // For link, get prefixed names:
-                if (stateOptions) {
-                    attribs = {
-                        // TO DO: API?
-                        stroke: stateOptions.linkColor || attribs.stroke,
-                        dashstyle: (stateOptions.linkDashStyle || attribs.dashstyle),
-                        opacity: pick(stateOptions.linkOpacity, attribs.opacity),
-                        'stroke-width': stateOptions.linkColor ||
-                            attribs['stroke-width']
-                    };
-                }
-            }
-            return attribs;
-        },
-        // Draggable mode:
-        /**
-         * Redraw halo on mousemove during the drag&drop action.
-         * @private
-         * @param {Highcharts.Point} point The point that should show halo.
-         */
-        redrawHalo: dragNodesMixin.redrawHalo,
-        /**
-         * Mouse down action, initializing drag&drop mode.
-         * @private
-         * @param {global.Event} event Browser event, before normalization.
-         * @param {Highcharts.Point} point The point that event occured.
-         */
-        onMouseDown: dragNodesMixin.onMouseDown,
-        /**
-         * Mouse move action during drag&drop.
-         * @private
-         * @param {global.Event} event Browser event, before normalization.
-         * @param {Highcharts.Point} point The point that event occured.
-         */
-        onMouseMove: dragNodesMixin.onMouseMove,
-        /**
-         * Mouse up action, finalizing drag&drop.
-         * @private
-         * @param {Highcharts.Point} point The point that event occured.
-         */
-        onMouseUp: dragNodesMixin.onMouseUp,
-        /**
-         * When state should be passed down to all points, concat nodes and
-         * links and apply this state to all of them.
-         * @private
-         */
-        setState: function (state, inherit) {
-            if (inherit) {
-                this.points = this.nodes.concat(this.data);
-                Series.prototype.setState.apply(this, arguments);
-                this.points = this.data;
-            } else {
-                Series.prototype.setState.apply(this, arguments);
-            }
-            // If simulation is done, re-render points with new states:
-            if (!this.layout.simulation && !state) {
-                this.render();
-            }
-        }
-    }, {
-        setState: NodesMixin.setNodeState,
-        /**
-         * Basic `point.init()` and additional styles applied when
-         * `series.draggable` is enabled.
-         * @private
-         */
-        init: function () {
-            Point.prototype.init.apply(this, arguments);
-            if (this.series.options.draggable &&
-                !this.series.chart.styledMode) {
-                addEvent(this, 'mouseOver', function () {
-                    css(this.series.chart.container, {cursor: 'move'});
-                });
-                addEvent(this, 'mouseOut', function () {
-                    css(this.series.chart.container, {cursor: 'default'});
-                });
-            }
-            return this;
-        },
-        /**
-         * Return degree of a node. If node has no connections, it still has
-         * deg=1.
-         * @private
-         * @return {number}
-         */
-        getDegree: function () {
-            var deg = this.isNode ?
-                this.linksFrom.length + this.linksTo.length :
-                0;
-            return deg === 0 ? 1 : deg;
-        },
-        // Links:
-        /**
-         * Get presentational attributes of link connecting two nodes.
-         * @private
-         * @return {Highcharts.SVGAttributes}
-         */
-        getLinkAttributes: function () {
-            var linkOptions = this.series.options.link, pointOptions = this.options;
-            return {
-                'stroke-width': pick(pointOptions.width, linkOptions.width),
-                stroke: (pointOptions.color || linkOptions.color),
-                dashstyle: (pointOptions.dashStyle || linkOptions.dashStyle),
-                opacity: pick(pointOptions.opacity, linkOptions.opacity, 1)
-            };
-        },
-        /**
-         * Render link and add it to the DOM.
-         * @private
-         */
-        renderLink: function () {
-            var attribs;
-            if (!this.graphic) {
-                this.graphic = this.series.chart.renderer
-                    .path(this.getLinkPath())
-                    .add(this.series.group);
-                if (!this.series.chart.styledMode) {
-                    attribs = this.series.pointAttribs(this);
-                    this.graphic.attr(attribs);
-                    (this.dataLabels || []).forEach(function (label) {
-                        if (label) {
-                            label.attr({
-                                opacity: attribs.opacity
-                            });
-                        }
-                    });
-                }
-            }
-        },
-        /**
-         * Redraw link's path.
-         * @private
-         */
-        redrawLink: function () {
-            var path = this.getLinkPath(), attribs;
-            if (this.graphic) {
-                this.shapeArgs = {
-                    d: path
-                };
-                if (!this.series.chart.styledMode) {
-                    attribs = this.series.pointAttribs(this);
-                    this.graphic.attr(attribs);
-                    (this.dataLabels || []).forEach(function (label) {
-                        if (label) {
-                            label.attr({
-                                opacity: attribs.opacity
-                            });
-                        }
-                    });
-                }
-                this.graphic.animate(this.shapeArgs);
-                // Required for dataLabels
-                var start = path[0];
-                var end = path[1];
-                if (start[0] === 'M' && end[0] === 'L') {
-                    this.plotX = (start[1] + end[1]) / 2;
-                    this.plotY = (start[2] + end[2]) / 2;
-                }
-            }
-        },
-        /**
-         * Get mass fraction applied on two nodes connected to each other. By
-         * default, when mass is equal to `1`, mass fraction for both nodes
-         * equal to 0.5.
-         * @private
-         * @return {Highcharts.Dictionary<number>}
-         *         For example `{ fromNode: 0.5, toNode: 0.5 }`
-         */
-        getMass: function () {
-            var m1 = this.fromNode.mass, m2 = this.toNode.mass, sum = m1 + m2;
-            return {
-                fromNode: 1 - m1 / sum,
-                toNode: 1 - m2 / sum
-            };
-        },
-        /**
-         * Get link path connecting two nodes.
-         * @private
-         * @return {Array<Highcharts.SVGPathArray>}
-         *         Path: `['M', x, y, 'L', x, y]`
-         */
-        getLinkPath: function () {
-            var left = this.fromNode, right = this.toNode;
-            // Start always from left to the right node, to prevent rendering
-            // labels upside down
-            if (left.plotX > right.plotX) {
-                left = this.toNode;
-                right = this.fromNode;
-            }
-            return [
-                ['M', left.plotX || 0, left.plotY || 0],
-                ['L', right.plotX || 0, right.plotY || 0]
-            ];
-            /*
-            IDEA: different link shapes?
-            return [
-                'M',
-                from.plotX,
-                from.plotY,
-                'Q',
-                (to.plotX + from.plotX) / 2,
-                (to.plotY + from.plotY) / 2 + 15,
-                to.plotX,
-                to.plotY
-            ];*/
-        },
-        isValid: function () {
-            return !this.isNode || defined(this.id);
-        },
-        /**
-         * Common method for removing points and nodes in networkgraph. To
-         * remove `link`, use `series.data[index].remove()`. To remove `node`
-         * with all connections, use `series.nodes[index].remove()`.
-         * @private
-         * @param {boolean} [redraw=true]
-         *        Whether to redraw the chart or wait for an explicit call. When
-         *        doing more operations on the chart, for example running
-         *        `point.remove()` in a loop, it is best practice to set
-         *        `redraw` to false and call `chart.redraw()` after.
-         * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=false]
-         *        Whether to apply animation, and optionally animation
-         *        configuration.
-         * @return {void}
-         */
-        remove: function (redraw, animation) {
-            var point = this, series = point.series, nodesOptions = series.options.nodes || [], index,
-                i = nodesOptions.length;
-            // For nodes, remove all connected links:
-            if (point.isNode) {
-                // Temporary disable series.points array, because
-                // Series.removePoint() modifies it
-                series.points = [];
-                // Remove link from all nodes collections:
-                []
-                    .concat(point.linksFrom)
-                    .concat(point.linksTo)
-                    .forEach(function (linkFromTo) {
-                        // Incoming links
-                        index = linkFromTo.fromNode.linksFrom.indexOf(linkFromTo);
-                        if (index > -1) {
-                            linkFromTo.fromNode.linksFrom.splice(index, 1);
-                        }
-                        // Outcoming links
-                        index = linkFromTo.toNode.linksTo.indexOf(linkFromTo);
-                        if (index > -1) {
-                            linkFromTo.toNode.linksTo.splice(index, 1);
-                        }
-                        // Remove link from data/points collections
-                        Series.prototype.removePoint.call(series, series.data.indexOf(linkFromTo), false, false);
-                    });
-                // Restore points array, after links are removed
-                series.points = series.data.slice();
-                // Proceed with removing node. It's similar to
-                // Series.removePoint() method, but doesn't modify other arrays
-                series.nodes.splice(series.nodes.indexOf(point), 1);
-                // Remove node options from config
-                while (i--) {
-                    if (nodesOptions[i].id === point.options.id) {
-                        series.options.nodes.splice(i, 1);
-                        break;
-                    }
-                }
-                if (point) {
-                    point.destroy();
-                }
-                // Run redraw if requested
-                series.isDirty = true;
-                series.isDirtyData = true;
-                if (redraw) {
-                    series.chart.redraw(redraw);
-                }
-            } else {
-                series.removePoint(series.data.indexOf(point), redraw, animation);
-            }
-        },
-        /**
-         * Destroy point. If it's a node, remove all links coming out of this
-         * node. Then remove point from the layout.
-         * @private
-         * @return {void}
-         */
-        destroy: function () {
-            if (this.isNode) {
-                this.linksFrom.concat(this.linksTo).forEach(function (link) {
-                    // Removing multiple nodes at the same time
-                    // will try to remove link between nodes twice
-                    if (link.destroyElements) {
-                        link.destroyElements();
-                    }
-                });
-            }
-            this.series.layout.removeElementFromCollection(this, this.series.layout[this.isNode ? 'nodes' : 'links']);
-            return Point.prototype.destroy.apply(this, arguments);
-        }
     });
+    return NetworkgraphSeries;
+}(Series));
+extend(NetworkgraphSeries.prototype, {
+    /**
+     * Array of internal forces. Each force should be later defined in
+     * integrations.js.
+     * @private
+     */
+    forces: ['barycenter', 'repulsive', 'attractive'],
+    hasDraggableNodes: true,
+    drawGraph: null,
+    isCartesian: false,
+    requireSorting: false,
+    directTouch: true,
+    noSharedTooltip: true,
+    pointArrayMap: ['from', 'to'],
+    trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
+    drawTracker: seriesTypes.column.prototype.drawTracker,
+    // Animation is run in `series.simulation`.
+    animate: null,
+    buildKDTree: H.noop,
+    /**
+     * Create a single node that holds information on incoming and outgoing
+     * links.
+     * @private
+     */
+    createNode: NodesMixin.createNode,
+    destroy: function () {
+        if (this.layout) {
+            this.layout.removeElementFromCollection(this, this.layout.series);
+        }
+        NodesMixin.destroy.call(this);
+    },
+    /* eslint-disable no-invalid-this, valid-jsdoc */
+    /**
+     * Extend init with base event, which should stop simulation during
+     * update. After data is updated, `chart.render` resumes the simulation.
+     * @private
+     */
+    init: function () {
+        Series.prototype.init.apply(this, arguments);
+        addEvent(this, 'updatedData', function () {
+            if (this.layout) {
+                this.layout.stop();
+            }
+        });
+        return this;
+    },
+    /**
+     * Extend generatePoints by adding the nodes, which are Point objects
+     * but pushed to the this.nodes array.
+     * @private
+     */
+    generatePoints: function () {
+        var node, i;
+        NodesMixin.generatePoints.apply(this, arguments);
+        // In networkgraph, it's fine to define stanalone nodes, create
+        // them:
+        if (this.options.nodes) {
+            this.options.nodes.forEach(function (nodeOptions) {
+                if (!this.nodeLookup[nodeOptions.id]) {
+                    this.nodeLookup[nodeOptions.id] =
+                        this.createNode(nodeOptions.id);
+                }
+            }, this);
+        }
+        for (i = this.nodes.length - 1; i >= 0; i--) {
+            node = this.nodes[i];
+            node.degree = node.getDegree();
+            node.radius = pick(node.marker && node.marker.radius, this.options.marker && this.options.marker.radius, 0);
+            // If node exists, but it's not available in nodeLookup,
+            // then it's leftover from previous runs (e.g. setData)
+            if (!this.nodeLookup[node.id]) {
+                node.remove();
+            }
+        }
+        this.data.forEach(function (link) {
+            link.formatPrefix = 'link';
+        });
+        this.indexateNodes();
+    },
+    /**
+     * In networkgraph, series.points refers to links,
+     * but series.nodes refers to actual points.
+     * @private
+     */
+    getPointsCollection: function () {
+        return this.nodes || [];
+    },
+    /**
+     * Set index for each node. Required for proper `node.update()`.
+     * Note that links are indexated out of the box in `generatePoints()`.
+     *
+     * @private
+     */
+    indexateNodes: function () {
+        this.nodes.forEach(function (node, index) {
+            node.index = index;
+        });
+    },
+    /**
+     * Extend the default marker attribs by using a non-rounded X position,
+     * otherwise the nodes will jump from pixel to pixel which looks a bit
+     * jaggy when approaching equilibrium.
+     * @private
+     */
+    markerAttribs: function (point, state) {
+        var attribs = Series.prototype.markerAttribs.call(this, point, state);
+        // series.render() is called before initial positions are set:
+        if (!defined(point.plotY)) {
+            attribs.y = 0;
+        }
+        attribs.x = (point.plotX || 0) - (attribs.width / 2 || 0);
+        return attribs;
+    },
+    /**
+     * Run pre-translation and register nodes&links to the deffered layout.
+     * @private
+     */
+    translate: function () {
+        if (!this.processedXData) {
+            this.processData();
+        }
+        this.generatePoints();
+        this.deferLayout();
+        this.nodes.forEach(function (node) {
+            // Draw the links from this node
+            node.isInside = true;
+            node.linksFrom.forEach(function (point) {
+                point.shapeType = 'path';
+                // Pass test in drawPoints
+                point.y = 1;
+            });
+        });
+    },
+    /**
+     * Defer the layout.
+     * Each series first registers all nodes and links, then layout
+     * calculates all nodes positions and calls `series.render()` in every
+     * simulation step.
+     *
+     * Note:
+     * Animation is done through `requestAnimationFrame` directly, without
+     * `Highcharts.animate()` use.
+     * @private
+     */
+    deferLayout: function () {
+        var layoutOptions = this.options.layoutAlgorithm, graphLayoutsStorage = this.chart.graphLayoutsStorage,
+            graphLayoutsLookup = this.chart.graphLayoutsLookup, chartOptions = this.chart.options.chart, layout;
+        if (!this.visible) {
+            return;
+        }
+        if (!graphLayoutsStorage) {
+            this.chart.graphLayoutsStorage = graphLayoutsStorage = {};
+            this.chart.graphLayoutsLookup = graphLayoutsLookup = [];
+        }
+        layout = graphLayoutsStorage[layoutOptions.type];
+        if (!layout) {
+            layoutOptions.enableSimulation =
+                !defined(chartOptions.forExport) ?
+                    layoutOptions.enableSimulation :
+                    !chartOptions.forExport;
+            graphLayoutsStorage[layoutOptions.type] = layout =
+                new H.layouts[layoutOptions.type]();
+            layout.init(layoutOptions);
+            graphLayoutsLookup.splice(layout.index, 0, layout);
+        }
+        this.layout = layout;
+        layout.setArea(0, 0, this.chart.plotWidth, this.chart.plotHeight);
+        layout.addElementsToCollection([this], layout.series);
+        layout.addElementsToCollection(this.nodes, layout.nodes);
+        layout.addElementsToCollection(this.points, layout.links);
+    },
+    /**
+     * Extend the render function to also render this.nodes together with
+     * the points.
+     * @private
+     */
+    render: function () {
+        var series = this, points = series.points, hoverPoint = series.chart.hoverPoint, dataLabels = [];
+        // Render markers:
+        series.points = series.nodes;
+        seriesTypes.line.prototype.render.call(this);
+        series.points = points;
+        points.forEach(function (point) {
+            if (point.fromNode && point.toNode) {
+                point.renderLink();
+                point.redrawLink();
+            }
+        });
+        if (hoverPoint && hoverPoint.series === series) {
+            series.redrawHalo(hoverPoint);
+        }
+        if (series.chart.hasRendered &&
+            !series.options.dataLabels.allowOverlap) {
+            series.nodes.concat(series.points).forEach(function (node) {
+                if (node.dataLabel) {
+                    dataLabels.push(node.dataLabel);
+                }
+            });
+            series.chart.hideOverlappingLabels(dataLabels);
+        }
+    },
+    // Networkgraph has two separate collecions of nodes and lines, render
+    // dataLabels for both sets:
+    drawDataLabels: function () {
+        var textPath = this.options.dataLabels.textPath;
+        // Render node labels:
+        Series.prototype.drawDataLabels.apply(this, arguments);
+        // Render link labels:
+        this.points = this.data;
+        this.options.dataLabels.textPath =
+            this.options.dataLabels.linkTextPath;
+        Series.prototype.drawDataLabels.apply(this, arguments);
+        // Restore nodes
+        this.points = this.nodes;
+        this.options.dataLabels.textPath = textPath;
+    },
+    // Return the presentational attributes.
+    pointAttribs: function (point, state) {
+        // By default, only `selected` state is passed on
+        var pointState = state || point && point.state || 'normal',
+            attribs = Series.prototype.pointAttribs.call(this, point, pointState),
+            stateOptions = this.options.states[pointState];
+        if (point && !point.isNode) {
+            attribs = point.getLinkAttributes();
+            // For link, get prefixed names:
+            if (stateOptions) {
+                attribs = {
+                    // TO DO: API?
+                    stroke: stateOptions.linkColor || attribs.stroke,
+                    dashstyle: (stateOptions.linkDashStyle || attribs.dashstyle),
+                    opacity: pick(stateOptions.linkOpacity, attribs.opacity),
+                    'stroke-width': stateOptions.linkColor ||
+                        attribs['stroke-width']
+                };
+            }
+        }
+        return attribs;
+    },
+    // Draggable mode:
+    /**
+     * Redraw halo on mousemove during the drag&drop action.
+     * @private
+     * @param {Highcharts.Point} point The point that should show halo.
+     */
+    redrawHalo: dragNodesMixin.redrawHalo,
+    /**
+     * Mouse down action, initializing drag&drop mode.
+     * @private
+     * @param {global.Event} event Browser event, before normalization.
+     * @param {Highcharts.Point} point The point that event occured.
+     */
+    onMouseDown: dragNodesMixin.onMouseDown,
+    /**
+     * Mouse move action during drag&drop.
+     * @private
+     * @param {global.Event} event Browser event, before normalization.
+     * @param {Highcharts.Point} point The point that event occured.
+     */
+    onMouseMove: dragNodesMixin.onMouseMove,
+    /**
+     * Mouse up action, finalizing drag&drop.
+     * @private
+     * @param {Highcharts.Point} point The point that event occured.
+     */
+    onMouseUp: dragNodesMixin.onMouseUp,
+    /**
+     * When state should be passed down to all points, concat nodes and
+     * links and apply this state to all of them.
+     * @private
+     */
+    setState: function (state, inherit) {
+        if (inherit) {
+            this.points = this.nodes.concat(this.data);
+            Series.prototype.setState.apply(this, arguments);
+            this.points = this.data;
+        } else {
+            Series.prototype.setState.apply(this, arguments);
+        }
+        // If simulation is done, re-render points with new states:
+        if (!this.layout.simulation && !state) {
+            this.render();
+        }
+    }
+});
+/* *
+ *
+ *  Class
+ *
+ * */
+var NetworkgraphPoint = /** @class */ (function (_super) {
+    __extends(NetworkgraphPoint, _super);
+
+    function NetworkgraphPoint() {
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.degree = void 0;
+        _this.linksFrom = void 0;
+        _this.linksTo = void 0;
+        _this.options = void 0;
+        _this.radius = void 0;
+        _this.series = void 0;
+        _this.toNode = void 0;
+        return _this;
+    }
+
+    return NetworkgraphPoint;
+}(Series.prototype.pointClass));
+extend(NetworkgraphPoint.prototype, {
+    setState: NodesMixin.setNodeState,
+    /**
+     * Basic `point.init()` and additional styles applied when
+     * `series.draggable` is enabled.
+     * @private
+     */
+    init: function () {
+        Point.prototype.init.apply(this, arguments);
+        if (this.series.options.draggable &&
+            !this.series.chart.styledMode) {
+            addEvent(this, 'mouseOver', function () {
+                css(this.series.chart.container, {cursor: 'move'});
+            });
+            addEvent(this, 'mouseOut', function () {
+                css(this.series.chart.container, {cursor: 'default'});
+            });
+        }
+        return this;
+    },
+    /**
+     * Return degree of a node. If node has no connections, it still has
+     * deg=1.
+     * @private
+     * @return {number}
+     */
+    getDegree: function () {
+        var deg = this.isNode ?
+            this.linksFrom.length + this.linksTo.length :
+            0;
+        return deg === 0 ? 1 : deg;
+    },
+    // Links:
+    /**
+     * Get presentational attributes of link connecting two nodes.
+     * @private
+     * @return {Highcharts.SVGAttributes}
+     */
+    getLinkAttributes: function () {
+        var linkOptions = this.series.options.link, pointOptions = this.options;
+        return {
+            'stroke-width': pick(pointOptions.width, linkOptions.width),
+            stroke: (pointOptions.color || linkOptions.color),
+            dashstyle: (pointOptions.dashStyle || linkOptions.dashStyle),
+            opacity: pick(pointOptions.opacity, linkOptions.opacity, 1)
+        };
+    },
+    /**
+     * Render link and add it to the DOM.
+     * @private
+     */
+    renderLink: function () {
+        var attribs;
+        if (!this.graphic) {
+            this.graphic = this.series.chart.renderer
+                .path(this.getLinkPath())
+                .add(this.series.group);
+            if (!this.series.chart.styledMode) {
+                attribs = this.series.pointAttribs(this);
+                this.graphic.attr(attribs);
+                (this.dataLabels || []).forEach(function (label) {
+                    if (label) {
+                        label.attr({
+                            opacity: attribs.opacity
+                        });
+                    }
+                });
+            }
+        }
+    },
+    /**
+     * Redraw link's path.
+     * @private
+     */
+    redrawLink: function () {
+        var path = this.getLinkPath(), attribs;
+        if (this.graphic) {
+            this.shapeArgs = {
+                d: path
+            };
+            if (!this.series.chart.styledMode) {
+                attribs = this.series.pointAttribs(this);
+                this.graphic.attr(attribs);
+                (this.dataLabels || []).forEach(function (label) {
+                    if (label) {
+                        label.attr({
+                            opacity: attribs.opacity
+                        });
+                    }
+                });
+            }
+            this.graphic.animate(this.shapeArgs);
+            // Required for dataLabels
+            var start = path[0];
+            var end = path[1];
+            if (start[0] === 'M' && end[0] === 'L') {
+                this.plotX = (start[1] + end[1]) / 2;
+                this.plotY = (start[2] + end[2]) / 2;
+            }
+        }
+    },
+    /**
+     * Get mass fraction applied on two nodes connected to each other. By
+     * default, when mass is equal to `1`, mass fraction for both nodes
+     * equal to 0.5.
+     * @private
+     * @return {Highcharts.Dictionary<number>}
+     *         For example `{ fromNode: 0.5, toNode: 0.5 }`
+     */
+    getMass: function () {
+        var m1 = this.fromNode.mass, m2 = this.toNode.mass, sum = m1 + m2;
+        return {
+            fromNode: 1 - m1 / sum,
+            toNode: 1 - m2 / sum
+        };
+    },
+    /**
+     * Get link path connecting two nodes.
+     * @private
+     * @return {Array<Highcharts.SVGPathArray>}
+     *         Path: `['M', x, y, 'L', x, y]`
+     */
+    getLinkPath: function () {
+        var left = this.fromNode, right = this.toNode;
+        // Start always from left to the right node, to prevent rendering
+        // labels upside down
+        if (left.plotX > right.plotX) {
+            left = this.toNode;
+            right = this.fromNode;
+        }
+        return [
+            ['M', left.plotX || 0, left.plotY || 0],
+            ['L', right.plotX || 0, right.plotY || 0]
+        ];
+        /*
+        IDEA: different link shapes?
+        return [
+            'M',
+            from.plotX,
+            from.plotY,
+            'Q',
+            (to.plotX + from.plotX) / 2,
+            (to.plotY + from.plotY) / 2 + 15,
+            to.plotX,
+            to.plotY
+        ];*/
+    },
+    isValid: function () {
+        return !this.isNode || defined(this.id);
+    },
+    /**
+     * Common method for removing points and nodes in networkgraph. To
+     * remove `link`, use `series.data[index].remove()`. To remove `node`
+     * with all connections, use `series.nodes[index].remove()`.
+     * @private
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart or wait for an explicit call. When
+     *        doing more operations on the chart, for example running
+     *        `point.remove()` in a loop, it is best practice to set
+     *        `redraw` to false and call `chart.redraw()` after.
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=false]
+     *        Whether to apply animation, and optionally animation
+     *        configuration.
+     * @return {void}
+     */
+    remove: function (redraw, animation) {
+        var point = this, series = point.series, nodesOptions = series.options.nodes || [], index,
+            i = nodesOptions.length;
+        // For nodes, remove all connected links:
+        if (point.isNode) {
+            // Temporary disable series.points array, because
+            // Series.removePoint() modifies it
+            series.points = [];
+            // Remove link from all nodes collections:
+            []
+                .concat(point.linksFrom)
+                .concat(point.linksTo)
+                .forEach(function (linkFromTo) {
+                    // Incoming links
+                    index = linkFromTo.fromNode.linksFrom.indexOf(linkFromTo);
+                    if (index > -1) {
+                        linkFromTo.fromNode.linksFrom.splice(index, 1);
+                    }
+                    // Outcoming links
+                    index = linkFromTo.toNode.linksTo.indexOf(linkFromTo);
+                    if (index > -1) {
+                        linkFromTo.toNode.linksTo.splice(index, 1);
+                    }
+                    // Remove link from data/points collections
+                    Series.prototype.removePoint.call(series, series.data.indexOf(linkFromTo), false, false);
+                });
+            // Restore points array, after links are removed
+            series.points = series.data.slice();
+            // Proceed with removing node. It's similar to
+            // Series.removePoint() method, but doesn't modify other arrays
+            series.nodes.splice(series.nodes.indexOf(point), 1);
+            // Remove node options from config
+            while (i--) {
+                if (nodesOptions[i].id === point.options.id) {
+                    series.options.nodes.splice(i, 1);
+                    break;
+                }
+            }
+            if (point) {
+                point.destroy();
+            }
+            // Run redraw if requested
+            series.isDirty = true;
+            series.isDirtyData = true;
+            if (redraw) {
+                series.chart.redraw(redraw);
+            }
+        } else {
+            series.removePoint(series.data.indexOf(point), redraw, animation);
+        }
+    },
+    /**
+     * Destroy point. If it's a node, remove all links coming out of this
+     * node. Then remove point from the layout.
+     * @private
+     * @return {void}
+     */
+    destroy: function () {
+        if (this.isNode) {
+            this.linksFrom.concat(this.linksTo).forEach(function (link) {
+                // Removing multiple nodes at the same time
+                // will try to remove link between nodes twice
+                if (link.destroyElements) {
+                    link.destroyElements();
+                }
+            });
+        }
+        this.series.layout.removeElementFromCollection(this, this.series.layout[this.isNode ? 'nodes' : 'links']);
+        return Point.prototype.destroy.apply(this, arguments);
+    }
+});
+NetworkgraphSeries.prototype.pointClass = NetworkgraphPoint;
+SeriesRegistry.registerSeriesType('networkgraph', NetworkgraphSeries);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default NetworkgraphSeries;
+/* *
+ *
+ *  API Options
+ *
+ * */
 /**
  * A `networkgraph` series. If the [type](#series.networkgraph.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).

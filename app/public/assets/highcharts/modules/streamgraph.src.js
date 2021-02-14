@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v8.2.0 (2020-08-20)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
  * Streamgraph module
  *
@@ -23,34 +23,92 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Series/StreamgraphSeries.js', [_modules['Core/Utilities.js']], function (U) {
+    _registerModule(_modules, 'Series/Streamgraph/StreamgraphSeries.js', [_modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (SeriesRegistry, U) {
         /* *
          *
          *  Streamgraph module
          *
-         *  (c) 2010-2020 Torstein Honsi
+         *  (c) 2010-2021 Torstein Honsi
          *
          *  License: www.highcharts.com/license
          *
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
-        var seriesType = U.seriesType;
+        var __extends = (this && this.__extends) || (function () {
+            var extendStatics = function (d,
+                                          b) {
+                extendStatics = Object.setPrototypeOf ||
+                    ({__proto__: []} instanceof Array && function (d,
+                                                                   b) {
+                        d.__proto__ = b;
+                    }) ||
+                    function (d,
+                              b) {
+                        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+                    };
+                return extendStatics(d, b);
+            };
+            return function (d, b) {
+                extendStatics(d, b);
+
+                function __() {
+                    this.constructor = d;
+                }
+
+                d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+            };
+        })();
+        var AreaSplineSeries = SeriesRegistry.seriesTypes.areaspline;
+        var merge = U.merge,
+            extend = U.extend;
         /**
+         * Streamgraph series type
+         *
          * @private
          * @class
          * @name Highcharts.seriesTypes.streamgraph
          *
          * @augments Highcharts.Series
          */
-        seriesType('streamgraph', 'areaspline'
+        var StreamgraphSeries = /** @class */ (function (_super) {
+            __extends(StreamgraphSeries, _super);
+
+            function StreamgraphSeries() {
+                var _this = _super !== null && _super.apply(this,
+                    arguments) || this;
+                /* *
+                 *
+                 *  Properties
+                 *
+                 * */
+                _this.data = void 0;
+                _this.points = void 0;
+                _this.options = void 0;
+                return _this;
+            }
+
+            /* *
+             *
+             *  Functions
+             *
+             * */
+            // Modifier function for stream stacks. It simply moves the point up or
+            // down in order to center the full stack vertically.
+            StreamgraphSeries.prototype.streamStacker = function (pointExtremes, stack, i) {
+                // Y bottom value
+                pointExtremes[0] -= stack.total / 2;
+                // Y value
+                pointExtremes[1] -= stack.total / 2;
+                // Record the Y data for use when getting axis extremes
+                this.stackedYData[i] = pointExtremes;
+            };
             /**
              * A streamgraph is a type of stacked area graph which is displaced around a
              * central axis, resulting in a flowing, organic shape.
@@ -64,27 +122,48 @@
              * @requires     modules/streamgraph
              * @optionparent plotOptions.streamgraph
              */
-            , {
+            StreamgraphSeries.defaultOptions = merge(AreaSplineSeries.defaultOptions, {
+                /**
+                 * @see [fillColor](#plotOptions.streamgraph.fillColor)
+                 * @see [fillOpacity](#plotOptions.streamgraph.fillOpacity)
+                 *
+                 * @apioption plotOptions.streamgraph.color
+                 */
+                /**
+                 * @see [color](#plotOptions.streamgraph.color)
+                 * @see [fillOpacity](#plotOptions.streamgraph.fillOpacity)
+                 *
+                 * @apioption plotOptions.streamgraph.fillColor
+                 */
+                /**
+                 * @see [color](#plotOptions.streamgraph.color)
+                 * @see [fillColor](#plotOptions.streamgraph.fillColor)
+                 *
+                 * @apioption plotOptions.streamgraph.fillOpacity
+                 */
                 fillOpacity: 1,
                 lineWidth: 0,
                 marker: {
                     enabled: false
                 },
                 stacking: 'stream'
-                // Prototype functions
-            }, {
-                negStacks: false,
-                // Modifier function for stream stacks. It simply moves the point up or
-                // down in order to center the full stack vertically.
-                streamStacker: function (pointExtremes, stack, i) {
-                    // Y bottom value
-                    pointExtremes[0] -= stack.total / 2;
-                    // Y value
-                    pointExtremes[1] -= stack.total / 2;
-                    // Record the Y data for use when getting axis extremes
-                    this.stackedYData[i] = pointExtremes;
-                }
             });
+            return StreamgraphSeries;
+        }(AreaSplineSeries));
+        extend(StreamgraphSeries.prototype, {
+            negStacks: false
+        });
+        SeriesRegistry.registerSeriesType('streamgraph', StreamgraphSeries);
+        /* *
+         *
+         *  Default export
+         *
+         * */
+        /* *
+         *
+         *  API options
+         *
+         * */
         /**
          * A `streamgraph` series. If the [type](#series.streamgraph.type) option is not
          * specified, it is inherited from [chart.type](#chart.type).
@@ -94,6 +173,12 @@
          * @product   highcharts highstock
          * @requires  modules/streamgraph
          * @apioption series.streamgraph
+         */
+        /**
+         * @see [fillColor](#series.streamgraph.fillColor)
+         * @see [fillOpacity](#series.streamgraph.fillOpacity)
+         *
+         * @apioption series.streamgraph.color
          */
         /**
          * An array of data points for the series. For the `streamgraph` series type,
@@ -154,8 +239,23 @@
          * @product   highcharts highstock
          * @apioption series.streamgraph.data
          */
+        /**
+         * @see [color](#series.streamgraph.color)
+         * @see [fillOpacity](#series.streamgraph.fillOpacity)
+         *
+         * @apioption series.streamgraph.fillColor
+         */
+        /**
+         * @see [color](#series.streamgraph.color)
+         * @see [fillColor](#series.streamgraph.fillColor)
+         *
+         * @type      {number}
+         * @default   1
+         * @apioption series.streamgraph.fillOpacity
+         */
         ''; // adds doclets above to transpiled file
 
+        return StreamgraphSeries;
     });
     _registerModule(_modules, 'masters/modules/streamgraph.src.js', [], function () {
 

@@ -1,5 +1,5 @@
 /**
- * @license Highcharts Gantt JS v8.2.0 (2020-08-20)
+ * @license Highcharts Gantt JS v9.0.0 (2021-02-02)
  *
  * Pathfinder
  *
@@ -23,13 +23,11 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
-
     _registerModule(_modules, 'Extensions/ArrowSymbols.js', [_modules['Core/Renderer/SVG/SVGRenderer.js']], function (SVGRenderer) {
         /* *
          *
@@ -512,7 +510,6 @@
          * @requires  highcharts-gantt
          * @apioption series.xrange.data.connect
          */
-
         /**
          * The ID of the point to connect to.
          *
@@ -555,7 +552,6 @@
                 yMax: point.plotY + bb.height / 2
             } : null;
         }
-
         /**
          * Calculate margin to place around obstacles for the pathfinder in pixels.
          * Returns a minimum of 1 pixel margin.
@@ -619,7 +615,6 @@
                 ), 1 // 1 is the minimum margin
             );
         }
-
         /* eslint-disable no-invalid-this, valid-jsdoc */
         /**
          * The Connection class. Used internally to represent a connection between two
@@ -1059,7 +1054,6 @@
                         x: rectHorizontalCenter,
                         y: rectVerticalCenter
                     },
-                    markerPoint = {},
                     xFactor = 1,
                     yFactor = 1;
                 while (theta < -Math.PI) {
@@ -1098,12 +1092,12 @@
                 if (anchor.y !== rectVerticalCenter) {
                     edgePoint.y = anchor.y;
                 }
-                markerPoint.x = edgePoint.x + (markerRadius * Math.cos(theta));
-                markerPoint.y = edgePoint.y - (markerRadius * Math.sin(theta));
-                return markerPoint;
+                return {
+                    x: edgePoint.x + (markerRadius * Math.cos(theta)),
+                    y: edgePoint.y - (markerRadius * Math.sin(theta))
+                };
             }
         });
-
         /**
          * Warn if using legacy options. Copy the options over. Note that this will
          * still break if using the legacy options in chart.update, addSeries etc.
@@ -1142,7 +1136,6 @@
         var min = Math.min,
             max = Math.max,
             abs = Math.abs;
-
         /**
          * Get index of last obstacle before xMin. Employs a type of binary search, and
          * thus requires that obstacles are sorted by xMin value.
@@ -1181,7 +1174,6 @@
             }
             return left > 0 ? left - 1 : 0;
         }
-
         /**
          * Test if a point lays within an obstacle.
          *
@@ -1203,7 +1195,6 @@
                 point.y <= obstacle.yMax &&
                 point.y >= obstacle.yMin);
         }
-
         /**
          * Find the index of an obstacle that wraps around a point.
          * Returns -1 if not found.
@@ -1232,7 +1223,6 @@
             }
             return -1;
         }
-
         /**
          * Get SVG path array from array of line segments.
          *
@@ -1255,7 +1245,6 @@
             }
             return path;
         }
-
         /**
          * Limits obstacle max/mins in all directions to bounds. Modifies input
          * obstacle.
@@ -1277,7 +1266,6 @@
             obstacle.xMin = max(obstacle.xMin, bounds.xMin);
             obstacle.xMax = min(obstacle.xMax, bounds.xMax);
         }
-
         /**
          * Get an SVG path from a starting coordinate to an ending coordinate.
          * Draws a straight line.
@@ -1304,7 +1292,6 @@
                 obstacles: [{start: start, end: end}]
             };
         }
-
         /**
          * Find a path from a starting coordinate to an ending coordinate, using
          * right angles only, and taking only starting/ending obstacle into
@@ -1364,7 +1351,6 @@
                 point[fromKey] = to[toKey || fromKey] + (offset || 0);
                 return point;
             }
-
             // eslint-disable-next-line valid-jsdoc
             /**
              * Return waypoint outside obstacle.
@@ -1375,7 +1361,6 @@
                     abs(point[direction] - obstacle[direction + 'Max']);
                 return copyFromPoint(point, direction, obstacle, direction + (useMax ? 'Max' : 'Min'), useMax ? 1 : -1);
             }
-
             // Pull out end point
             if (endObstacleIx > -1) {
                 endObstacle = chartObstacles[endObstacleIx];
@@ -1522,7 +1507,6 @@
                     softMinX),
                 endObstacleIx = findLastObstacleBefore(chartObstacles,
                     softMaxX);
-
             // eslint-disable-next-line valid-jsdoc
             /**
              * How far can you go between two points before hitting an obstacle?
@@ -1589,7 +1573,6 @@
                 }
                 return toPoint;
             }
-
             /**
              * Decide in which direction to dodge or get out of an obstacle.
              * Considers desired direction, which way is shortest, soft and hard
@@ -1659,7 +1642,6 @@
                     (maxOutOfHardBounds ? false : useMax); // Not out on min
                 return useMax;
             }
-
             // eslint-disable-next-line valid-jsdoc
             /**
              * Find a clear path between point.
@@ -1784,7 +1766,6 @@
                 segments = segments.concat(clearPathTo(segments[segments.length - 1].end, toPoint, !dirIsX));
                 return segments;
             }
-
             // eslint-disable-next-line valid-jsdoc
             /**
              * Extract point to outside of obstacle in whichever direction is
@@ -1813,7 +1794,6 @@
                     y: obstacle[useMax ? 'yMax' : 'yMin'] + (useMax ? 1 : -1)
                 };
             }
-
             // Cut the obstacle array to soft bounds for optimization in large
             // datasets.
             chartObstacles =
@@ -2154,7 +2134,6 @@
          * @requires  highcharts-gantt
          * @apioption series.xrange.data.connect
          */
-
         /**
          * The ID of the point to connect to.
          *
@@ -2197,7 +2176,6 @@
                 yMax: point.plotY + bb.height / 2
             } : null;
         }
-
         /**
          * Calculate margin to place around obstacles for the pathfinder in pixels.
          * Returns a minimum of 1 pixel margin.
@@ -2261,7 +2239,6 @@
                 ), 1 // 1 is the minimum margin
             );
         }
-
         /* eslint-disable no-invalid-this, valid-jsdoc */
         /**
          * The Pathfinder class.
@@ -2329,6 +2306,12 @@
                 chart.series.forEach(function (series) {
                     if (series.visible && !series.options.isInternal) {
                         series.points.forEach(function (point) {
+                            var ganttPointOptions = point.options;
+                            // For Gantt series the connect could be
+                            // defined as a dependency
+                            if (ganttPointOptions && ganttPointOptions.dependency) {
+                                ganttPointOptions.connect = ganttPointOptions.dependency;
+                            }
                             var to,
                                 connects = (point.options &&
                                     point.options.connect &&
@@ -2641,7 +2624,6 @@
                         x: rectHorizontalCenter,
                         y: rectVerticalCenter
                     },
-                    markerPoint = {},
                     xFactor = 1,
                     yFactor = 1;
                 while (theta < -Math.PI) {
@@ -2680,12 +2662,12 @@
                 if (anchor.y !== rectVerticalCenter) {
                     edgePoint.y = anchor.y;
                 }
-                markerPoint.x = edgePoint.x + (markerRadius * Math.cos(theta));
-                markerPoint.y = edgePoint.y - (markerRadius * Math.sin(theta));
-                return markerPoint;
+                return {
+                    x: edgePoint.x + (markerRadius * Math.cos(theta)),
+                    y: edgePoint.y - (markerRadius * Math.sin(theta))
+                };
             }
         });
-
         /**
          * Warn if using legacy options. Copy the options over. Note that this will
          * still break if using the legacy options in chart.update, addSeries etc.
@@ -2705,7 +2687,6 @@
                     'Use "chart.connectors" or "series.connectors" instead.');
             }
         }
-
         // Initialize Pathfinder for charts
         Chart.prototype.callbacks.push(function (chart) {
             var options = chart.options;

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -9,8 +9,8 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
+import Chart from '../Core/Chart/Chart.js';
 import U from '../Core/Utilities.js';
-
 var addEvent = U.addEvent, isNumber = U.isNumber, setOptions = U.setOptions;
 setOptions({
     /**
@@ -31,7 +31,7 @@ setOptions({
     }
 });
 /* eslint-disable no-invalid-this */
-addEvent(H.Chart, 'displayError', function (e) {
+addEvent(Chart, 'displayError', function (e) {
     var chart = this, code = e.code, msg, options = chart.options.chart, renderer = chart.renderer, chartWidth,
         chartHeight;
     if (chart.errorElements) {
@@ -52,7 +52,8 @@ addEvent(H.Chart, 'displayError', function (e) {
         // Format msg so SVGRenderer can handle it
         msg = msg
             .replace(/<h1>(.*)<\/h1>/g, '<br><span style="font-size: 24px">$1</span><br>')
-            .replace(/<\/p>/g, '</p><br>');
+            .replace(/<p>/g, '')
+            .replace(/<\/p>/g, '<br>');
         // Render red chart frame.
         chart.errorElements[0] = renderer.rect(2, 2, chartWidth - 4, chartHeight - 4).attr({
             'stroke-width': 4,
@@ -75,7 +76,7 @@ addEvent(H.Chart, 'displayError', function (e) {
         });
     }
 });
-addEvent(H.Chart, 'beforeRedraw', function () {
+addEvent(Chart, 'beforeRedraw', function () {
     var errorElements = this.errorElements;
     if (errorElements && errorElements.length) {
         errorElements.forEach(function (el) {

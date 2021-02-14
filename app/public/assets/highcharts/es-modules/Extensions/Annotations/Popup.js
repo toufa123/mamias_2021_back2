@@ -2,22 +2,23 @@
  *
  *  Popup generator for Stock tools
  *
- *  (c) 2009-2017 Sebastian Bochan
+ *  (c) 2009-2021 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
 import H from '../../Core/Globals.js';
+
+var isFirefox = H.isFirefox;
 import NavigationBindings from './NavigationBindings.js';
 import Pointer from '../../Core/Pointer.js';
 import U from '../../Core/Utilities.js';
 
 var addEvent = U.addEvent, createElement = U.createElement, defined = U.defined, getOptions = U.getOptions,
     isArray = U.isArray, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick,
-    wrap = U.wrap;
+    stableSort = U.stableSort, wrap = U.wrap;
 var indexFilter = /\d/g, PREFIX = 'highcharts-', DIV = 'div', INPUT = 'input', LABEL = 'label', BUTTON = 'button',
     SELECT = 'select', OPTION = 'option', SPAN = 'span', UL = 'ul', LI = 'li', H3 = 'h3';
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -377,9 +378,12 @@ H.Popup.prototype = {
                 }
             });
             if (isRoot) {
-                storage = storage.sort(function (a) {
+                stableSort(storage, function (a) {
                     return a[1].match(/format/g) ? -1 : 1;
                 });
+                if (isFirefox) {
+                    storage.reverse(); // (#14691)
+                }
                 storage.forEach(function (genInput) {
                     if (genInput[0] === true) {
                         createElement(SPAN, {
@@ -732,7 +736,7 @@ addEvent(NavigationBindings, 'showPopup', function (config) {
         this.popup = new H.Popup(this.chart.container, (this.chart.options.navigation.iconsURL ||
             (this.chart.options.stockTools &&
                 this.chart.options.stockTools.gui.iconsURL) ||
-            'https://code.highcharts.com/8.2.0/gfx/stock-icons/'));
+            'https://code.highcharts.com/9.0.0/gfx/stock-icons/'));
     }
     this.popup.showForm(config.formType, this.chart, config.options, config.onSubmit);
 });

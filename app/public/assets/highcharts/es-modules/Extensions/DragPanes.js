@@ -2,7 +2,7 @@
  *
  *  Plugin for resizing axes / panes in a chart.
  *
- *  (c) 2010-2017 Highsoft AS
+ *  (c) 2010-2021 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -13,9 +13,9 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-
 var hasTouch = H.hasTouch;
 import Axis from '../Core/Axis/Axis.js';
+import palette from '../Core/Color/Palette.js';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 
@@ -41,7 +41,6 @@ var AxisResizer = /** @class */ (function () {
         this.options = void 0;
         this.init(axis);
     }
-
     /**
      * Initialize the AxisResizer object.
      *
@@ -414,7 +413,7 @@ var AxisResizer = /** @class */ (function () {
              * @type     {Highcharts.ColorString}
              * @requires modules/drag-panes
              */
-            lineColor: '#cccccc',
+            lineColor: palette.neutralColor20,
             /**
              * Dash style of the control line.
              *
@@ -483,7 +482,7 @@ addEvent(Axis, 'afterRender', function () {
             // Resizer not present and enabled
             if (enabled) {
                 // Add new resizer
-                axis.resizer = new H.AxisResizer(axis);
+                axis.resizer = new AxisResizer(axis);
             }
             // Resizer not present and disabled, so do nothing
         }

@@ -1,6 +1,6 @@
 /**
  *
- *  (c) 2010-2020 Wojciech Chmiel
+ *  (c) 2010-2021 Wojciech Chmiel
  *
  *  License: www.highcharts.com/license
  *
@@ -10,7 +10,6 @@
 'use strict';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
-
 var defined = U.defined, error = U.error, merge = U.merge;
 var SMA = H.seriesTypes.sma;
 /**

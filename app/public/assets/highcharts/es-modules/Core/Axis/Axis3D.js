@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  Extenstion for 3d axes
  *
@@ -12,12 +12,10 @@
 'use strict';
 import H from '../Globals.js';
 import Math3D from '../../Extensions/Math3D.js';
-
 var perspective = Math3D.perspective, perspective3D = Math3D.perspective3D, shapeArea = Math3D.shapeArea;
 import Tick from './Tick.js';
 import Tick3D from './Tick3D.js';
 import U from '../Utilities.js';
-
 var addEvent = U.addEvent, merge = U.merge, pick = U.pick, wrap = U.wrap;
 var deg2rad = H.deg2rad;
 /* eslint-disable valid-jsdoc */
@@ -38,7 +36,6 @@ var Axis3DAdditions = /** @class */ (function () {
     function Axis3DAdditions(axis) {
         this.axis = axis;
     }
-
     /* *
      *
      *  Functions
@@ -48,11 +45,11 @@ var Axis3DAdditions = /** @class */ (function () {
      * @private
      * @param {Highcharts.Axis} axis
      * Related axis.
-     * @param {Highcharts.Position3dObject} pos
+     * @param {Highcharts.Position3DObject} pos
      * Position to fix.
      * @param {boolean} [isTitle]
      * Whether this is a title position.
-     * @return {Highcharts.Position3dObject}
+     * @return {Highcharts.Position3DObject}
      * Fixed position.
      */
     Axis3DAdditions.prototype.fix3dPosition = function (pos, isTitle) {
@@ -246,7 +243,6 @@ var Axis3DAdditions = /** @class */ (function () {
 var Axis3D = /** @class */ (function () {
     function Axis3D() {
     }
-
     /* *
      *
      *  Static Functions
@@ -450,7 +446,7 @@ var Axis3D = /** @class */ (function () {
                 nextTick = ticks[tickId + 1];
             // Check whether the tick is not the first one and previous tick
             // exists, then calculate position of previous label.
-            if (tickId !== 0 && prevTick && prevTick.label.xy) {
+            if (tickId !== 0 && prevTick && prevTick.label && prevTick.label.xy) {
                 prevLabelPos = perspective3D({
                     x: prevTick.label.xy.x,
                     y: prevTick.label.xy.y,
@@ -459,7 +455,7 @@ var Axis3D = /** @class */ (function () {
             }
             // If next label position is defined, then recalculate its position
             // basing on the perspective.
-            if (nextTick && nextTick.label.xy) {
+            if (nextTick && nextTick.label && nextTick.label.xy) {
                 nextLabelPos = perspective3D({
                     x: nextTick.label.xy.x,
                     y: nextTick.label.xy.y,

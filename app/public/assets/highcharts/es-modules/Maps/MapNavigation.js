@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,12 +10,10 @@
 'use strict';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-
 var doc = H.doc;
 import U from '../Core/Utilities.js';
-
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
-
+import './MapNavigationOptionsDefault.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private
@@ -31,7 +29,6 @@ function stopEvent(e) {
         e.cancelBubble = true;
     }
 }
-
 /**
  * The MapNavigation handles buttons for navigation in addition to mousewheel
  * and doubleclick handlers for chart zooming.
@@ -46,7 +43,6 @@ function stopEvent(e) {
 function MapNavigation(chart) {
     this.init(chart);
 }
-
 /**
  * Initialize function.
  *

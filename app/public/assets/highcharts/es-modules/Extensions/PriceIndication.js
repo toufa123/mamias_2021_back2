@@ -1,5 +1,5 @@
 /**
- * (c) 2009-2020 Sebastian Bochann
+ * (c) 2009-2021 Sebastian Bochann
  *
  * Price indicator for Highcharts
  *
@@ -8,9 +8,8 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  */
 'use strict';
-import H from '../Core/Globals.js';
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
-
 var addEvent = U.addEvent, isArray = U.isArray, merge = U.merge;
 /**
  * The line marks the last price from visible range of points.
@@ -73,7 +72,7 @@ var addEvent = U.addEvent, isArray = U.isArray, merge = U.merge;
  *
  */
 /* eslint-disable no-invalid-this */
-addEvent(H.Series, 'afterRender', function () {
+addEvent(Series, 'afterRender', function () {
     var serie = this, seriesOptions = serie.options, pointRange = seriesOptions.pointRange,
         lastVisiblePrice = seriesOptions.lastVisiblePrice, lastPrice = seriesOptions.lastPrice;
     if ((lastVisiblePrice || lastPrice) &&
@@ -123,7 +122,7 @@ addEvent(H.Series, 'afterRender', function () {
             serie.crossLabel = yAxis.crossLabel;
         }
         // Restore crosshair:
-        yAxis.crosshair = origOptions;
+        yAxis.crosshair = yAxis.options.crosshair = origOptions;
         yAxis.cross = origGraphic;
         yAxis.crossLabel = origLabel;
     }

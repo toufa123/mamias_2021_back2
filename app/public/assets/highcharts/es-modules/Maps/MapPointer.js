@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,7 +10,6 @@
 'use strict';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
-
 var extend = U.extend, pick = U.pick, wrap = U.wrap;
 /* eslint-disable no-invalid-this */
 // Extend the Pointer

@@ -6,7 +6,6 @@
 import ControllableMixin from '../Mixins/ControllableMixin.js';
 import ControllablePath from './ControllablePath.js';
 import U from '../../../Core/Utilities.js';
-
 var merge = U.merge;
 /**
  * @typedef {Annotation.ControllablePath.AttrsMap}
@@ -71,7 +70,6 @@ var ControllableRect = /** @class */ (function () {
         this.init(annotation, options, index);
         this.collection = 'shapes';
     }
-
     /* *
      *
      *  Functions

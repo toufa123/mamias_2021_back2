@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v8.2.0 (2020-08-20)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  * Organization chart series type
  *
  * (c) 2019-2019 Torstein Honsi
@@ -22,37 +22,145 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Series/OrganizationSeries.js', [_modules['Core/Globals.js'], _modules['Core/Utilities.js']], function (H, U) {
+    _registerModule(_modules, 'Series/Organization/OrganizationPoint.js', [_modules['Core/Series/SeriesRegistry.js']], function (SeriesRegistry) {
         /* *
          *
          *  Organization chart module
          *
-         *  (c) 2018-2020 Torstein Honsi
+         *  (c) 2018-2021 Torstein Honsi
          *
          *  License: www.highcharts.com/license
          *
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
-        var css = U.css,
-            pick = U.pick,
-            seriesType = U.seriesType,
-            wrap = U.wrap;
-        /**
-         * Layout value for the child nodes in an organization chart. If `hanging`, this
-         * node's children will hang below their parent, allowing a tighter packing of
-         * nodes in the diagram.
+        var __extends = (this && this.__extends) || (function () {
+            var extendStatics = function (d,
+                                          b) {
+                extendStatics = Object.setPrototypeOf ||
+                    ({__proto__: []} instanceof Array && function (d,
+                                                                   b) {
+                        d.__proto__ = b;
+                    }) ||
+                    function (d,
+                              b) {
+                        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+                    };
+                return extendStatics(d, b);
+            };
+            return function (d, b) {
+                extendStatics(d, b);
+
+                function __() {
+                    this.constructor = d;
+                }
+
+                d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+            };
+        })();
+        var SankeyPoint = SeriesRegistry.seriesTypes.sankey.prototype.pointClass;
+        /* *
          *
-         * @typedef {"normal"|"hanging"} Highcharts.SeriesOrganizationNodesLayoutValue
-         */
-        var base = H.seriesTypes.sankey.prototype;
+         *  Class
+         *
+         * */
+        var OrganizationPoint = /** @class */ (function (_super) {
+            __extends(OrganizationPoint, _super);
+
+            function OrganizationPoint() {
+                /* *
+                 *
+                 *  Properties
+                 *
+                 * */
+                var _this = _super !== null && _super.apply(this,
+                    arguments) || this;
+                _this.fromNode = void 0;
+                _this.linksFrom = void 0;
+                _this.linksTo = void 0;
+                _this.options = void 0;
+                _this.series = void 0;
+                _this.toNode = void 0;
+                return _this;
+                /* eslint-enable valid-jsdoc */
+            }
+
+            /* *
+             *
+             *  Functions
+             *
+             * */
+            /* eslint-disable valid-jsdoc */
+            /**
+             * All nodes in an org chart are equal width.
+             * @private
+             */
+            OrganizationPoint.prototype.getSum = function () {
+                return 1;
+            };
+            return OrganizationPoint;
+        }(SankeyPoint));
+        /* *
+         *
+         *  Default Export
+         *
+         * */
+
+        return OrganizationPoint;
+    });
+    _registerModule(_modules, 'Series/Organization/OrganizationSeries.js', [_modules['Series/Organization/OrganizationPoint.js'], _modules['Core/Color/Palette.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (OrganizationPoint, palette, SeriesRegistry, U) {
+        /* *
+         *
+         *  Organization chart module
+         *
+         *  (c) 2018-2021 Torstein Honsi
+         *
+         *  License: www.highcharts.com/license
+         *
+         *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+         *
+         * */
+        var __extends = (this && this.__extends) || (function () {
+            var extendStatics = function (d,
+                                          b) {
+                extendStatics = Object.setPrototypeOf ||
+                    ({__proto__: []} instanceof Array && function (d,
+                                                                   b) {
+                        d.__proto__ = b;
+                    }) ||
+                    function (d,
+                              b) {
+                        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+                    };
+                return extendStatics(d, b);
+            };
+            return function (d, b) {
+                extendStatics(d, b);
+
+                function __() {
+                    this.constructor = d;
+                }
+
+                d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+            };
+        })();
+        var SankeySeries = SeriesRegistry.seriesTypes.sankey;
+        var css = U.css,
+            extend = U.extend,
+            merge = U.merge,
+            pick = U.pick,
+            wrap = U.wrap;
+        /* *
+         *
+         *  Class
+         *
+         * */
         /**
          * @private
          * @class
@@ -60,7 +168,262 @@
          *
          * @augments Highcharts.seriesTypes.sankey
          */
-        seriesType('organization', 'sankey',
+        var OrganizationSeries = /** @class */ (function (_super) {
+            __extends(OrganizationSeries, _super);
+
+            function OrganizationSeries() {
+                /* *
+                 *
+                 *  Static Properties
+                 *
+                 * */
+                var _this = _super !== null && _super.apply(this,
+                    arguments) || this;
+                /* eslint-enable valid-jsdoc */
+                /* *
+                 *
+                 *  Properties
+                 *
+                 * */
+                _this.data = void 0;
+                _this.options = void 0;
+                _this.points = void 0;
+                return _this;
+                /* eslint-enable valid-jsdoc */
+            }
+
+            /* *
+             *
+             *  Static Functions
+             *
+             * */
+            /* eslint-disable valid-jsdoc */
+            /**
+             * General function to apply corner radius to a path - can be lifted to
+             * renderer or utilities if we need it elsewhere.
+             * @private
+             */
+            OrganizationSeries.curvedPath = function (path, r) {
+                var d = [];
+                for (var i = 0; i < path.length; i++) {
+                    var x = path[i][1];
+                    var y = path[i][2];
+                    if (typeof x === 'number' && typeof y === 'number') {
+                        // moveTo
+                        if (i === 0) {
+                            d.push(['M', x, y]);
+                        } else if (i === path.length - 1) {
+                            d.push(['L', x, y]);
+                            // curveTo
+                        } else if (r) {
+                            var prevSeg = path[i - 1];
+                            var nextSeg = path[i + 1];
+                            if (prevSeg && nextSeg) {
+                                var x1 = prevSeg[1],
+                                    y1 = prevSeg[2],
+                                    x2 = nextSeg[1],
+                                    y2 = nextSeg[2];
+                                // Only apply to breaks
+                                if (typeof x1 === 'number' &&
+                                    typeof x2 === 'number' &&
+                                    typeof y1 === 'number' &&
+                                    typeof y2 === 'number' &&
+                                    x1 !== x2 &&
+                                    y1 !== y2) {
+                                    var directionX = x1 < x2 ? 1 : -1,
+                                        directionY = y1 < y2 ? 1 : -1;
+                                    d.push([
+                                        'L',
+                                        x - directionX * Math.min(Math.abs(x - x1), r),
+                                        y - directionY * Math.min(Math.abs(y - y1), r)
+                                    ], [
+                                        'C',
+                                        x,
+                                        y,
+                                        x,
+                                        y,
+                                        x + directionX * Math.min(Math.abs(x - x2), r),
+                                        y + directionY * Math.min(Math.abs(y - y2), r)
+                                    ]);
+                                }
+                            }
+                            // lineTo
+                        } else {
+                            d.push(['L', x, y]);
+                        }
+                    }
+                }
+                return d;
+            };
+            /* *
+             *
+             *  Functions
+             *
+             * */
+            /* eslint-disable valid-jsdoc */
+            OrganizationSeries.prototype.alignDataLabel = function (point, dataLabel, options) {
+                // Align the data label to the point graphic
+                if (options.useHTML) {
+                    var width = point.shapeArgs.width,
+                        height = point.shapeArgs.height,
+                        padjust = (this.options.borderWidth +
+                            2 * this.options.dataLabels.padding);
+                    if (this.chart.inverted) {
+                        width = height;
+                        height = point.shapeArgs.width;
+                    }
+                    height -= padjust;
+                    width -= padjust;
+                    // Set the size of the surrounding div emulating `g`
+                    var text = dataLabel.text;
+                    if (text) {
+                        css(text.element.parentNode, {
+                            width: width + 'px',
+                            height: height + 'px'
+                        });
+                        // Set properties for the span emulating `text`
+                        css(text.element, {
+                            left: 0,
+                            top: 0,
+                            width: '100%',
+                            height: '100%',
+                            overflow: 'hidden'
+                        });
+                    }
+                    // The getBBox function is used in `alignDataLabel` to align
+                    // inside the box
+                    dataLabel.getBBox = function () {
+                        return {
+                            width: width,
+                            height: height
+                        };
+                    };
+                    // Overwrite dataLabel dimensions (#13100).
+                    dataLabel.width = width;
+                    dataLabel.height = height;
+                }
+                _super.prototype.alignDataLabel.apply(this, arguments);
+            };
+            OrganizationSeries.prototype.createNode = function (id) {
+                var node = _super.prototype.createNode.call(this,
+                    id);
+                // All nodes in an org chart are equal width
+                node.getSum = function () {
+                    return 1;
+                };
+                return node;
+            };
+            OrganizationSeries.prototype.createNodeColumn = function () {
+                var column = _super.prototype.createNodeColumn.call(this);
+                // Wrap the offset function so that the hanging node's children are
+                // aligned to their parent
+                wrap(column, 'offset', function (proceed, node, factor) {
+                    var offset = proceed.call(this,
+                        node,
+                        factor); // eslint-disable-line no-invalid-this
+                    // Modify the default output if the parent's layout is 'hanging'
+                    if (node.hangsFrom) {
+                        return {
+                            absoluteTop: node.hangsFrom.nodeY
+                        };
+                    }
+                    return offset;
+                });
+                return column;
+            };
+            OrganizationSeries.prototype.pointAttribs = function (point, state) {
+                var series = this, attribs = SankeySeries.prototype.pointAttribs.call(series, point, state),
+                    level = point.isNode ? point.level : point.fromNode.level,
+                    levelOptions = series.mapOptionsToLevel[level || 0] || {}, options = point.options,
+                    stateOptions = (levelOptions.states && levelOptions.states[state]) || {},
+                    values = ['borderRadius', 'linkColor', 'linkLineWidth']
+                        .reduce(function (obj, key) {
+                            obj[key] = pick(stateOptions[key], options[key], levelOptions[key], series.options[key]);
+                            return obj;
+                        }, {});
+                if (!point.isNode) {
+                    attribs.stroke = values.linkColor;
+                    attribs['stroke-width'] = values.linkLineWidth;
+                    delete attribs.fill;
+                } else {
+                    if (values.borderRadius) {
+                        attribs.r = values.borderRadius;
+                    }
+                }
+                return attribs;
+            };
+            OrganizationSeries.prototype.translateLink = function (point) {
+                var fromNode = point.fromNode,
+                    toNode = point.toNode,
+                    crisp = Math.round(this.options.linkLineWidth) % 2 / 2,
+                    x1 = Math.floor(fromNode.shapeArgs.x +
+                        fromNode.shapeArgs.width) + crisp,
+                    y1 = Math.floor(fromNode.shapeArgs.y +
+                        fromNode.shapeArgs.height / 2) + crisp,
+                    x2 = Math.floor(toNode.shapeArgs.x) + crisp,
+                    y2 = Math.floor(toNode.shapeArgs.y +
+                        toNode.shapeArgs.height / 2) + crisp,
+                    xMiddle,
+                    hangingIndent = this.options.hangingIndent,
+                    toOffset = toNode.options.offset,
+                    percentOffset = /%$/.test(toOffset) && parseInt(toOffset, 10),
+                    inverted = this.chart.inverted;
+                if (inverted) {
+                    x1 -= fromNode.shapeArgs.width;
+                    x2 += toNode.shapeArgs.width;
+                }
+                xMiddle = Math.floor(x2 +
+                    (inverted ? 1 : -1) *
+                    (this.colDistance - this.nodeWidth) / 2) + crisp;
+                // Put the link on the side of the node when an offset is given. HR
+                // node in the main demo.
+                if (percentOffset &&
+                    (percentOffset >= 50 || percentOffset <= -50)) {
+                    xMiddle = x2 = Math.floor(x2 + (inverted ? -0.5 : 0.5) *
+                        toNode.shapeArgs.width) + crisp;
+                    y2 = toNode.shapeArgs.y;
+                    if (percentOffset > 0) {
+                        y2 += toNode.shapeArgs.height;
+                    }
+                }
+                if (toNode.hangsFrom === fromNode) {
+                    if (this.chart.inverted) {
+                        y1 = Math.floor(fromNode.shapeArgs.y +
+                            fromNode.shapeArgs.height -
+                            hangingIndent / 2) + crisp;
+                        y2 = (toNode.shapeArgs.y +
+                            toNode.shapeArgs.height);
+                    } else {
+                        y1 = Math.floor(fromNode.shapeArgs.y +
+                            hangingIndent / 2) + crisp;
+                    }
+                    xMiddle = x2 = Math.floor(toNode.shapeArgs.x +
+                        toNode.shapeArgs.width / 2) + crisp;
+                }
+                point.plotY = 1;
+                point.shapeType = 'path';
+                point.shapeArgs = {
+                    d: OrganizationSeries.curvedPath([
+                        ['M', x1, y1],
+                        ['L', xMiddle, y1],
+                        ['L', xMiddle, y2],
+                        ['L', x2, y2]
+                    ], this.options.linkRadius)
+                };
+            };
+            OrganizationSeries.prototype.translateNode = function (node, column) {
+                SankeySeries.prototype.translateNode.call(this, node, column);
+                if (node.hangsFrom) {
+                    node.shapeArgs.height -=
+                        this.options.hangingIndent;
+                    if (!this.chart.inverted) {
+                        node.shapeArgs.y += this.options.hangingIndent;
+                    }
+                }
+                node.nodeHeight = this.chart.inverted ?
+                    node.shapeArgs.width :
+                    node.shapeArgs.height;
+            };
             /**
              * An organization chart is a diagram that shows the structure of an
              * organization and the relationships and relative ranks of its parts and
@@ -82,14 +445,14 @@
              * @requires     modules/organization
              * @optionparent plotOptions.organization
              */
-            {
+            OrganizationSeries.defaultOptions = merge(SankeySeries.defaultOptions, {
                 /**
                  * The border color of the node cards.
                  *
                  * @type {Highcharts.ColorString}
                  * @private
                  */
-                borderColor: '#666666',
+                borderColor: palette.neutralColor60,
                 /**
                  * The border radius of the node cards.
                  *
@@ -226,7 +589,7 @@
                  * @type {Highcharts.ColorString}
                  * @private
                  */
-                linkColor: '#666666',
+                linkColor: palette.neutralColor60,
                 /**
                  * The line width of the links connecting nodes, in pixels.
                  *
@@ -247,226 +610,36 @@
                 tooltip: {
                     nodeFormat: '{point.name}<br>{point.title}<br>{point.description}'
                 }
-            }, {
-                pointAttribs: function (point, state) {
-                    var series = this, attribs = base.pointAttribs.call(series, point, state),
-                        level = point.isNode ? point.level : point.fromNode.level,
-                        levelOptions = series.mapOptionsToLevel[level || 0] || {}, options = point.options,
-                        stateOptions = (levelOptions.states && levelOptions.states[state]) || {},
-                        values = ['borderRadius', 'linkColor', 'linkLineWidth']
-                            .reduce(function (obj, key) {
-                                obj[key] = pick(stateOptions[key], options[key], levelOptions[key], series.options[key]);
-                                return obj;
-                            }, {});
-                    if (!point.isNode) {
-                        attribs.stroke = values.linkColor;
-                        attribs['stroke-width'] = values.linkLineWidth;
-                        delete attribs.fill;
-                    } else {
-                        if (values.borderRadius) {
-                            attribs.r = values.borderRadius;
-                        }
-                    }
-                    return attribs;
-                },
-                createNode: function (id) {
-                    var node = base.createNode
-                        .call(this,
-                            id);
-                    // All nodes in an org chart are equal width
-                    node.getSum = function () {
-                        return 1;
-                    };
-                    return node;
-                },
-                createNodeColumn: function () {
-                    var column = base.createNodeColumn.call(this);
-                    // Wrap the offset function so that the hanging node's children are
-                    // aligned to their parent
-                    wrap(column, 'offset', function (proceed, node, factor) {
-                        var offset = proceed.call(this,
-                            node,
-                            factor); // eslint-disable-line no-invalid-this
-                        // Modify the default output if the parent's layout is 'hanging'
-                        if (node.hangsFrom) {
-                            return {
-                                absoluteTop: node.hangsFrom.nodeY
-                            };
-                        }
-                        return offset;
-                    });
-                    return column;
-                },
-                translateNode: function (node, column) {
-                    base.translateNode.call(this, node, column);
-                    if (node.hangsFrom) {
-                        node.shapeArgs.height -=
-                            this.options.hangingIndent;
-                        if (!this.chart.inverted) {
-                            node.shapeArgs.y += this.options.hangingIndent;
-                        }
-                    }
-                    node.nodeHeight = this.chart.inverted ?
-                        node.shapeArgs.width :
-                        node.shapeArgs.height;
-                },
-                // General function to apply corner radius to a path - can be lifted to
-                // renderer or utilities if we need it elsewhere.
-                curvedPath: function (path, r) {
-                    var d = [];
-                    for (var i = 0; i < path.length; i++) {
-                        var x = path[i][1];
-                        var y = path[i][2];
-                        if (typeof x === 'number' && typeof y === 'number') {
-                            // moveTo
-                            if (i === 0) {
-                                d.push(['M', x, y]);
-                            } else if (i === path.length - 1) {
-                                d.push(['L', x, y]);
-                                // curveTo
-                            } else if (r) {
-                                var prevSeg = path[i - 1];
-                                var nextSeg = path[i + 1];
-                                if (prevSeg && nextSeg) {
-                                    var x1 = prevSeg[1],
-                                        y1 = prevSeg[2],
-                                        x2 = nextSeg[1],
-                                        y2 = nextSeg[2];
-                                    // Only apply to breaks
-                                    if (typeof x1 === 'number' &&
-                                        typeof x2 === 'number' &&
-                                        typeof y1 === 'number' &&
-                                        typeof y2 === 'number' &&
-                                        x1 !== x2 &&
-                                        y1 !== y2) {
-                                        var directionX = x1 < x2 ? 1 : -1,
-                                            directionY = y1 < y2 ? 1 : -1;
-                                        d.push([
-                                            'L',
-                                            x - directionX * Math.min(Math.abs(x - x1), r),
-                                            y - directionY * Math.min(Math.abs(y - y1), r)
-                                        ], [
-                                            'C',
-                                            x,
-                                            y,
-                                            x,
-                                            y,
-                                            x + directionX * Math.min(Math.abs(x - x2), r),
-                                            y + directionY * Math.min(Math.abs(y - y2), r)
-                                        ]);
-                                    }
-                                }
-                                // lineTo
-                            } else {
-                                d.push(['L', x, y]);
-                            }
-                        }
-                    }
-                    return d;
-                },
-                translateLink: function (point) {
-                    var fromNode = point.fromNode,
-                        toNode = point.toNode,
-                        crisp = Math.round(this.options.linkLineWidth) % 2 / 2,
-                        x1 = Math.floor(fromNode.shapeArgs.x +
-                            fromNode.shapeArgs.width) + crisp,
-                        y1 = Math.floor(fromNode.shapeArgs.y +
-                            fromNode.shapeArgs.height / 2) + crisp,
-                        x2 = Math.floor(toNode.shapeArgs.x) + crisp,
-                        y2 = Math.floor(toNode.shapeArgs.y +
-                            toNode.shapeArgs.height / 2) + crisp,
-                        xMiddle,
-                        hangingIndent = this.options.hangingIndent,
-                        toOffset = toNode.options.offset,
-                        percentOffset = /%$/.test(toOffset) && parseInt(toOffset, 10),
-                        inverted = this.chart.inverted;
-                    if (inverted) {
-                        x1 -= fromNode.shapeArgs.width;
-                        x2 += toNode.shapeArgs.width;
-                    }
-                    xMiddle = Math.floor(x2 +
-                        (inverted ? 1 : -1) *
-                        (this.colDistance - this.nodeWidth) / 2) + crisp;
-                    // Put the link on the side of the node when an offset is given. HR
-                    // node in the main demo.
-                    if (percentOffset &&
-                        (percentOffset >= 50 || percentOffset <= -50)) {
-                        xMiddle = x2 = Math.floor(x2 + (inverted ? -0.5 : 0.5) *
-                            toNode.shapeArgs.width) + crisp;
-                        y2 = toNode.shapeArgs.y;
-                        if (percentOffset > 0) {
-                            y2 += toNode.shapeArgs.height;
-                        }
-                    }
-                    if (toNode.hangsFrom === fromNode) {
-                        if (this.chart.inverted) {
-                            y1 = Math.floor(fromNode.shapeArgs.y +
-                                fromNode.shapeArgs.height -
-                                hangingIndent / 2) + crisp;
-                            y2 = (toNode.shapeArgs.y +
-                                toNode.shapeArgs.height);
-                        } else {
-                            y1 = Math.floor(fromNode.shapeArgs.y +
-                                hangingIndent / 2) + crisp;
-                        }
-                        xMiddle = x2 = Math.floor(toNode.shapeArgs.x +
-                            toNode.shapeArgs.width / 2) + crisp;
-                    }
-                    point.plotY = 1;
-                    point.shapeType = 'path';
-                    point.shapeArgs = {
-                        d: this.curvedPath([
-                            ['M', x1, y1],
-                            ['L', xMiddle, y1],
-                            ['L', xMiddle, y2],
-                            ['L', x2, y2]
-                        ], this.options.linkRadius)
-                    };
-                },
-                alignDataLabel: function (point, dataLabel, options) {
-                    // Align the data label to the point graphic
-                    if (options.useHTML) {
-                        var width = point.shapeArgs.width,
-                            height = point.shapeArgs.height,
-                            padjust = (this.options.borderWidth +
-                                2 * this.options.dataLabels.padding);
-                        if (this.chart.inverted) {
-                            width = height;
-                            height = point.shapeArgs.width;
-                        }
-                        height -= padjust;
-                        width -= padjust;
-                        // Set the size of the surrounding div emulating `g`
-                        var text = dataLabel.text;
-                        if (text) {
-                            css(text.element.parentNode, {
-                                width: width + 'px',
-                                height: height + 'px'
-                            });
-                            // Set properties for the span emulating `text`
-                            css(text.element, {
-                                left: 0,
-                                top: 0,
-                                width: '100%',
-                                height: '100%',
-                                overflow: 'hidden'
-                            });
-                        }
-                        // The getBBox function is used in `alignDataLabel` to align
-                        // inside the box
-                        dataLabel.getBBox = function () {
-                            return {
-                                width: width,
-                                height: height
-                            };
-                        };
-                        // Overwrite dataLabel dimensions (#13100).
-                        dataLabel.width = width;
-                        dataLabel.height = height;
-                    }
-                    H.seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
-                }
             });
+            return OrganizationSeries;
+        }(SankeySeries));
+        extend(OrganizationSeries.prototype, {
+            pointClass: OrganizationPoint
+        });
+        SeriesRegistry.registerSeriesType('organization', OrganizationSeries);
+        /* *
+         *
+         *  Default Export
+         *
+         * */
+        /* *
+         *
+         *  API Declarations
+         *
+         * */
+        /**
+         * Layout value for the child nodes in an organization chart. If `hanging`, this
+         * node's children will hang below their parent, allowing a tighter packing of
+         * nodes in the diagram.
+         *
+         * @typedef {"normal"|"hanging"} Highcharts.SeriesOrganizationNodesLayoutValue
+         */
+        ''; // detach doclets above
+        /* *
+         *
+         *  API Options
+         *
+         * */
         /**
          * An `organization` series. If the [type](#series.organization.type) option is
          * not specified, it is inherited from [chart.type](#chart.type).
@@ -474,6 +647,7 @@
          * @extends   series,plotOptions.organization
          * @exclude   dataSorting, boostThreshold, boostBlending
          * @product   highcharts
+         * @requires  modules/sankey
          * @requires  modules/organization
          * @apioption series.organization
          */
@@ -573,6 +747,7 @@
          */
         ''; // adds doclets above to transpiled file
 
+        return OrganizationSeries;
     });
     _registerModule(_modules, 'masters/modules/organization.src.js', [], function () {
 

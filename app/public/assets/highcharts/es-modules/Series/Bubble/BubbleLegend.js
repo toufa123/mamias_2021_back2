@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Highsoft AS
+ *  (c) 2010-2021 Highsoft AS
  *
  *  Author: Paweł Potaczek
  *
@@ -11,11 +11,15 @@
  * */
 'use strict';
 import Chart from '../../Core/Chart/Chart.js';
-import Color from '../../Core/Color.js';
+import Color from '../../Core/Color/Color.js';
 
 var color = Color.parse;
 import H from '../../Core/Globals.js';
+
+var noop = H.noop;
 import Legend from '../../Core/Legend.js';
+import palette from '../../Core/Color/Palette.js';
+import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, isNumber = U.isNumber, merge = U.merge,
@@ -39,7 +43,6 @@ var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, isNumbe
 ''; // detach doclets above
 import './BubbleSeries.js';
 
-var Series = H.Series, noop = H.noop;
 setOptions({
     legend: {
         /**
@@ -60,7 +63,7 @@ setOptions({
              * individual range.
              *
              * @sample highcharts/bubble-legend/similartoseries/
-             *         Similat look to the bubble series
+             *         Similar look to the bubble series
              * @sample highcharts/bubble-legend/bordercolor/
              *         Individual bubble border color
              *
@@ -88,7 +91,7 @@ setOptions({
              * individual color is not defined.
              *
              * @sample highcharts/bubble-legend/similartoseries/
-             *         Similat look to the bubble series
+             *         Similar look to the bubble series
              * @sample highcharts/bubble-legend/color/
              *         Individual bubble color
              *
@@ -318,7 +321,6 @@ var BubbleLegend = /** @class */ (function () {
         this.setState = noop;
         this.init(options, legend);
     }
-
     /**
      * Create basic bubbleLegend properties similar to item in legend.
      *
@@ -453,7 +455,7 @@ var BubbleLegend = /** @class */ (function () {
         });
         return merge(false, additionalLabelsStyle, {
             'font-size': options.labels.style.fontSize,
-            fill: pick(options.labels.style.color, '#000000'),
+            fill: pick(options.labels.style.color, palette.neutralColor100),
             'z-index': options.zIndex,
             align: rtl || labelsOnLeft ? 'right' : 'left'
         });

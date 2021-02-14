@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,6 +10,7 @@
 'use strict';
 import Axis from './Axis/Axis.js';
 import H from './Globals.js';
+import palette from './Color/Palette.js';
 import ScrollbarAxis from './Axis/ScrollbarAxis.js';
 import U from './Utilities.js';
 
@@ -19,7 +20,7 @@ var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined,
 import O from './Options.js';
 
 var defaultOptions = O.defaultOptions;
-var hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice;
+var isTouchDevice = H.isTouchDevice;
 /**
  * When we have vertical scrollbar, rifles and arrow in buttons should be
  * rotated. The same method is used in Navigator's handles, to rotate them.
@@ -101,7 +102,6 @@ var Scrollbar = /** @class */ (function () {
         this.renderer = chart.renderer;
         this.init(renderer, options, chart);
     }
-
     /* *
      *
      *  Functions
@@ -129,7 +129,7 @@ var Scrollbar = /** @class */ (function () {
             [bar.ownerDocument, 'mouseup', mouseUpHandler]
         ];
         // Touch events
-        if (hasTouch) {
+        if (H.hasTouch) {
             _events.push([bar, 'touchstart', mouseDownHandler], [bar.ownerDocument, 'touchmove', mouseMoveHandler], [bar.ownerDocument, 'touchend', mouseUpHandler]);
         }
         // Add them all
@@ -725,7 +725,7 @@ var Scrollbar = /** @class */ (function () {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        barBackgroundColor: '#cccccc',
+        barBackgroundColor: palette.neutralColor20,
         /**
          * The width of the bar's border.
          *
@@ -738,7 +738,7 @@ var Scrollbar = /** @class */ (function () {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        barBorderColor: '#cccccc',
+        barBorderColor: palette.neutralColor20,
         /**
          * The color of the small arrow inside the scrollbar buttons.
          *
@@ -747,7 +747,7 @@ var Scrollbar = /** @class */ (function () {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        buttonArrowColor: '#333333',
+        buttonArrowColor: palette.neutralColor80,
         /**
          * The color of scrollbar buttons.
          *
@@ -756,7 +756,7 @@ var Scrollbar = /** @class */ (function () {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        buttonBackgroundColor: '#e6e6e6',
+        buttonBackgroundColor: palette.neutralColor10,
         /**
          * The color of the border of the scrollbar buttons.
          *
@@ -765,7 +765,7 @@ var Scrollbar = /** @class */ (function () {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        buttonBorderColor: '#cccccc',
+        buttonBorderColor: palette.neutralColor20,
         /**
          * The border width of the scrollbar buttons.
          *
@@ -778,7 +778,7 @@ var Scrollbar = /** @class */ (function () {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        rifleColor: '#333333',
+        rifleColor: palette.neutralColor80,
         /**
          * The color of the track background.
          *
@@ -787,7 +787,7 @@ var Scrollbar = /** @class */ (function () {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        trackBackgroundColor: '#f2f2f2',
+        trackBackgroundColor: palette.neutralColor5,
         /**
          * The color of the border of the scrollbar track.
          *
@@ -796,7 +796,7 @@ var Scrollbar = /** @class */ (function () {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        trackBorderColor: '#f2f2f2',
+        trackBorderColor: palette.neutralColor5,
         /**
          * The corner radius of the border of the scrollbar track.
          *

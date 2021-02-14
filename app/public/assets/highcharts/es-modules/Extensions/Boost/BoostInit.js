@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2020 Highsoft AS
+ *  Copyright (c) 2019-2021 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -12,15 +12,19 @@
 'use strict';
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
+
+var noop = H.noop;
+import Series from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
+var seriesTypes = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, wrap = U.wrap;
-import '../../Core/Series/Series.js';
 import butils from './BoostUtils.js';
 import createAndAttachRenderer from './BoostAttach.js';
 
-var Series = H.Series, seriesTypes = H.seriesTypes, noop = function () {
-    }, eachAsync = butils.eachAsync, pointDrawHandler = butils.pointDrawHandler,
+var eachAsync = butils.eachAsync, pointDrawHandler = butils.pointDrawHandler,
     allocateIfNotSeriesBoosting = butils.allocateIfNotSeriesBoosting,
     renderIfNotSeriesBoosting = butils.renderIfNotSeriesBoosting,
     shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting, index;
@@ -121,7 +125,6 @@ function init() {
                 // Perform the actual renderer if we're on series level
                 renderIfNotSeriesBoosting(renderer, this, chart);
             }
-
             /**
              * This builds the KD-tree
              * @private
@@ -197,7 +200,6 @@ function init() {
                 }
                 return !chartDestroyed;
             }
-
             /**
              * @private
              */
@@ -210,7 +212,6 @@ function init() {
                     console.timeEnd('kd tree building'); // eslint-disable-line no-console
                 }
             }
-
             // Loop over the points to build the k-d tree - skip this if
             // exporting
             if (!chart.renderer.forExport) {
@@ -267,7 +268,6 @@ function init() {
                 chart.ogl.render(chart);
             }
         }
-
         /**
          * Clear chart-level canvas.
          * @private
@@ -298,7 +298,6 @@ function init() {
                 chart.markerGroup.translate(chart.xAxis[0].pos, chart.yAxis[0].pos);
             }
         }
-
         addEvent(chart, 'predraw', preRender);
         addEvent(chart, 'render', canvasToSVG);
         // addEvent(chart, 'zoom', function () {
@@ -308,5 +307,4 @@ function init() {
     });
     /* eslint-enable no-invalid-this */
 }
-
 export default init;

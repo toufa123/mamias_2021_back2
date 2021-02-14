@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v8.2.0 (2020-08-20)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
  * Data module
  *
@@ -23,17 +23,15 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
-
     _registerModule(_modules, 'Extensions/Ajax.js', [_modules['Core/Globals.js'], _modules['Core/Utilities.js']], function (H, U) {
         /* *
          *
-         *  (c) 2010-2017 Christer Vasseng, Torstein Honsi
+         *  (c) 2010-2021 Christer Vasseng, Torstein Honsi
          *
          *  License: www.highcharts.com/license
          *
@@ -103,7 +101,6 @@
                     octet: 'application/octet-stream'
                 },
                 r = new XMLHttpRequest();
-
             /**
              * @private
              * @param {XMLHttpRequest} xhr - Internal request object.
@@ -117,7 +114,6 @@
                     // @todo Maybe emit a highcharts error event here
                 }
             }
-
             if (!options.url) {
                 return false;
             }
@@ -183,18 +179,21 @@
 
         return exports;
     });
-    _registerModule(_modules, 'Extensions/Data.js', [_modules['Core/Chart/Chart.js'], _modules['Core/Globals.js'], _modules['Core/Series/Point.js'], _modules['Core/Utilities.js'], _modules['Extensions/Ajax.js']], function (Chart, H, Point, U, Ajax) {
+    _registerModule(_modules, 'Extensions/Data.js', [_modules['Extensions/Ajax.js'], _modules['Core/Chart/Chart.js'], _modules['Core/Globals.js'], _modules['Core/Series/Point.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (Ajax, Chart, H, Point, SeriesRegistry, U) {
         /* *
          *
          *  Data module
          *
-         *  (c) 2012-2020 Torstein Honsi
+         *  (c) 2012-2021 Torstein Honsi
          *
          *  License: www.highcharts.com/license
          *
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
+        var ajax = Ajax.ajax;
+        var doc = H.doc;
+        var seriesTypes = SeriesRegistry.seriesTypes;
         var addEvent = U.addEvent,
             defined = U.defined,
             extend = U.extend,
@@ -276,10 +275,6 @@
          *         Return `false` to stop completion, or call `this.complete()` to
          *         continue async.
          */
-        var ajax = Ajax.ajax;
-        // Utilities
-        var win = H.win,
-            doc = win.document;
         /**
          * The Data module provides a simplified interface for adding data to
          * a chart from sources like CVS, HTML tables or grid views. See also
@@ -660,6 +655,11 @@
          * @param {Highcharts.Chart} [chart]
          */
         var Data = /** @class */ (function () {
+            /* *
+             *
+             *  Constructors
+             *
+             * */
             function Data(dataOptions, chartOptions, chart) {
                 this.chart = void 0;
                 this.chartOptions = void 0;
@@ -728,6 +728,11 @@
                 this.init(dataOptions, chartOptions, chart);
             }
 
+            /* *
+             *
+             *  Functions
+             *
+             * */
             /**
              * Initialize the Data object with the given options
              *
@@ -807,12 +812,9 @@
                     options = this.options,
                     xColumns = [],
                     getValueCount = function (type) {
-                        return (H.seriesTypes[type || 'line'].prototype
-                                .pointArrayMap ||
-                            [0]).length;
+                        return (seriesTypes[type || 'line'].prototype.pointArrayMap || [0]).length;
                     }, getPointArrayMap = function (type) {
-                        return H.seriesTypes[type || 'line']
-                            .prototype.pointArrayMap;
+                        return seriesTypes[type || 'line'].prototype.pointArrayMap;
                     }, globalType = (chartOptions &&
                     chartOptions.chart &&
                     chartOptions.chart.type), individualCounts = [], seriesBuilders = [], seriesIndex = 0,
@@ -936,7 +938,6 @@
                         '\t': 0
                     };
                 columns = this.columns = [];
-
                 /*
                     This implementation is quite verbose. It will be shortened once
                     it's stable and passes all the test.
@@ -980,7 +981,6 @@
                  */
                 function parseRow(columnStr, rowNumber, noAdd, callbacks) {
                     var i = 0, c = '', cl = '', cn = '', token = '', actualColumn = 0, column = 0;
-
                     /**
                      * @private
                      */
@@ -989,7 +989,6 @@
                         cl = columnStr[j - 1];
                         cn = columnStr[j + 1];
                     }
-
                     /**
                      * @private
                      */
@@ -1001,7 +1000,6 @@
                             dataTypes[column].push(type);
                         }
                     }
-
                     /**
                      * @private
                      */
@@ -1033,7 +1031,6 @@
                         ++column;
                         ++actualColumn;
                     }
-
                     if (!columnStr.trim().length) {
                         return;
                     }
@@ -1042,12 +1039,6 @@
                     }
                     for (; i < columnStr.length; i++) {
                         read(i);
-                        // Quoted string
-                        if (c === '#') {
-                            // The rest of the row is a comment
-                            push();
-                            return;
-                        }
                         if (c === '"') {
                             read(++i);
                             while (i < columnStr.length) {
@@ -1074,7 +1065,6 @@
                     }
                     push();
                 }
-
                 /**
                  * Attempt to guess the delimiter. We do a separate parse pass here
                  * because we need to count potential delimiters softly without making
@@ -1166,7 +1156,6 @@
                     }
                     return guessed;
                 }
-
                 /**
                  * Tries to guess the date format
                  *  - Check if either month candidate exceeds 12
@@ -1269,7 +1258,6 @@
                     }
                     return format;
                 }
-
                 /**
                  * @todo
                  * Figure out the best axis types for the data
@@ -1280,7 +1268,6 @@
                  */
                 function deduceAxisTypes() {
                 }
-
                 if (csv && options.beforeParse) {
                     csv = options.beforeParse.call(this, csv);
                 }
@@ -1421,7 +1408,6 @@
                 delete options.csvURL;
                 delete options.rowsURL;
                 delete options.columnsURL;
-
                 /**
                  * @private
                  */
@@ -1441,7 +1427,6 @@
                             clearTimeout(data.liveDataTimeout);
                             chart.liveDataURL = url;
                         }
-
                         /**
                          * @private
                          */
@@ -1453,7 +1438,6 @@
                                     setTimeout(performFetch, updateIntervalMs);
                             }
                         }
-
                         ajax({
                             url: url,
                             dataType: tp || 'json',
@@ -1472,7 +1456,6 @@
                         });
                         return true;
                     }
-
                     if (!request(originalOptions.csvURL, function (res) {
                         chart.update({
                             data: {
@@ -1497,7 +1480,6 @@
                         }
                     }
                 }
-
                 performFetch(true);
                 return this.hasURLOption(options);
             };
@@ -1526,7 +1508,6 @@
                 if (refreshRate < 4000) {
                     refreshRate = 4000;
                 }
-
                 /**
                  * Fetch the actual spreadsheet using XMLHttpRequest.
                  * @private
@@ -1554,7 +1535,6 @@
                         }
                     });
                 }
-
                 if (googleSpreadsheetKey) {
                     delete options.googleSpreadsheetKey;
                     fetchSheet(function (json) {
@@ -1809,8 +1789,8 @@
              * @return {number}
              */
             Data.prototype.parseDate = function (val) {
-                var parseDate = this.options.parseDate,
-                    ret,
+                var parseDate = this.options.parseDate;
+                var ret,
                     key,
                     format,
                     dateFormat = this.options.dateFormat || this.dateFormat,
@@ -1844,9 +1824,15 @@
                     }
                     // Fall back to Date.parse
                     if (!match) {
+                        if (val.match(/:.+(GMT|UTC|[Z+-])/)) {
+                            val = val
+                                .replace(/\s*(?:GMT|UTC)?([+-])(\d\d)(\d\d)$/, '$1$2:$3')
+                                .replace(/(?:\s+|GMT|UTC)([+-])/, '$1')
+                                .replace(/(\d)\s*(?:GMT|UTC|Z)$/, '$1+00:00');
+                        }
                         match = Date.parse(val);
                         // External tools like Date.js and MooTools extend Date object
-                        // and returns a date.
+                        // and return a date.
                         if (typeof match === 'object' &&
                             match !== null &&
                             match.getTime) {

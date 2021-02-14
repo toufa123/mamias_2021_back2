@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -9,6 +9,16 @@
  * */
 'use strict';
 import H from './Globals.js';
+
+var isTouchDevice = H.isTouchDevice, svg = H.svg;
+import Color from './Color/Color.js';
+
+var color = Color.parse;
+import palette from './Color/Palette.js';
+import Time from './Time.js';
+import U from './Utilities.js';
+
+var merge = U.merge;
 /**
  * @typedef {"plotBox"|"spacingBox"} Highcharts.ButtonRelativeToValue
  */
@@ -170,19 +180,13 @@ import H from './Globals.js';
  * The maximum axis value, either automatic or set manually.
  * @name Highcharts.ChartSelectionAxisContextObject#max
  * @type {number}
- */ /**
+ */
+/**
  * The minimum axis value, either automatic or set manually.
  * @name Highcharts.ChartSelectionAxisContextObject#min
  * @type {number}
  */
-import Time from './Time.js';
-import Color from './Color.js';
-
-var color = Color.parse;
-import U from './Utilities.js';
-
-var merge = U.merge;
-var isTouchDevice = H.isTouchDevice, svg = H.svg;
+''; // detach doclets above
 /* ************************************************************************** *
  * Handle the options                                                         *
  * ************************************************************************** */
@@ -230,7 +234,7 @@ H.defaultOptions = {
      * @default ["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9",
      *          "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"]
      */
-    colors: '#7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b #91e8e1'.split(' '),
+    colors: palette.colors,
     /**
      * Styled mode only. Configuration object for adding SVG definitions for
      * reusable elements. See [gradients, shadows and
@@ -1291,14 +1295,10 @@ H.defaultOptions = {
          *         String
          * @sample {highcharts} highcharts/chart/renderto-object/
          *         Object reference
-         * @sample {highcharts} highcharts/chart/renderto-jquery/
-         *         Object reference through jQuery
          * @sample {highstock} stock/chart/renderto-string/
          *         String
          * @sample {highstock} stock/chart/renderto-object/
          *         Object reference
-         * @sample {highstock} stock/chart/renderto-jquery/
-         *         Object reference through jQuery
          *
          * @type      {string|Highcharts.HTMLDOMElement}
          * @apioption chart.renderTo
@@ -1491,6 +1491,19 @@ H.defaultOptions = {
          * @apioption  chart.zoomType
          */
         /**
+         * Enables zooming by a single touch, in combination with
+         * [chart.zoomType](#chart.zoomType). When enabled, two-finger pinch
+         * will still work as set up by [chart.pinchType](#chart.pinchType).
+         * However, `zoomBySingleTouch` will interfere with touch-dragging the
+         * chart to read the tooltip. And especially when vertical zooming is
+         * enabled, it will make it hard to scroll vertically on the page.
+         * @since 9.0.0
+         * @sample     highcharts/chart/zoombysingletouch
+         *             Zoom by single touch enabled, with buttons to toggle
+         * @product    highcharts higstock gantt
+         */
+        zoomBySingleTouch: false,
+        /**
          * An explicit width for the chart. By default (when `null`) the width
          * is calculated from the offset width of the containing element.
          *
@@ -1542,7 +1555,7 @@ H.defaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        borderColor: '#335cad',
+        borderColor: palette.highlightColor80,
         /**
          * The pixel width of the outer chart border.
          *
@@ -1581,7 +1594,7 @@ H.defaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        backgroundColor: '#ffffff',
+        backgroundColor: palette.backgroundColor,
         /**
          * The background color or gradient for the plot area.
          *
@@ -1638,7 +1651,7 @@ H.defaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        plotBorderColor: '#cccccc'
+        plotBorderColor: palette.neutralColor20
     },
     /**
      * The chart's main title.
@@ -2067,7 +2080,7 @@ H.defaultOptions = {
             /**
              * @ignore-option
              */
-            color: '#333333'
+            color: palette.neutralColor80
         }
     },
     /**
@@ -2343,7 +2356,7 @@ H.defaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        borderColor: '#999999',
+        borderColor: palette.neutralColor40,
         /**
          * The border corner radius of the legend.
          *
@@ -2437,7 +2450,7 @@ H.defaultOptions = {
              * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 2.2.4
              */
-            activeColor: '#003399',
+            activeColor: palette.highlightColor100,
             /**
              * The color of the inactive up or down arrow in the legend page
              * navigation. .
@@ -2453,7 +2466,7 @@ H.defaultOptions = {
              * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 2.2.4
              */
-            inactiveColor: '#cccccc'
+            inactiveColor: palette.neutralColor20
         },
         /**
          * The inner padding of the legend box.
@@ -2529,7 +2542,7 @@ H.defaultOptions = {
             /**
              * @ignore
              */
-            color: '#333333',
+            color: palette.neutralColor80,
             /**
              * @ignore
              */
@@ -2567,7 +2580,7 @@ H.defaultOptions = {
             /**
              * @ignore
              */
-            color: '#000000'
+            color: palette.neutralColor100
         },
         /**
          * CSS styles for each legend item when the corresponding series or
@@ -2588,7 +2601,7 @@ H.defaultOptions = {
             /**
              * @ignore
              */
-            color: '#cccccc'
+            color: palette.neutralColor20
         },
         /**
          * Whether to apply a drop shadow to the legend. A `backgroundColor`
@@ -2892,7 +2905,7 @@ H.defaultOptions = {
             /**
              * @ignore
              */
-            backgroundColor: '#ffffff',
+            backgroundColor: palette.backgroundColor,
             /**
              * @ignore
              */
@@ -3441,11 +3454,12 @@ H.defaultOptions = {
          */
         /**
          * The HTML of the point's line in the tooltip. Variables are enclosed
-         * by curly brackets. Available variables are point.x, point.y, series.
-         * name and series.color and other properties on the same form.
-         * Furthermore, `point.y` can be extended by the `tooltip.valuePrefix`
-         * and `tooltip.valueSuffix` variables. This can also be overridden for
-         * each series, which makes it a good hook for displaying units.
+         * by curly brackets. Available variables are `point.x`, `point.y`,
+         * `series.name` and `series.color` and other properties on the same
+         * form. Furthermore, `point.y` can be extended by the
+         * `tooltip.valuePrefix` and `tooltip.valueSuffix` variables. This can
+         * also be overridden for each series, which makes it a good hook for
+         * displaying units.
          *
          * In styled mode, the dot is colored by a class name rather
          * than the point color.
@@ -3483,7 +3497,7 @@ H.defaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        backgroundColor: color('#f7f7f7')
+        backgroundColor: color(palette.neutralColor3)
             .setOpacity(0.85).get(),
         /**
          * The pixel width of the tooltip border.
@@ -3535,7 +3549,7 @@ H.defaultOptions = {
          */
         style: {
             /** @internal */
-            color: '#333333',
+            color: palette.neutralColor80,
             /** @internal */
             cursor: 'default',
             /** @internal */
@@ -3634,7 +3648,7 @@ H.defaultOptions = {
             /** @internal */
             cursor: 'pointer',
             /** @internal */
-            color: '#999999',
+            color: palette.neutralColor40,
             /** @internal */
             fontSize: '9px'
         },
@@ -3655,6 +3669,8 @@ H.defaultOptions = {
     }
 };
 /* eslint-disable spaced-comment */
+
+H.defaultOptions.chart.styledMode = false;
 
 '';
 /**

@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v8.2.0 (2020-08-20)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
  * ColorAxis module
  *
@@ -23,17 +23,16 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Mixins/ColorSeries.js', [_modules['Core/Globals.js']], function (H) {
+    _registerModule(_modules, 'Mixins/ColorSeries.js', [], function () {
         /* *
          *
-         *  (c) 2010-2020 Torstein Honsi
+         *  (c) 2010-2021 Torstein Honsi
          *
          *  License: www.highcharts.com/license
          *
@@ -46,7 +45,7 @@
          * @private
          * @mixin Highcharts.colorPointMixin
          */
-        H.colorPointMixin = {
+        var colorPointMixin = {
             /* eslint-disable valid-jsdoc */
             /**
              * Set the visibility of a single point
@@ -73,12 +72,14 @@
          * @private
          * @mixin Highcharts.colorSeriesMixin
          */
-        H.colorSeriesMixin = {
+        var colorSeriesMixin = {
             optionalAxis: 'colorAxis',
             colorAxis: 0,
             /* eslint-disable valid-jsdoc */
             /**
-             * In choropleth maps, the color is a result of the value, so this needs
+             * In choropleth maps,
+             the color is a result of the value,
+             so this needs
              * translation too
              * @private
              * @function Highcharts.colorSeriesMixin.translateColors
@@ -109,12 +110,17 @@
             }
             /* eslint-enable valid-jsdoc */
         };
+        var exports = {
+            colorPointMixin: colorPointMixin,
+            colorSeriesMixin: colorSeriesMixin
+        };
 
+        return exports;
     });
-    _registerModule(_modules, 'Core/Axis/ColorAxis.js', [_modules['Core/Axis/Axis.js'], _modules['Core/Chart/Chart.js'], _modules['Core/Color.js'], _modules['Core/Globals.js'], _modules['Core/Legend.js'], _modules['Mixins/LegendSymbol.js'], _modules['Core/Series/Point.js'], _modules['Core/Utilities.js']], function (Axis, Chart, Color, H, Legend, LegendSymbolMixin, Point, U) {
+    _registerModule(_modules, 'Core/Axis/ColorAxis.js', [_modules['Core/Axis/Axis.js'], _modules['Core/Chart/Chart.js'], _modules['Core/Color/Color.js'], _modules['Mixins/ColorSeries.js'], _modules['Core/Animation/Fx.js'], _modules['Core/Globals.js'], _modules['Core/Legend.js'], _modules['Mixins/LegendSymbol.js'], _modules['Core/Color/Palette.js'], _modules['Core/Series/Point.js'], _modules['Core/Series/Series.js'], _modules['Core/Utilities.js']], function (Axis, Chart, Color, ColorSeriesModule, Fx, H, Legend, LegendSymbolMixin, palette, Point, Series, U) {
         /* *
          *
-         *  (c) 2010-2020 Torstein Honsi
+         *  (c) 2010-2021 Torstein Honsi
          *
          *  License: www.highcharts.com/license
          *
@@ -146,11 +152,12 @@
             };
         })();
         var color = Color.parse;
+        var colorPointMixin = ColorSeriesModule.colorPointMixin,
+            colorSeriesMixin = ColorSeriesModule.colorSeriesMixin;
         var noop = H.noop;
         var addEvent = U.addEvent,
             erase = U.erase,
             extend = U.extend,
-            Fx = U.Fx,
             isNumber = U.isNumber,
             merge = U.merge,
             pick = U.pick,
@@ -161,9 +168,6 @@
          * @typedef {"linear"|"logarithmic"} Highcharts.ColorAxisTypeValue
          */
         ''; // detach doclet above
-        var Series = H.Series,
-            colorPointMixin = H.colorPointMixin,
-            colorSeriesMixin = H.colorSeriesMixin;
         extend(Series.prototype, colorSeriesMixin);
         extend(Point.prototype, colorPointMixin);
         Chart.prototype.collectionsWithUpdate.push('colorAxis');
@@ -184,7 +188,6 @@
          */
         var ColorAxis = /** @class */ (function (_super) {
             __extends(ColorAxis, _super);
-
             /* *
              *
              *  Constructors
@@ -210,32 +213,6 @@
                 _this.init(chart, userOptions);
                 return _this;
             }
-
-            /* *
-             *
-             *  Static Functions
-             *
-             * */
-            /**
-             * Build options to keep layout params on init and update.
-             * @private
-             */
-            ColorAxis.buildOptions = function (chart, options, userOptions) {
-                var legend = chart.options.legend || {},
-                    horiz = userOptions.layout ?
-                        userOptions.layout !== 'vertical' :
-                        legend.layout !== 'vertical';
-                return merge(options, {
-                    side: horiz ? 2 : 1,
-                    reversed: !horiz
-                }, userOptions, {
-                    opposite: !horiz,
-                    showEmpty: false,
-                    title: null,
-                    visible: legend.enabled &&
-                        (userOptions ? userOptions.visible !== false : true)
-                });
-            };
             /* *
              *
              *  Functions
@@ -254,11 +231,24 @@
              */
             ColorAxis.prototype.init = function (chart, userOptions) {
                 var axis = this;
-                var options = ColorAxis.buildOptions(// Build the options
-                    chart,
-                    ColorAxis.defaultOptions,
-                    userOptions);
+                var legend = chart.options.legend || {},
+                    horiz = userOptions.layout ?
+                        userOptions.layout !== 'vertical' :
+                        legend.layout !== 'vertical';
+                var options = merge(ColorAxis.defaultOptions,
+                    userOptions, {
+                        showEmpty: false,
+                        title: null,
+                        visible: legend.enabled &&
+                            (userOptions ? userOptions.visible !== false : true)
+                    });
                 axis.coll = 'colorAxis';
+                axis.side = userOptions.side || horiz ? 2 : 1;
+                axis.reversed = userOptions.reversed || !horiz;
+                axis.opposite = !horiz;
+                // Keep the options structure updated for export. Unlike xAxis and
+                // yAxis, the colorAxis is not an array. (#3207)
+                chart.options[axis.coll] = options;
                 _super.prototype.init.call(this, chart, options);
                 // Base init() pushes it to the xAxis array, now pop it again
                 // chart[this.isXAxis ? 'xAxis' : 'yAxis'].pop();
@@ -268,7 +258,7 @@
                 }
                 axis.initStops();
                 // Override original axis properties
-                axis.horiz = !options.opposite;
+                axis.horiz = horiz;
                 axis.zoomEnabled = false;
             };
             /**
@@ -677,9 +667,7 @@
             ColorAxis.prototype.update = function (newOptions, redraw) {
                 var axis = this,
                     chart = axis.chart,
-                    legend = chart.legend,
-                    updatedOptions = ColorAxis.buildOptions(chart, {},
-                        newOptions);
+                    legend = chart.legend;
                 this.series.forEach(function (series) {
                     // Needed for Axis.update when choropleth colors change
                     series.isDirtyData = true;
@@ -689,11 +677,7 @@
                 if (newOptions.dataClasses && legend.allItems || axis.dataClasses) {
                     axis.destroyItems();
                 }
-                // Keep the options structure updated for export. Unlike xAxis and
-                // yAxis, the colorAxis is not an array. (#3207)
-                chart.options[axis.coll] =
-                    merge(axis.userOptions, updatedOptions);
-                _super.prototype.update.call(this, updatedOptions, redraw);
+                _super.prototype.update.call(this, newOptions, redraw);
                 if (axis.legendItem) {
                     axis.setLegendColor();
                     legend.colorizeItem(this, true);
@@ -714,6 +698,12 @@
                     });
                 }
                 chart.isDirtyLegend = true;
+            };
+            //   Removing the whole axis (#14283)
+            ColorAxis.prototype.destroy = function () {
+                this.chart.isDirtyLegend = true;
+                this.destroyItems();
+                _super.prototype.destroy.apply(this, [].slice.call(arguments));
             };
             /**
              * Removes the color axis and the related legend item.
@@ -1077,7 +1067,7 @@
                      * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                      * @product highcharts highstock highmaps
                      */
-                    color: '#999999'
+                    color: palette.neutralColor40
                 },
                 /**
                  * The axis labels show the number for each tick.
@@ -1119,7 +1109,7 @@
                  * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @product highcharts highstock highmaps
                  */
-                minColor: '#e6ebf5',
+                minColor: palette.highlightColor10,
                 /**
                  * The color to represent the maximum of the color axis. Unless
                  * [dataClasses](#colorAxis.dataClasses) or
@@ -1138,7 +1128,7 @@
                  * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
                  * @product highcharts highstock highmaps
                  */
-                maxColor: '#003399',
+                maxColor: palette.highlightColor100,
                 /**
                  * Color stops for the gradient of a scalar color axis. Use this in
                  * cases where a linear gradient between a `minColor` and `maxColor`

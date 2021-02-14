@@ -5179,7 +5179,7 @@
                 var lastLine = "";
                 var lineCount = 0;
 
-                for (var i in textSplit) {
+                Line: for (var i in textSplit) {
                     if (textSplit.hasOwnProperty(i)) {
                         lastLine += textSplit[i] + " "; // Remove last blank
 

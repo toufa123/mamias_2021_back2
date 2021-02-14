@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v8.2.0 (2020-08-20)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
  * Pareto series type for Highcharts
  *
@@ -23,23 +23,21 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Mixins/DerivedSeries.js', [_modules['Core/Globals.js'], _modules['Core/Utilities.js']], function (H, U) {
+    _registerModule(_modules, 'Mixins/DerivedSeries.js', [_modules['Core/Globals.js'], _modules['Core/Series/Series.js'], _modules['Core/Utilities.js']], function (H, Series, U) {
         /* *
          *
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
+        var noop = H.noop;
         var addEvent = U.addEvent,
             defined = U.defined;
-        var Series = H.Series,
-            noop = H.noop;
         /* ************************************************************************** *
          *
          * DERIVED SERIES MIXIN
@@ -155,19 +153,49 @@
 
         return derivedSeriesMixin;
     });
-    _registerModule(_modules, 'Series/ParetoSeries.js', [_modules['Core/Utilities.js'], _modules['Mixins/DerivedSeries.js']], function (U, derivedSeriesMixin) {
+    _registerModule(_modules, 'Series/ParetoSeries/ParetoSeries.js', [_modules['Mixins/DerivedSeries.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (DerivedSeriesMixin, SeriesRegistry, U) {
         /* *
          *
-         *  (c) 2010-2017 Sebastian Bochan
+         *  (c) 2010-2021 Sebastian Bochan
          *
          *  License: www.highcharts.com/license
          *
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
+        var __extends = (this && this.__extends) || (function () {
+            var extendStatics = function (d,
+                                          b) {
+                extendStatics = Object.setPrototypeOf ||
+                    ({__proto__: []} instanceof Array && function (d,
+                                                                   b) {
+                        d.__proto__ = b;
+                    }) ||
+                    function (d,
+                              b) {
+                        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+                    };
+                return extendStatics(d, b);
+            };
+            return function (d, b) {
+                extendStatics(d, b);
+
+                function __() {
+                    this.constructor = d;
+                }
+
+                d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+            };
+        })();
+        var LineSeries = SeriesRegistry.seriesTypes.line;
         var correctFloat = U.correctFloat,
             merge = U.merge,
-            seriesType = U.seriesType;
+            extend = U.extend;
+        /* *
+         *
+         *  Class
+         *
+         * */
         /**
          * The pareto series type.
          *
@@ -177,7 +205,93 @@
          *
          * @augments Highcharts.Series
          */
-        seriesType('pareto', 'line'
+        var ParetoSeries = /** @class */ (function (_super) {
+            __extends(ParetoSeries, _super);
+
+            function ParetoSeries() {
+                /* *
+                 *
+                 *  Static properties
+                 *
+                 * */
+                var _this = _super !== null && _super.apply(this,
+                    arguments) || this;
+                /* *
+                 *
+                 *  Properties
+                 *
+                 * */
+                _this.data = void 0;
+                _this.points = void 0;
+                _this.options = void 0;
+                return _this;
+            }
+
+            /* *
+             *
+             *  Functions
+             *
+             * */
+            /**
+             * Calculate y sum and each percent point.
+             *
+             * @private
+             * @function Highcharts.Series#sumPointsPercents
+             *
+             * @param {Array<number>} yValues
+             * Y values
+             *
+             * @param {Array<number>} xValues
+             * X values
+             *
+             * @param {number} sum
+             * Sum of all y values
+             *
+             * @param {boolean} [isSum]
+             * Declares if calculate sum of all points
+             *
+             * @return {number|Array<number,number>}
+             * Returns sum of points or array of points [x,sum]
+             *
+             * @requires modules/pareto
+             */
+            ParetoSeries.prototype.sumPointsPercents = function (yValues, xValues, sum, isSum) {
+                var sumY = 0,
+                    sumPercent = 0,
+                    percentPoints = [],
+                    percentPoint;
+                yValues.forEach(function (point, i) {
+                    if (point !== null) {
+                        if (isSum) {
+                            sumY += point;
+                        } else {
+                            percentPoint = (point / sum) * 100;
+                            percentPoints.push([
+                                xValues[i],
+                                correctFloat(sumPercent + percentPoint)
+                            ]);
+                            sumPercent += percentPoint;
+                        }
+                    }
+                });
+                return (isSum ? sumY : percentPoints);
+            };
+            /**
+             * Calculate sum and return percent points.
+             *
+             * @private
+             * @function Highcharts.Series#setDerivedData
+             * @requires modules/pareto
+             */
+            ParetoSeries.prototype.setDerivedData = function () {
+                var xValues = this.baseSeries.xData,
+                    yValues = this.baseSeries.yData,
+                    sum = this.sumPointsPercents(yValues,
+                        xValues,
+                        null,
+                        true);
+                this.setData(this.sumPointsPercents(yValues, xValues, sum, false), false);
+            };
             /**
              * A pareto diagram is a type of chart that contains both bars and a line
              * graph, where individual values are represented in descending order by
@@ -200,77 +314,33 @@
              * @requires     modules/pareto
              * @optionparent plotOptions.pareto
              */
-            , {
+            ParetoSeries.defaultOptions = merge(LineSeries.defaultOptions, {
                 /**
                  * Higher zIndex than column series to draw line above shapes.
                  */
                 zIndex: 3
-            },
-            /* eslint-disable no-invalid-this, valid-jsdoc */
-            merge(derivedSeriesMixin, {
-                /**
-                 * Calculate sum and return percent points.
-                 *
-                 * @private
-                 * @function Highcharts.Series#setDerivedData
-                 * @requires modules/pareto
-                 */
-                setDerivedData: function () {
-                    var xValues = this.baseSeries.xData,
-                        yValues = this.baseSeries.yData,
-                        sum = this.sumPointsPercents(yValues,
-                            xValues,
-                            null,
-                            true);
-                    this.setData(this.sumPointsPercents(yValues, xValues, sum, false), false);
-                },
-                /**
-                 * Calculate y sum and each percent point.
-                 *
-                 * @private
-                 * @function Highcharts.Series#sumPointsPercents
-                 *
-                 * @param {Array<number>} yValues
-                 * Y values
-                 *
-                 * @param {Array<number>} xValues
-                 * X values
-                 *
-                 * @param {number} sum
-                 * Sum of all y values
-                 *
-                 * @param {boolean} [isSum]
-                 * Declares if calculate sum of all points
-                 *
-                 * @return {number|Array<number,number>}
-                 * Returns sum of points or array of points [x,sum]
-                 *
-                 * @requires modules/pareto
-                 */
-                sumPointsPercents: function (yValues, xValues, sum, isSum) {
-                    var sumY = 0,
-                        sumPercent = 0,
-                        percentPoints = [],
-                        percentPoint;
-                    yValues.forEach(function (point, i) {
-                        if (point !== null) {
-                            if (isSum) {
-                                sumY += point;
-                            } else {
-                                percentPoint = (point / sum) * 100;
-                                percentPoints.push([
-                                    xValues[i],
-                                    correctFloat(sumPercent + percentPoint)
-                                ]);
-                                sumPercent += percentPoint;
-                            }
-                        }
-                    });
-                    return (isSum ? sumY : percentPoints);
-                }
-            })
-            /* eslint-enable no-invalid-this, valid-jsdoc */
-        );
+            });
+            return ParetoSeries;
+        }(LineSeries));
+        extend(ParetoSeries.prototype, {
+            addBaseSeriesEvents: DerivedSeriesMixin.addBaseSeriesEvents,
+            addEvents: DerivedSeriesMixin.addEvents,
+            destroy: DerivedSeriesMixin.destroy,
+            hasDerivedData: DerivedSeriesMixin.hasDerivedData,
+            init: DerivedSeriesMixin.init,
+            setBaseSeries: DerivedSeriesMixin.setBaseSeries
+        });
+        SeriesRegistry.registerSeriesType('pareto', ParetoSeries);
+        /* *
+         *
+         *  Default export
+         *
+         * */
+        /* *
+         *
+         *  API options
+         *
+         * */
         /**
          * A `pareto` series. If the [type](#series.pareto.type) option is not
          * specified, it is inherited from [chart.type](#chart.type).
@@ -302,6 +372,7 @@
          */
         ''; // adds the doclets above to the transpiled file
 
+        return ParetoSeries;
     });
     _registerModule(_modules, 'masters/modules/pareto.src.js', [], function () {
 

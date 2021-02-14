@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Handle forcing series markers.
  *
@@ -10,11 +10,9 @@
  *
  * */
 'use strict';
-import H from '../../../Core/Globals.js';
+import Series from '../../../Core/Series/Series.js';
 import U from '../../../Core/Utilities.js';
-
 var addEvent = U.addEvent, merge = U.merge;
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private
@@ -25,7 +23,6 @@ function isWithinDescriptionThreshold(series) {
         a11yOptions.series.pointDescriptionEnabledThreshold ||
         a11yOptions.series.pointDescriptionEnabledThreshold === false;
 }
-
 /**
  * @private
  */
@@ -35,14 +32,12 @@ function shouldForceMarkers(series) {
             series.options.accessibility.enabled) !== false;
     return chartA11yEnabled && seriesA11yEnabled && isWithinDescriptionThreshold(series);
 }
-
 /**
  * @private
  */
 function hasIndividualPointMarkerOptions(series) {
     return !!(series._hasPointMarkers && series.points && series.points.length);
 }
-
 /**
  * @private
  */
@@ -63,7 +58,6 @@ function unforceSeriesMarkerOptions(series) {
         });
     }
 }
-
 /**
  * @private
  */
@@ -79,7 +73,6 @@ function forceZeroOpacityMarkerOptions(options) {
         }
     });
 }
-
 /**
  * @private
  */
@@ -88,7 +81,6 @@ function getPointMarkerOpacity(pointOptions) {
         pointOptions.marker.states.normal &&
         pointOptions.marker.states.normal.opacity || 1;
 }
-
 /**
  * @private
  */
@@ -101,7 +93,6 @@ function unforcePointMarkerOptions(pointOptions) {
         }
     });
 }
-
 /**
  * @private
  */
@@ -122,7 +113,6 @@ function handleForcePointMarkers(series) {
         }
     }
 }
-
 /**
  * @private
  */
@@ -131,7 +121,7 @@ function addForceMarkersEvents() {
      * Keep track of forcing markers.
      * @private
      */
-    addEvent(H.Series, 'render', function () {
+    addEvent(Series, 'render', function () {
         var series = this, options = series.options;
         if (shouldForceMarkers(series)) {
             if (options.marker && options.marker.enabled === false) {
@@ -150,14 +140,14 @@ function addForceMarkersEvents() {
      * Keep track of options to reset markers to if no longer forced.
      * @private
      */
-    addEvent(H.Series, 'afterSetOptions', function (e) {
+    addEvent(Series, 'afterSetOptions', function (e) {
         this.resetA11yMarkerOptions = merge(e.options.marker || {}, this.userOptions.marker || {});
     });
     /**
      * Process marker graphics after render
      * @private
      */
-    addEvent(H.Series, 'afterRender', function () {
+    addEvent(Series, 'afterRender', function () {
         var series = this;
         // For styled mode the rendered graphic does not reflect the style
         // options, and we need to add/remove classes to achieve the same.
@@ -177,5 +167,4 @@ function addForceMarkersEvents() {
         }
     });
 }
-
 export default addForceMarkersEvents;

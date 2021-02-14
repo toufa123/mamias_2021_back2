@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -222,7 +222,6 @@ Chart.prototype.matchResponsiveRule = function (rule, matches) {
  */
 Chart.prototype.currentOptions = function (options) {
     var chart = this, ret = {};
-
     /**
      * Recurse over a set of options and its current values,
      * and store the current values in the ret object.
@@ -231,7 +230,8 @@ Chart.prototype.currentOptions = function (options) {
         var i;
         objectEach(options, function (val, key) {
             if (!depth &&
-                chart.collectionsWithUpdate.indexOf(key) > -1) {
+                chart.collectionsWithUpdate.indexOf(key) > -1 &&
+                curr[key]) {
                 val = splat(val);
                 ret[key] = [];
                 // Iterate over collections like series, xAxis or yAxis and map
@@ -262,7 +262,6 @@ Chart.prototype.currentOptions = function (options) {
             }
         });
     }
-
     getCurrent(options, this.options, ret, 0);
     return ret;
 };

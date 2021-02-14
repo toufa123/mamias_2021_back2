@@ -1,5 +1,5 @@
 /**
- * @license Highstock JS v8.2.0 (2020-08-20)
+ * @license Highstock JS v9.0.0 (2021-02-02)
  *
  * Advanced Highstock tools
  *
@@ -24,21 +24,21 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Extensions/FullScreen.js', [_modules['Core/Chart/Chart.js'], _modules['Core/Globals.js'], _modules['Core/Utilities.js']], function (Chart, H, U) {
+    _registerModule(_modules, 'Extensions/FullScreen.js', [_modules['Core/Chart/Chart.js'], _modules['Core/Globals.js'], _modules['Core/Renderer/HTML/AST.js'], _modules['Core/Utilities.js']], function (Chart, H, AST, U) {
         /* *
-         * (c) 2009-2020 Rafal Sebestjanski
+         * (c) 2009-2021 Rafal Sebestjanski
          *
          * Full screen for Highcharts
          *
          * License: www.highcharts.com/license
          */
+        var doc = H.doc;
         var addEvent = U.addEvent;
         /**
          * The module allows user to enable display chart in full screen mode.
@@ -109,7 +109,6 @@
                     }
                 }
             }
-
             /* *
              *
              *  Functions
@@ -203,10 +202,9 @@
                     menuItems &&
                     exportDivElements &&
                     exportDivElements.length) {
-                    exportDivElements[menuItems.indexOf('viewFullscreen')]
-                        .innerHTML = !this.isOpen ?
+                    AST.setElementHTML(exportDivElements[menuItems.indexOf('viewFullscreen')], !this.isOpen ?
                         (exportingOptions.menuItemDefinitions.viewFullscreen.text ||
-                            lang.viewFullscreen) : lang.exitFullscreen;
+                            lang.viewFullscreen) : lang.exitFullscreen);
                 }
             };
             /**

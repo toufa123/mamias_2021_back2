@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -24,13 +24,11 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import Axis from './Axis.js';
 import U from '../Utilities.js';
-
 var addEvent = U.addEvent, merge = U.merge, pick = U.pick, splat = U.splat;
 /* eslint-disable valid-jsdoc */
 /**
@@ -41,7 +39,6 @@ var addEvent = U.addEvent, merge = U.merge, pick = U.pick, splat = U.splat;
 var ZChart = /** @class */ (function () {
     function ZChart() {
     }
-
     /* *
      *
      *  Static Functions
@@ -88,7 +85,6 @@ var ZChart = /** @class */ (function () {
  */
 var ZAxis = /** @class */ (function (_super) {
     __extends(ZAxis, _super);
-
     /* *
      *
      *  Constructors
@@ -99,7 +95,6 @@ var ZAxis = /** @class */ (function (_super) {
         _this.isZAxis = true;
         return _this;
     }
-
     /* *
      *
      *  Functions
@@ -153,6 +148,8 @@ var ZAxis = /** @class */ (function (_super) {
             offset: 0,
             lineWidth: 0
         }, userOptions);
+        // #14793, this used to be set on the prototype
+        this.isZAxis = true;
         _super.prototype.setOptions.call(this, userOptions);
         this.coll = 'zAxis';
     };

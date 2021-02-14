@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2020 Highsoft AS
+ *  (c) 2016-2021 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -9,14 +9,11 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
 import Chart from './Chart.js';
 import H from '../Globals.js';
 import U from '../Utilities.js';
-
 var getOptions = U.getOptions, isArray = U.isArray, merge = U.merge, splat = U.splat;
-import '../../Series/GanttSeries.js';
-
+import '../../Series/Gantt/GanttSeries.js';
 /**
  * Factory function for Gantt charts.
  *
@@ -100,7 +97,11 @@ H.ganttChart = function (renderTo, options, callback) {
                 enabled: false
             },
             navigator: {
-                series: {type: 'gantt'}
+                series: {type: 'gantt'},
+                // Bars were clipped, #14060.
+                yAxis: {
+                    type: 'category'
+                }
             }
         }, options, // user's options
         // forced options
@@ -108,13 +109,6 @@ H.ganttChart = function (renderTo, options, callback) {
             isGantt: true
         });
     options.series = userOptions.series = seriesOptions;
-    (options.series || []).forEach(function (series) {
-        if (series.data) {
-            series.data.forEach(function (point) {
-                H.seriesTypes.gantt.prototype.setGanttPointAliases(point);
-            });
-        }
-    });
     return hasRenderToArg ?
         new Chart(renderTo, options, callback) :
         new Chart(options, options); // @todo does not look correct

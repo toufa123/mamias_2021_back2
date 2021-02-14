@@ -1,5 +1,5 @@
 /**
- * @license Highstock JS v8.2.0 (2020-08-20)
+ * @license Highstock JS v9.0.0 (2021-02-02)
  *
  * Data grouping module
  *
@@ -23,23 +23,34 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Extensions/DataGrouping.js', [_modules['Core/Axis/DateTimeAxis.js'], _modules['Core/Globals.js'], _modules['Core/Options.js'], _modules['Core/Series/Point.js'], _modules['Core/Tooltip.js'], _modules['Core/Utilities.js']], function (DateTimeAxis, H, O, Point, Tooltip, U) {
+    _registerModule(_modules, 'Extensions/DataGrouping.js', [_modules['Core/Axis/Axis.js'], _modules['Core/Axis/DateTimeAxis.js'], _modules['Core/Globals.js'], _modules['Core/Options.js'], _modules['Core/Series/Point.js'], _modules['Core/Series/Series.js'], _modules['Core/Tooltip.js'], _modules['Core/Utilities.js']], function (Axis, DateTimeAxis, H, O, Point, Series, Tooltip, U) {
         /* *
          *
-         *  (c) 2010-2020 Torstein Honsi
+         *  (c) 2010-2021 Torstein Honsi
          *
          *  License: www.highcharts.com/license
          *
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
+        var seriesProto = Series.prototype;
+        var addEvent = U.addEvent,
+            arrayMax = U.arrayMax,
+            arrayMin = U.arrayMin,
+            correctFloat = U.correctFloat,
+            defined = U.defined,
+            error = U.error,
+            extend = U.extend,
+            format = U.format,
+            isNumber = U.isNumber,
+            merge = U.merge,
+            pick = U.pick;
         /**
          * @typedef {"average"|"averages"|"open"|"high"|"low"|"close"|"sum"} Highcharts.DataGroupingApproximationValue
          */
@@ -57,20 +68,6 @@
          * @type {number}
          */
         ''; // detach doclets above
-        var defaultOptions = O.defaultOptions;
-        var addEvent = U.addEvent,
-            arrayMax = U.arrayMax,
-            arrayMin = U.arrayMin,
-            correctFloat = U.correctFloat,
-            defined = U.defined,
-            error = U.error,
-            extend = U.extend,
-            format = U.format,
-            isNumber = U.isNumber,
-            merge = U.merge,
-            pick = U.pick;
-        var Axis = H.Axis,
-            Series = H.Series;
         /* ************************************************************************** *
          *  Start data grouping module                                                *
          * ************************************************************************** */
@@ -199,7 +196,6 @@
                 valuesLen,
                 i,
                 j;
-
             /**
              * @private
              */
@@ -213,7 +209,6 @@
                 return approximations[(series.getDGApproximation && series.getDGApproximation()) ||
                 'average'];
             }
-
             approximationFn = getApproximation(approximation);
             // Calculate values array size from pointArrayMap length
             if (pointArrayMapLength) {
@@ -320,8 +315,7 @@
         };
         // -----------------------------------------------------------------------------
         // The following code applies to implementation of data grouping on a Series
-        var seriesProto = Series.prototype, baseProcessData = seriesProto.processData,
-            baseGeneratePoints = seriesProto.generatePoints,
+        var baseProcessData = seriesProto.processData, baseGeneratePoints = seriesProto.generatePoints,
             /** @ignore */
             commonOptions = {
                 // enabled: null, // (true for stock charts, false for basic),

@@ -2,7 +2,7 @@
  *
  *  Accessibility module - internationalization support
  *
- *  (c) 2010-2020 Highsoft AS
+ *  (c) 2010-2021 Highsoft AS
  *  Author: Øystein Moseng
  *
  *  License: www.highcharts.com/license
@@ -13,9 +13,7 @@
 'use strict';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
-
 var format = U.format, pick = U.pick;
-
 /* eslint-disable valid-jsdoc */
 /**
  * String trim that works for IE6-8 as well.
@@ -32,7 +30,6 @@ var format = U.format, pick = U.pick;
 function stringTrim(str) {
     return str.trim && str.trim() || str.replace(/^\s+|\s+$/g, '');
 }
-
 /**
  * i18n utility function. Format a single array or plural statement in a format
  * string. If the statement is not an array or plural statement, returns the
@@ -115,7 +112,6 @@ function formatExtendedStatement(statement, ctx) {
     // Standard substitution, delegate to format or similar
     return '{' + statement + '}';
 }
-
 /**
  * i18n formatting function. Extends Highcharts.format() functionality by also
  * handling arrays and plural conditionals. Arrays can be indexed as follows:

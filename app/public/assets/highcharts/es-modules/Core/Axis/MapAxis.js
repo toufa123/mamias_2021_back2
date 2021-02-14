@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,7 +10,6 @@
 'use strict';
 import Axis from './Axis.js';
 import U from '../Utilities.js';
-
 var addEvent = U.addEvent, pick = U.pick;
 /**
  * Map support for axes.
@@ -26,7 +25,6 @@ var MapAxisAdditions = /** @class */ (function () {
     function MapAxisAdditions(axis) {
         this.axis = axis;
     }
-
     return MapAxisAdditions;
 }());
 /**
@@ -37,7 +35,6 @@ var MapAxisAdditions = /** @class */ (function () {
 var MapAxis = /** @class */ (function () {
     function MapAxis() {
     }
-
     /**
      * Extends axes with map support.
      * @private

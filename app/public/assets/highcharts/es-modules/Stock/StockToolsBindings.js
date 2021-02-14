@@ -2,7 +2,7 @@
  *
  *  Events generator for Stock tools
  *
- *  (c) 2009-2020 Paweł Fus
+ *  (c) 2009-2021 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -12,10 +12,12 @@
 'use strict';
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 
 var correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent,
-    isNumber = U.isNumber, merge = U.merge, pick = U.pick, setOptions = U.setOptions, uniqueKey = U.uniqueKey;
+    getOptions = U.getOptions, isNumber = U.isNumber, merge = U.merge, pick = U.pick, setOptions = U.setOptions,
+    uniqueKey = U.uniqueKey;
 var bindingsUtils = NavigationBindings.prototype.utils, PREFIX = 'highcharts-';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -98,6 +100,7 @@ bindingsUtils.addFlagFromForm = function (type) {
     };
 };
 bindingsUtils.manageIndicators = function (data) {
+    var _a;
     var navigation = this, chart = navigation.chart, seriesConfig = {
         linkedTo: data.linkedTo,
         type: data.type
@@ -131,7 +134,7 @@ bindingsUtils.manageIndicators = function (data) {
         'linearRegressionSlope',
         'linearRegressionIntercept',
         'linearRegressionAngle'
-    ], yAxis, series;
+    ], yAxis, parentSeries, defaultOptions, series;
     if (data.actionType === 'edit') {
         navigation.fieldsToOptions(data.fields, seriesConfig);
         series = chart.get(data.seriesId);
@@ -156,6 +159,19 @@ bindingsUtils.manageIndicators = function (data) {
     } else {
         seriesConfig.id = uniqueKey();
         navigation.fieldsToOptions(data.fields, seriesConfig);
+        parentSeries = chart.get(seriesConfig.linkedTo);
+        defaultOptions = getOptions().plotOptions;
+        // Make sure that indicator uses the SUM approx if SUM approx is used
+        // by parent series (#13950).
+        if (typeof parentSeries !== 'undefined' &&
+            parentSeries instanceof Series &&
+            parentSeries.getDGApproximation() === 'sum' &&
+            // If indicator has defined approx type, use it (e.g. "ranges")
+            !defined(defaultOptions && defaultOptions[seriesConfig.type] && ((_a = defaultOptions.dataGrouping) === null || _a === void 0 ? void 0 : _a.approximation))) {
+            seriesConfig.dataGrouping = {
+                approximation: 'sum'
+            };
+        }
         if (indicatorsWithAxes.indexOf(data.type) >= 0) {
             yAxis = chart.addAxis({
                 id: uniqueKey(),
@@ -308,12 +324,10 @@ extend(NavigationBindings.prototype, {
      */
     getYAxisPositions: function (yAxes, plotHeight, defaultHeight) {
         var positions, allAxesHeight = 0;
-
         /** @private */
         function isPercentage(prop) {
             return defined(prop) && !isNumber(prop) && prop.match('%');
         }
-
         positions = yAxes.map(function (yAxis) {
             var height = isPercentage(yAxis.options.height) ?
                 parseFloat(yAxis.options.height) / 100 :

@@ -155,7 +155,6 @@
         this.elem = elem;
         this.prop = prop;
     }
-
     Fx.prototype = {
 
         /**
@@ -610,7 +609,6 @@
         }
         return ret;
     }
-
     /**
      * Check if an element is an array, and if not, make it into an array.
      */
@@ -1922,6 +1920,7 @@
     };
 
 
+
     /**
      * Set the time methods globally based on the useUTC option. Time method can be either
      * local time or UTC (default).
@@ -2013,7 +2012,6 @@
         // Initialize
         this.init(input);
     }
-
     Color.prototype = {
 
         // Collection of parsers. This can be extended from the outside by pushing parsers
@@ -2419,6 +2417,7 @@
                 for (key in hash) {
                     value = hash[key];
                     skipAttr = false;
+
 
 
                     if (this.symbolName && /^(x|y|width|height|r|start|end|innerR|anchorX|anchorY)/.test(key)) {
@@ -3438,6 +3437,7 @@
             renderer.setSize(width, height, false);
 
 
+
             // Issue 110 workaround:
             // In Firefox, if a div is positioned by percentage, its pixel position may land
             // between pixels. The container itself doesn't display this, but an SVG element
@@ -3775,6 +3775,7 @@
                 }
             }
         },
+
 
 
         /*
@@ -10782,6 +10783,7 @@
         },
 
 
+
         onDocumentMouseUp: function (e) {
             if (charts[hoverChartIndex]) {
                 charts[hoverChartIndex].pointer.drop(e);
@@ -15700,7 +15702,6 @@
                     dimensions
                 );
             }
-
             delete series.kdTree;
 
             // For testing tooltips, don't build async
@@ -15722,7 +15723,6 @@
                 p2.dist = defined(r) ? Math.sqrt(r) : Number.MAX_VALUE;
                 p2.distX = defined(x) ? Math.sqrt(x) : Number.MAX_VALUE;
             }
-
             function _search(search, tree, depth, dimensions) {
                 var point = tree.point,
                     axis = series.kdAxisArray[depth % dimensions],
@@ -18829,6 +18829,7 @@
             Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
         };
     }
+
 
 
     /**

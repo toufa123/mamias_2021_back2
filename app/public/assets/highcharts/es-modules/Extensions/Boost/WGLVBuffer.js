@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2020 Highsoft AS
+ *  Copyright (c) 2019-2021 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -10,7 +10,6 @@
  *
  * */
 'use strict';
-
 /* eslint-disable valid-jsdoc */
 /**
  * Vertex Buffer abstraction.
@@ -49,7 +48,6 @@ function GLVertexBuffer(gl, shader, dataComponents
         components = dataComponents || 2;
         data = [];
     }
-
     /**
      * Build the buffer
      * @private
@@ -82,7 +80,6 @@ function GLVertexBuffer(gl, shader, dataComponents
         farray = false;
         return true;
     }
-
     /**
      * Bind the buffer
      * @private
@@ -97,7 +94,6 @@ function GLVertexBuffer(gl, shader, dataComponents
         gl.vertexAttribPointer(vertAttribute, components, gl.FLOAT, false, 0, 0);
         // gl.enableVertexAttribArray(vertAttribute);
     }
-
     /**
      * Render the buffer
      * @private
@@ -123,7 +119,6 @@ function GLVertexBuffer(gl, shader, dataComponents
         gl.drawArrays(gl[drawMode.toUpperCase()], from / components, (to - from) / components);
         return true;
     }
-
     /**
      * @private
      */
@@ -135,7 +130,6 @@ function GLVertexBuffer(gl, shader, dataComponents
             preAllocated[++iterator] = b;
         }
     }
-
     /**
      * Note about pre-allocated buffers:
      *     - This is slower for charts with many series
@@ -146,7 +140,6 @@ function GLVertexBuffer(gl, shader, dataComponents
         iterator = -1;
         preAllocated = new Float32Array(size);
     }
-
     // /////////////////////////////////////////////////////////////////////////
     return {
         destroy: destroy,
@@ -158,5 +151,4 @@ function GLVertexBuffer(gl, shader, dataComponents
         push: push
     };
 }
-
 export default GLVertexBuffer;

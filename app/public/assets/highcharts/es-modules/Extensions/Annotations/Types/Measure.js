@@ -21,19 +21,16 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import Annotation from '../Annotations.js';
 import ControlPoint from '../ControlPoint.js';
 import U from '../../../Core/Utilities.js';
-
 var extend = U.extend, isNumber = U.isNumber, merge = U.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var Measure = /** @class */ (function (_super) {
     __extends(Measure, _super);
-
     /* *
      *
      *  Constructors
@@ -42,7 +39,6 @@ var Measure = /** @class */ (function (_super) {
     function Measure(chart, userOptions) {
         return _super.call(this, chart, userOptions) || this;
     }
-
     /* *
      *
      *  Functions

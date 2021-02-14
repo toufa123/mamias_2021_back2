@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2020 Highsoft AS
+ *  (c) 2016-2021 Highsoft AS
  *
  *  Authors: Jon Arild Nygard
  *
@@ -12,7 +12,6 @@
 /* eslint no-console: 0 */
 'use strict';
 import U from '../Core/Utilities.js';
-
 var extend = U.extend, isNumber = U.isNumber, pick = U.pick;
 /**
  * Creates an object map from parent id to childrens index.

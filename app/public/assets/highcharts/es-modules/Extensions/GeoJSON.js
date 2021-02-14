@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -168,7 +168,6 @@ function pointInPolygon(point, polygon) {
     }
     return c;
 }
-
 /**
  * Highmaps only. Get point from latitude and longitude using specified
  * transform definition.

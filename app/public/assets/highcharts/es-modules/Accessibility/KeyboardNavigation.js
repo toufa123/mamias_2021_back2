@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Main keyboard navigation handling.
  *
@@ -11,13 +11,10 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-
 var doc = H.doc, win = H.win;
 import U from '../Core/Utilities.js';
-
 var addEvent = U.addEvent, fireEvent = U.fireEvent;
 import HTMLUtilities from './Utils/HTMLUtilities.js';
-
 var getElement = HTMLUtilities.getElement;
 import EventProvider from './Utils/EventProvider.js';
 /* eslint-disable valid-jsdoc */
@@ -46,7 +43,6 @@ H.Chart.prototype.dismissPopupContent = function () {
         chart.hideExportMenu();
     });
 };
-
 /**
  * The KeyboardNavigation class, containing the overall keyboard navigation
  * logic for the chart.
@@ -64,7 +60,6 @@ H.Chart.prototype.dismissPopupContent = function () {
 function KeyboardNavigation(chart, components) {
     this.init(chart, components);
 }
-
 KeyboardNavigation.prototype = {
     /**
      * Initialize the class
@@ -89,11 +84,15 @@ KeyboardNavigation.prototype = {
         ep.addEvent(this.tabindexContainer, 'focus', function (e) {
             return _this.onFocus(e);
         });
-        ep.addEvent(doc, 'mouseup', function () {
-            return _this.onMouseUp();
+        ['mouseup', 'touchend'].forEach(function (eventName) {
+            return ep.addEvent(doc, eventName, function () {
+                return _this.onMouseUp();
+            });
         });
-        ep.addEvent(chart.renderTo, 'mousedown', function () {
-            _this.isClickingChart = true;
+        ['mousedown', 'touchstart'].forEach(function (eventName) {
+            return ep.addEvent(chart.renderTo, eventName, function () {
+                _this.isClickingChart = true;
+            });
         });
         ep.addEvent(chart.renderTo, 'mouseover', function () {
             _this.pointerIsOverChart = true;

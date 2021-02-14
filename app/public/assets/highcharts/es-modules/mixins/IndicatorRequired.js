@@ -1,6 +1,6 @@
 /**
  *
- *  (c) 2010-2020 Daniel Studencki
+ *  (c) 2010-2021 Daniel Studencki
  *
  *  License: www.highcharts.com/license
  *
@@ -9,7 +9,6 @@
  * */
 'use strict';
 import U from '../Core/Utilities.js';
-
 var error = U.error;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var requiredIndicatorMixin = {

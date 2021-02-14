@@ -21,19 +21,16 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import Annotation from '../Annotations.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
-
 var merge = U.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var VerticalLine = /** @class */ (function (_super) {
     __extends(VerticalLine, _super);
-
     /* *
      *
      *  Constructors
@@ -42,7 +39,6 @@ var VerticalLine = /** @class */ (function (_super) {
     function VerticalLine(chart, userOptions) {
         return _super.call(this, chart, userOptions) || this;
     }
-
     /* *
      *
      *  Static Functions

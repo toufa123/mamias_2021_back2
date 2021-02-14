@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v8.2.0 (2020-08-20)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
  * (c) 2009-2019 Highsoft AS
  *
@@ -21,17 +21,16 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Extensions/Themes/HighContrastDark.js', [_modules['Core/Globals.js'], _modules['Core/Utilities.js']], function (Highcharts, U) {
+    _registerModule(_modules, 'Extensions/Themes/HighContrastDark.js', [_modules['Core/Globals.js'], _modules['Core/Utilities.js']], function (H, U) {
         /* *
          *
-         *  (c) 2010-2020 Highsoft AS
+         *  (c) 2010-2021 Highsoft AS
          *
          *  Author: Øystein Moseng
          *
@@ -46,7 +45,7 @@
          * */
         var setOptions = U.setOptions;
         var textBright = '#F0F0F3';
-        Highcharts.theme = {
+        H.theme = {
             colors: [
                 '#a6f0ff',
                 '#70d49e',
@@ -236,7 +235,7 @@
             }
         };
         // Apply the theme
-        setOptions(Highcharts.theme);
+        setOptions(H.theme);
 
     });
     _registerModule(_modules, 'masters/themes/high-contrast-dark.src.js', [], function () {

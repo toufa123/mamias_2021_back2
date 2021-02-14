@@ -21,23 +21,19 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 import Annotation from '../Annotations.js';
 import CrookedLine from './CrookedLine.js';
 import U from '../../../Core/Utilities.js';
-
 var merge = U.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var ElliottWave = /** @class */ (function (_super) {
     __extends(ElliottWave, _super);
-
     function ElliottWave(chart, options) {
         return _super.call(this, chart, options) || this;
     }
-
     /* *
      *
      * Functions

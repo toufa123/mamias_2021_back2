@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -14,7 +14,6 @@
 var HiddenAxis = /** @class */ (function () {
     function HiddenAxis() {
     }
-
     /**
      * Augments methods for the x axis in order to hide it completely. Used for
      * the X axis in gauges

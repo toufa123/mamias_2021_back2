@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Accessibility component for chart container.
  *
@@ -9,20 +9,19 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-'use strict';
-import H from '../../Core/Globals.js';
-
-var doc = H.win.document;
-import U from '../../Core/Utilities.js';
-
-var extend = U.extend;
-import HTMLUtilities from '../Utils/HTMLUtilities.js';
-
-var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
+import AccessibilityComponent from '../AccessibilityComponent.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
 
 var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT, getChartTitle = ChartUtilities.getChartTitle;
-import AccessibilityComponent from '../AccessibilityComponent.js';
+import H from '../../Core/Globals.js';
+
+var doc = H.doc;
+import HTMLUtilities from '../Utils/HTMLUtilities.js';
+
+var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
+import U from '../../Core/Utilities.js';
+
+var extend = U.extend;
 /* eslint-disable valid-jsdoc */
 /**
  * The ContainerComponent class
@@ -65,9 +64,9 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
      * @private
      */
     setSVGContainerLabel: function () {
-        var chart = this.chart, svgContainerLabel = stripHTMLTags(chart.langFormat('accessibility.svgContainerLabel', {
+        var chart = this.chart, svgContainerLabel = chart.langFormat('accessibility.svgContainerLabel', {
             chartTitle: getChartTitle(chart)
-        }));
+        });
         if (chart.renderer.box && svgContainerLabel.length) {
             chart.renderer.box.setAttribute('aria-label', svgContainerLabel);
         }
@@ -105,7 +104,7 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
         var chart = this.chart, credits = chart.credits;
         if (credits) {
             if (credits.textStr) {
-                credits.element.setAttribute('aria-label', stripHTMLTags(chart.langFormat('accessibility.credits', {creditsStr: credits.textStr})));
+                credits.element.setAttribute('aria-label', chart.langFormat('accessibility.credits', {creditsStr: stripHTMLTags(credits.textStr)}));
             }
             unhideChartElementFromAT(chart, credits.element);
         }

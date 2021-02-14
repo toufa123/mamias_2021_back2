@@ -9,6 +9,7 @@
  *
  * */
 'use strict';
+import palette from '../../Core/Color/Palette.js';
 import U from '../Utilities.js';
 
 var addEvent = U.addEvent, defined = U.defined, isObject = U.isObject, isNumber = U.isNumber, pick = U.pick,
@@ -29,7 +30,6 @@ var TreeGridTick;
      *
      * */
     var applied = false;
-
     /* *
      *
      *  Functions
@@ -56,9 +56,7 @@ var TreeGridTick;
             applied = true;
         }
     }
-
     TreeGridTick.compose = compose;
-
     /**
      * @private
      */
@@ -68,7 +66,6 @@ var TreeGridTick;
             tick.treeGrid = new Additions(tick);
         }
     }
-
     /**
      * @private
      */
@@ -80,18 +77,16 @@ var TreeGridTick;
             });
         }
     }
-
     /**
      * @private
      */
     function onTickHoverExit(label, options) {
-        var css = defined(options.style) ? options.style : {};
+        var css = isObject(options.style) ? options.style : {};
         label.removeClass('highcharts-treegrid-node-active');
         if (!label.renderer.styledMode) {
             label.css({textDecoration: css.textDecoration});
         }
     }
-
     /**
      * @private
      */
@@ -117,7 +112,7 @@ var TreeGridTick;
             icon
                 .attr({
                     'stroke-width': 1,
-                    'fill': pick(params.color, '#666666')
+                    'fill': pick(params.color, palette.neutralColor60)
                 })
                 .css({
                     cursor: 'pointer',
@@ -132,7 +127,6 @@ var TreeGridTick;
             rotation: rotation
         });
     }
-
     /**
      * @private
      */
@@ -159,7 +153,6 @@ var TreeGridTick;
         }
         return result;
     }
-
     /**
      * @private
      */
@@ -229,7 +222,6 @@ var TreeGridTick;
             });
         }
     }
-
     /* *
      *
      *  Classes
@@ -251,7 +243,6 @@ var TreeGridTick;
         function Additions(tick) {
             this.tick = tick;
         }
-
         /* *
          *
          *  Functions

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Annotations accessibility code.
  *
@@ -14,7 +14,6 @@ import HTMLUtilities from '../Utils/HTMLUtilities.js';
 
 var escapeStringForHTML = HTMLUtilities.escapeStringForHTML,
     stripHTMLTagsFromString = HTMLUtilities.stripHTMLTagsFromString;
-
 /**
  * Get list of all annotation labels in the chart.
  *
@@ -32,7 +31,6 @@ function getChartAnnotationLabels(chart) {
         return acc;
     }, []);
 }
-
 /**
  * Get the text of an annotation label.
  *
@@ -45,7 +43,6 @@ function getLabelText(label) {
     var a11yDesc = (_b = (_a = label.options) === null || _a === void 0 ? void 0 : _a.accessibility) === null || _b === void 0 ? void 0 : _b.description;
     return a11yDesc ? a11yDesc : ((_d = (_c = label.graphic) === null || _c === void 0 ? void 0 : _c.text) === null || _d === void 0 ? void 0 : _d.textStr) || '';
 }
-
 /**
  * Describe an annotation label.
  *
@@ -91,7 +88,6 @@ function getAnnotationLabelDescription(label) {
     };
     return chart.langFormat(langFormatStr, context);
 }
-
 /**
  * Return array of HTML strings for each annotation label in the chart.
  *
@@ -106,7 +102,6 @@ function getAnnotationListItems(chart) {
         return desc ? "<li>" + desc + "</li>" : '';
     });
 }
-
 /**
  * Return the annotation info for a chart as string.
  *
@@ -122,7 +117,6 @@ function getAnnotationsInfoHTML(chart) {
     var annotationItems = getAnnotationListItems(chart);
     return "<ul>" + annotationItems.join(' ') + "</ul>";
 }
-
 /**
  * Return the texts for the annotation(s) connected to a point, or empty array
  * if none.
@@ -144,7 +138,6 @@ function getPointAnnotationTexts(point) {
         return "" + getLabelText(label);
     });
 }
-
 var AnnotationsA11y = {
     getAnnotationsInfoHTML: getAnnotationsInfoHTML,
     getAnnotationLabelDescription: getAnnotationLabelDescription,

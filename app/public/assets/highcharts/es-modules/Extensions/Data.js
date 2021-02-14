@@ -2,7 +2,7 @@
  *
  *  Data module
  *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2012-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,9 +10,17 @@
  *
  * */
 'use strict';
+import Ajax from '../Extensions/Ajax.js';
+
+var ajax = Ajax.ajax;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
+
+var doc = H.doc;
 import Point from '../Core/Series/Point.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+
+var seriesTypes = SeriesRegistry.seriesTypes;
 import U from '../Core/Utilities.js';
 
 var addEvent = U.addEvent, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber,
@@ -89,11 +97,6 @@ var addEvent = U.addEvent, defined = U.defined, extend = U.extend, fireEvent = U
  *         Return `false` to stop completion, or call `this.complete()` to
  *         continue async.
  */
-import Ajax from '../Extensions/Ajax.js';
-
-var ajax = Ajax.ajax;
-// Utilities
-var win = H.win, doc = win.document;
 /**
  * The Data module provides a simplified interface for adding data to
  * a chart from sources like CVS, HTML tables or grid views. See also
@@ -474,6 +477,11 @@ var win = H.win, doc = win.document;
  * @param {Highcharts.Chart} [chart]
  */
 var Data = /** @class */ (function () {
+    /* *
+     *
+     *  Constructors
+     *
+     * */
     function Data(dataOptions, chartOptions, chart) {
         this.chart = void 0;
         this.chartOptions = void 0;
@@ -541,6 +549,11 @@ var Data = /** @class */ (function () {
         this.init(dataOptions, chartOptions, chart);
     }
 
+    /* *
+     *
+     *  Functions
+     *
+     * */
     /**
      * Initialize the Data object with the given options
      *
@@ -616,12 +629,9 @@ var Data = /** @class */ (function () {
      */
     Data.prototype.getColumnDistribution = function () {
         var chartOptions = this.chartOptions, options = this.options, xColumns = [], getValueCount = function (type) {
-                return (H.seriesTypes[type || 'line'].prototype
-                        .pointArrayMap ||
-                    [0]).length;
+                return (seriesTypes[type || 'line'].prototype.pointArrayMap || [0]).length;
             }, getPointArrayMap = function (type) {
-                return H.seriesTypes[type || 'line']
-                    .prototype.pointArrayMap;
+                return seriesTypes[type || 'line'].prototype.pointArrayMap;
             }, globalType = (chartOptions &&
             chartOptions.chart &&
             chartOptions.chart.type), individualCounts = [], seriesBuilders = [], seriesIndex = 0,
@@ -787,7 +797,6 @@ var Data = /** @class */ (function () {
          */
         function parseRow(columnStr, rowNumber, noAdd, callbacks) {
             var i = 0, c = '', cl = '', cn = '', token = '', actualColumn = 0, column = 0;
-
             /**
              * @private
              */
@@ -796,7 +805,6 @@ var Data = /** @class */ (function () {
                 cl = columnStr[j - 1];
                 cn = columnStr[j + 1];
             }
-
             /**
              * @private
              */
@@ -808,7 +816,6 @@ var Data = /** @class */ (function () {
                     dataTypes[column].push(type);
                 }
             }
-
             /**
              * @private
              */
@@ -840,7 +847,6 @@ var Data = /** @class */ (function () {
                 ++column;
                 ++actualColumn;
             }
-
             if (!columnStr.trim().length) {
                 return;
             }
@@ -849,12 +855,6 @@ var Data = /** @class */ (function () {
             }
             for (; i < columnStr.length; i++) {
                 read(i);
-                // Quoted string
-                if (c === '#') {
-                    // The rest of the row is a comment
-                    push();
-                    return;
-                }
                 if (c === '"') {
                     read(++i);
                     while (i < columnStr.length) {
@@ -881,7 +881,6 @@ var Data = /** @class */ (function () {
             }
             push();
         }
-
         /**
          * Attempt to guess the delimiter. We do a separate parse pass here
          * because we need to count potential delimiters softly without making
@@ -967,7 +966,6 @@ var Data = /** @class */ (function () {
             }
             return guessed;
         }
-
         /**
          * Tries to guess the date format
          *  - Check if either month candidate exceeds 12
@@ -1063,7 +1061,6 @@ var Data = /** @class */ (function () {
             }
             return format;
         }
-
         /**
          * @todo
          * Figure out the best axis types for the data
@@ -1074,7 +1071,6 @@ var Data = /** @class */ (function () {
          */
         function deduceAxisTypes() {
         }
-
         if (csv && options.beforeParse) {
             csv = options.beforeParse.call(this, csv);
         }
@@ -1206,7 +1202,6 @@ var Data = /** @class */ (function () {
         delete options.csvURL;
         delete options.rowsURL;
         delete options.columnsURL;
-
         /**
          * @private
          */
@@ -1226,7 +1221,6 @@ var Data = /** @class */ (function () {
                     clearTimeout(data.liveDataTimeout);
                     chart.liveDataURL = url;
                 }
-
                 /**
                  * @private
                  */
@@ -1238,7 +1232,6 @@ var Data = /** @class */ (function () {
                             setTimeout(performFetch, updateIntervalMs);
                     }
                 }
-
                 ajax({
                     url: url,
                     dataType: tp || 'json',
@@ -1257,7 +1250,6 @@ var Data = /** @class */ (function () {
                 });
                 return true;
             }
-
             if (!request(originalOptions.csvURL, function (res) {
                 chart.update({
                     data: {
@@ -1282,7 +1274,6 @@ var Data = /** @class */ (function () {
                 }
             }
         }
-
         performFetch(true);
         return this.hasURLOption(options);
     };
@@ -1334,7 +1325,6 @@ var Data = /** @class */ (function () {
                 }
             });
         }
-
         if (googleSpreadsheetKey) {
             delete options.googleSpreadsheetKey;
             fetchSheet(function (json) {
@@ -1567,8 +1557,8 @@ var Data = /** @class */ (function () {
      * @return {number}
      */
     Data.prototype.parseDate = function (val) {
-        var parseDate = this.options.parseDate, ret, key, format,
-            dateFormat = this.options.dateFormat || this.dateFormat, match;
+        var parseDate = this.options.parseDate;
+        var ret, key, format, dateFormat = this.options.dateFormat || this.dateFormat, match;
         if (parseDate) {
             ret = parseDate(val);
         } else if (typeof val === 'string') {
@@ -1598,9 +1588,15 @@ var Data = /** @class */ (function () {
             }
             // Fall back to Date.parse
             if (!match) {
+                if (val.match(/:.+(GMT|UTC|[Z+-])/)) {
+                    val = val
+                        .replace(/\s*(?:GMT|UTC)?([+-])(\d\d)(\d\d)$/, '$1$2:$3')
+                        .replace(/(?:\s+|GMT|UTC)([+-])/, '$1')
+                        .replace(/(\d)\s*(?:GMT|UTC|Z)$/, '$1+00:00');
+                }
                 match = Date.parse(val);
                 // External tools like Date.js and MooTools extend Date object
-                // and returns a date.
+                // and return a date.
                 if (typeof match === 'object' &&
                     match !== null &&
                     match.getTime) {
@@ -1928,7 +1924,6 @@ var SeriesBuilder = /** @class */ (function () {
         /* eslint-enable no-invalid-this */
         this.name = void 0;
     }
-
     /**
      * Populates readers with column indexes. A reader can be added without
      * a specific index and for those readers the index is taken sequentially

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Place desriptions on a series and its points.
  *
@@ -10,24 +10,23 @@
  *
  * */
 'use strict';
-import U from '../../../Core/Utilities.js';
-
-var find = U.find, format = U.format, isNumber = U.isNumber, numberFormat = U.numberFormat, pick = U.pick,
-    defined = U.defined;
 import AnnotationsA11y from '../AnnotationsA11y.js';
 
 var getPointAnnotationTexts = AnnotationsA11y.getPointAnnotationTexts;
-import HTMLUtilities from '../../Utils/HTMLUtilities.js';
-
-var escapeStringForHTML = HTMLUtilities.escapeStringForHTML, reverseChildNodes = HTMLUtilities.reverseChildNodes,
-    stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
 import ChartUtilities from '../../Utils/ChartUtilities.js';
 
 var getAxisDescription = ChartUtilities.getAxisDescription,
     getSeriesFirstPointElement = ChartUtilities.getSeriesFirstPointElement,
     getSeriesA11yElement = ChartUtilities.getSeriesA11yElement,
     unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
+import HTMLUtilities from '../../Utils/HTMLUtilities.js';
+
+var reverseChildNodes = HTMLUtilities.reverseChildNodes, stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
 import Tooltip from '../../../Core/Tooltip.js';
+import U from '../../../Core/Utilities.js';
+
+var find = U.find, format = U.format, isNumber = U.isNumber, numberFormat = U.numberFormat, pick = U.pick,
+    defined = U.defined;
 
 /* eslint-disable valid-jsdoc */
 /**
@@ -46,7 +45,6 @@ function findFirstPointWithGraphic(point) {
             p.graphic.element);
     }) || null;
 }
-
 /**
  * @private
  */
@@ -56,7 +54,6 @@ function shouldAddDummyPoint(point) {
     var isSunburst = point.series && point.series.is('sunburst'), isNull = point.isNull;
     return isNull && !isSunburst;
 }
-
 /**
  * @private
  */
@@ -71,7 +68,6 @@ function makeDummyElement(point, pos) {
     });
     return dummy;
 }
-
 /**
  * @private
  * @param {Highcharts.Point} point
@@ -97,7 +93,6 @@ function addDummyPointElement(point) {
         return dummyElement.element;
     }
 }
-
 /**
  * @private
  * @param {Highcharts.Series} series
@@ -110,7 +105,6 @@ function hasMorePointsThanDescriptionThreshold(series) {
         series.points &&
         series.points.length >= threshold);
 }
-
 /**
  * @private
  * @param {Highcharts.Series} series
@@ -121,7 +115,6 @@ function shouldSetScreenReaderPropsOnPoints(series) {
     return !hasMorePointsThanDescriptionThreshold(series) &&
         !seriesA11yOptions.exposeAsGroupOnly;
 }
-
 /**
  * @private
  * @param {Highcharts.Series} series
@@ -134,7 +127,6 @@ function shouldSetKeyboardNavPropsOnPoints(series) {
         seriesNavOptions.pointNavigationEnabledThreshold ||
         seriesNavOptions.pointNavigationEnabledThreshold === false));
 }
-
 /**
  * @private
  * @param {Highcharts.Series} series
@@ -150,7 +142,6 @@ function shouldDescribeSeriesElement(series) {
     return !noDescribe3D && (hasMultipleSeries || describeSingleSeriesOption ||
         exposeAsGroupOnlyOption || hasMorePointsThanDescriptionThreshold(series));
 }
-
 /**
  * @private
  * @param {Highcharts.Point} point
@@ -167,7 +158,6 @@ function pointNumberToString(point, value) {
     }
     return value;
 }
-
 /**
  * @private
  * @param {Highcharts.Series} series
@@ -180,7 +170,6 @@ function getSeriesDescriptionText(series) {
         series: series
     }) || '';
 }
-
 /**
  * @private
  * @param {Highcharts.series} series
@@ -194,7 +183,6 @@ function getSeriesAxisDescriptionText(series, axisCollection) {
         series: series
     });
 }
-
 /**
  * Get accessible time description for a point on a datetime axis.
  *
@@ -218,7 +206,6 @@ function getPointA11yTimeDescription(point) {
         return chart.time.dateFormat(dateFormat, point.x, void 0);
     }
 }
-
 /**
  * @private
  * @param {Highcharts.Point} point
@@ -232,7 +219,6 @@ function getPointXDescription(point) {
     return point.name || timeDesc || pointCategory ||
         (canUseId ? point.id : fallback);
 }
-
 /**
  * @private
  * @param {Highcharts.Point} point
@@ -249,7 +235,6 @@ function getPointArrayMapValueDescription(point, prefix, suffix) {
         return desc + (desc.length ? ', ' : '') + keyToValStr(key);
     }, '');
 }
-
 /**
  * @private
  * @param {Highcharts.Point} point
@@ -272,7 +257,6 @@ function getPointValue(point) {
     }
     return valuePrefix + fallbackDesc + valueSuffix;
 }
-
 /**
  * Return the description for the annotation(s) connected to a point, or empty
  * string if none.
@@ -288,7 +272,6 @@ function getPointAnnotationDescription(point) {
     var context = {point: point, annotations: annotations};
     return annotations.length ? chart.langFormat(langKey, context) : '';
 }
-
 /**
  * Return string with information about point.
  * @private
@@ -308,7 +291,6 @@ function getPointValueDescription(point) {
         };
     return format(pointValueDescriptionFormat, context, chart);
 }
-
 /**
  * Return string with information about point.
  * @private
@@ -325,7 +307,6 @@ function defaultPointDescriptionFormatter(point) {
     point.accessibility.valueDescription = valText;
     return valText + userDescText + seriesNameText + pointAnnotationsText;
 }
-
 /**
  * Set a11y props on a point element
  * @private
@@ -335,15 +316,14 @@ function defaultPointDescriptionFormatter(point) {
 function setPointScreenReaderAttribs(point, pointElement) {
     var series = point.series, a11yPointOptions = series.chart.options.accessibility.point || {},
         seriesA11yOptions = series.options.accessibility || {},
-        label = escapeStringForHTML(stripHTMLTags(seriesA11yOptions.pointDescriptionFormatter &&
+        label = stripHTMLTags(seriesA11yOptions.pointDescriptionFormatter &&
             seriesA11yOptions.pointDescriptionFormatter(point) ||
             a11yPointOptions.descriptionFormatter &&
             a11yPointOptions.descriptionFormatter(point) ||
-            defaultPointDescriptionFormatter(point)));
+            defaultPointDescriptionFormatter(point));
     pointElement.setAttribute('role', 'img');
     pointElement.setAttribute('aria-label', label);
 }
-
 /**
  * Add accessible info to individual point elements of a series
  * @private
@@ -371,7 +351,6 @@ function describePointsInSeries(series) {
         });
     }
 }
-
 /**
  * Return string with information about series.
  * @private
@@ -392,7 +371,6 @@ function defaultSeriesDescriptionFormatter(series) {
         summary = chart.langFormat('accessibility.series.summary.' + series.type + combinationSuffix, summaryContext) || chart.langFormat('accessibility.series.summary.default' + combinationSuffix, summaryContext);
     return summary + (description ? ' ' + description : '') + (shouldDescribeAxis('yAxis') ? ' ' + yAxisInfo : '') + (shouldDescribeAxis('xAxis') ? ' ' + xAxisInfo : '');
 }
-
 /**
  * Set a11y props on a series element
  * @private
@@ -410,11 +388,10 @@ function describeSeriesElement(series, seriesElement) {
     } /* else do not add role */
     seriesElement.setAttribute('tabindex', '-1');
     seriesElement.style.outline = '0'; // Don't show browser outline on click, despite tabindex
-    seriesElement.setAttribute('aria-label', escapeStringForHTML(stripHTMLTags(a11yOptions.series.descriptionFormatter &&
+    seriesElement.setAttribute('aria-label', stripHTMLTags(a11yOptions.series.descriptionFormatter &&
         a11yOptions.series.descriptionFormatter(series) ||
-        defaultSeriesDescriptionFormatter(series))));
+        defaultSeriesDescriptionFormatter(series)));
 }
-
 /**
  * Put accessible info on series and points of a series.
  * @param {Highcharts.Series} series The series to add info on.
@@ -439,7 +416,6 @@ function describeSeries(series) {
         }
     }
 }
-
 var SeriesDescriber = {
     describeSeries: describeSeries,
     defaultPointDescriptionFormatter: defaultPointDescriptionFormatter,

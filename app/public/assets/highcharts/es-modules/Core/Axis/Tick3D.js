@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  Extenstion for 3d axes
  *
@@ -11,7 +11,6 @@
  * */
 'use strict';
 import U from '../Utilities.js';
-
 var addEvent = U.addEvent, extend = U.extend, wrap = U.wrap;
 /* eslint-disable valid-jsdoc */
 /**
@@ -22,7 +21,6 @@ var addEvent = U.addEvent, extend = U.extend, wrap = U.wrap;
 var Tick3D = /** @class */ (function () {
     function Tick3D() {
     }
-
     /* *
      *
      *  Static Functions

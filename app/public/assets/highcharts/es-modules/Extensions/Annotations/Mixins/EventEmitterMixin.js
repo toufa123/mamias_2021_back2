@@ -5,7 +5,6 @@
  * */
 import H from '../../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
-
 var addEvent = U.addEvent, fireEvent = U.fireEvent, objectEach = U.objectEach, pick = U.pick,
     removeEvent = U.removeEvent;
 /* eslint-disable valid-jsdoc */
@@ -28,7 +27,7 @@ var eventEmitterMixin = {
         var emitter = this, addMouseDownEvent = function (element) {
             addEvent(element, H.isTouchDevice ? 'touchstart' : 'mousedown', function (e) {
                 emitter.onMouseDown(e);
-            });
+            }, {passive: false});
         };
         addMouseDownEvent(this.graphic.element);
         (emitter.labels || []).forEach(function (label) {
@@ -46,7 +45,7 @@ var eventEmitterMixin = {
             if ((emitter.nonDOMEvents || []).indexOf(type) === -1) {
                 emitter.graphic.on(type, eventHandler);
             } else {
-                addEvent(emitter, type, eventHandler);
+                addEvent(emitter, type, eventHandler, {passive: false});
             }
         });
         if (emitter.options.draggable) {
@@ -107,7 +106,7 @@ var eventEmitterMixin = {
             fireEvent(emitter, 'drag', e);
             prevChartX = e.chartX;
             prevChartY = e.chartY;
-        });
+        }, H.isTouchDevice ? {passive: false} : void 0);
         emitter.removeMouseUp = addEvent(H.doc, H.isTouchDevice ? 'touchend' : 'mouseup', function (e) {
             emitter.cancelClick = emitter.hasDragged;
             emitter.hasDragged = false;
@@ -115,7 +114,7 @@ var eventEmitterMixin = {
             // ControlPoints vs Annotation:
             fireEvent(pick(emitter.target, emitter), 'afterUpdate');
             emitter.onMouseUp(e);
-        });
+        }, H.isTouchDevice ? {passive: false} : void 0);
     },
     /**
      * Mouse up handler.

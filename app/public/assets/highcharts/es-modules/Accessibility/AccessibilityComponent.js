@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Accessibility component class definition
  *
@@ -10,20 +10,20 @@
  *
  * */
 'use strict';
-import H from '../Core/Globals.js';
-
-var win = H.win, doc = win.document;
-import U from '../Core/Utilities.js';
-
-var extend = U.extend, fireEvent = U.fireEvent, merge = U.merge;
-import HTMLUtilities from './Utils/HTMLUtilities.js';
-
-var removeElement = HTMLUtilities.removeElement, getFakeMouseEvent = HTMLUtilities.getFakeMouseEvent;
 import ChartUtilities from './Utils/ChartUtilities.js';
 
 var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
-import EventProvider from './Utils/EventProvider.js';
 import DOMElementProvider from './Utils/DOMElementProvider.js';
+import EventProvider from './Utils/EventProvider.js';
+import H from '../Core/Globals.js';
+
+var doc = H.doc, win = H.win;
+import HTMLUtilities from './Utils/HTMLUtilities.js';
+
+var removeElement = HTMLUtilities.removeElement, getFakeMouseEvent = HTMLUtilities.getFakeMouseEvent;
+import U from '../Core/Utilities.js';
+
+var extend = U.extend, fireEvent = U.fireEvent, merge = U.merge;
 /* eslint-disable valid-jsdoc */
 /** @lends Highcharts.AccessibilityComponent */
 var functionsToOverrideByDerivedClasses = {
@@ -55,7 +55,6 @@ var functionsToOverrideByDerivedClasses = {
     destroy: function () {
     }
 };
-
 /**
  * The AccessibilityComponent base class, representing a part of the chart that
  * has accessibility logic connected to it. This class can be inherited from to
@@ -74,7 +73,6 @@ var functionsToOverrideByDerivedClasses = {
  */
 function AccessibilityComponent() {
 }
-
 /**
  * @lends Highcharts.AccessibilityComponent
  */
@@ -308,7 +306,7 @@ AccessibilityComponent.prototype = {
                 }
                 e.stopPropagation();
                 e.preventDefault();
-            });
+            }, {passive: false});
         });
     },
     /**

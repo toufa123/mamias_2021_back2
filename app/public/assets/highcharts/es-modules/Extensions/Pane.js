@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,9 +10,9 @@
 'use strict';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
+import palette from '../Core/Color/Palette.js';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
-
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge, pick = U.pick, splat = U.splat;
 /**
  * @typedef {"arc"|"circle"|"solid"} Highcharts.PaneBackgroundShapeValue
@@ -159,7 +159,7 @@ var Pane = /** @class */ (function () {
              * @since   2.3.0
              * @product highcharts
              */
-            borderColor: '#cccccc',
+            borderColor: palette.neutralColor20,
             /**
              * The background color or gradient for the pane.
              *
@@ -173,8 +173,8 @@ var Pane = /** @class */ (function () {
                 linearGradient: {x1: 0, y1: 0, x2: 0, y2: 1},
                 /** @ignore-option */
                 stops: [
-                    [0, '#ffffff'],
-                    [1, '#e6e6e6']
+                    [0, palette.backgroundColor],
+                    [1, palette.neutralColor10]
                 ]
             },
             /** @ignore-option */
@@ -202,7 +202,6 @@ var Pane = /** @class */ (function () {
         };
         this.init(options, chart);
     }
-
     /**
      * Initialize the Pane object
      *
@@ -345,7 +344,6 @@ var Pane = /** @class */ (function () {
     };
     return Pane;
 }());
-
 /**
  * Check whether element is inside or outside pane.
  * @private
@@ -358,7 +356,7 @@ function isInsidePane(x, y, center) {
     return Math.sqrt(Math.pow(x - center[0], 2) + Math.pow(y - center[1], 2)) <= center[2] / 2;
 }
 
-H.Chart.prototype.getHoverPane = function (eventArgs) {
+Chart.prototype.getHoverPane = function (eventArgs) {
     var chart = this;
     var hoverPane;
     if (eventArgs) {
@@ -392,6 +390,8 @@ addEvent(Pointer, 'beforeGetHoverData', function (eventArgs) {
                 pick(s.options.enableMouseTracking, true) &&
                 (!chart.hoverPane || s.xAxis.pane === chart.hoverPane));
         };
+    } else {
+        chart.hoverPane = void 0;
     }
 });
 addEvent(Pointer, 'afterGetHoverData', function (eventArgs) {

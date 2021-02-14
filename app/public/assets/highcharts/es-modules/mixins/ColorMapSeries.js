@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -11,7 +11,6 @@
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
-
 var defined = U.defined;
 var noop = H.noop, seriesTypes = H.seriesTypes;
 /**
@@ -20,15 +19,13 @@ var noop = H.noop, seriesTypes = H.seriesTypes;
  * @private
  * @mixin Highcharts.colorMapPointMixin
  */
-H.colorMapPointMixin = {
+var colorMapPointMixin = {
     dataLabelOnNull: true,
     /* eslint-disable valid-jsdoc */
     /**
      * Color points have a value option that determines whether or not it is
      * a null point
      * @private
-     * @function Highcharts.colorMapPointMixin.isValid
-     * @return {boolean}
      */
     isValid: function () {
         // undefined is allowed
@@ -38,9 +35,6 @@ H.colorMapPointMixin = {
     },
     /**
      * @private
-     * @function Highcharts.colorMapPointMixin.setState
-     * @param {string} state
-     * @return {void}
      */
     setState: function (state) {
         Point.prototype.setState.call(this, state);
@@ -56,7 +50,7 @@ H.colorMapPointMixin = {
  * @private
  * @mixin Highcharts.colorMapSeriesMixin
  */
-H.colorMapSeriesMixin = {
+var colorMapSeriesMixin = {
     pointArrayMap: ['value'],
     axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
@@ -80,3 +74,8 @@ H.colorMapSeriesMixin = {
         return ret;
     }
 };
+var exports = {
+    colorMapPointMixin: colorMapPointMixin,
+    colorMapSeriesMixin: colorMapSeriesMixin
+};
+export default exports;

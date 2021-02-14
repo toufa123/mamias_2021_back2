@@ -42,7 +42,7 @@ class MedlevelController extends AbstractController
         }
         //dump($categories); die;
         $ob7 = new Highchart();
-        $ob7->chart->type('bar');
+        $ob7->chart->type('column');
         $ob7->lang->noData('No Data to display');
         $ob7->chart->renderTo('barchart2');
         $ob7->title->text('Number of reported NIS per Country');
@@ -53,11 +53,9 @@ class MedlevelController extends AbstractController
         );
         $ob7->credits->text('www.mamias.org');
         $ob7->credits->href('http://www.mamias.org _target="blank"');
-        //$ob5->legend->enabled(true);
         $ob7->labels->enabled(true);
-
         //$data = array($status,$results2);
-        $ob7->series([['type' => 'column', 'name' => 'Number of NIS', 'color' => '#00AEEF', 'data' => $datac]]);
+        $ob7->series([['type' => 'column', 'name' => 'Number of reported NIS', 'color' => '#00AEEF', 'data' => $datac]]);
 
         //draw total numbre of reported NIS
         $total = $em->getRepository(Mamias::class)->gettotal();
@@ -290,7 +288,7 @@ class MedlevelController extends AbstractController
         $ob9->lang->noData('No Data to display');
         $ob9->chart->renderTo('barchart3');
         $ob9->chart->type('pie');
-        $ob9->title->text('Number of Reported NIS per Pathway/Vector');
+        $ob9->title->text('Number of Reported NIS per Pathway (CBD)');
         //$ob9->xAxis->categories($pcategoriesc);
         //$ob9->yAxis->title(['text' => 'Numbre of NIS']);
         //$ob9->yAxis->allowDecimals(false);
@@ -318,6 +316,46 @@ class MedlevelController extends AbstractController
         //$data = array($status,$results2);
         $ob9->series([['type' => 'pie', 'name' => 'Number of NIS', 'color' => '#00AEEF', 'data' => $pdatac]]);
 
+        //Pathways with Certinity
+
+        $vectorcer = $em->getRepository(Mamias::class)->getnumberbypathwaysandcertinity();
+        //dump ($vectorcer);die;
+        $cerpcategoriesc = [];
+        $cerpdatac = [];
+        foreach ($vectorcer as $values) {
+            $cerpcategoriesc[] = [$values['vector_name']];
+            $a4 = [$values['certainty'], $values['count']];
+            array_push($cerpdatac, $a4);
+
+        }
+        //dump($cerpdatac); die;
+
+        $ob15 = new Highchart();
+        $ob15->lang->noData('No Data to display');
+        $ob15->chart->renderTo('column1');
+        $ob15->chart->type('column');
+        $ob15->xAxis->categories($cerpcategoriesc);
+        $ob15->title->text('Number of Reported NIS per Pathway (CBD)');
+        //$ob9->xAxis->categories($pcategoriesc);
+        //$ob9->yAxis->title(['text' => 'Numbre of NIS']);
+        //$ob9->yAxis->allowDecimals(false);
+        $ob15->title->style(
+            ['fontFamily' => 'Roboto light', 'fontSize' => '18px', 'color' => '#00AEEF', 'fontWeight' => 'bold']
+        );
+        $ob15->credits->text('www.mamias.org');
+        $ob15->credits->href('http://www.mamias.org _target="blank"');
+        //$ob5->legend->enabled(true);
+        $ob15->labels->enabled(true);
+        $ob15->plotOptions->column(
+            [
+                'stacking' => 'normal',
+
+            ]
+        );
+        //$data = array($status,$results2);
+        $ob15->series([['type' => 'column', 'name' => 'Number of NIS', 'color' => '#00AEEF', 'data' => $cerpdatac]]);
+
+        ////////////////////////////////////////////////
         //draw cumulative numbre of NIS
         //$total = $em->getRepository(Mamias::class)->gettotal();
         $cumulative = $em->getRepository(Mamias::class)->getcumulative();
@@ -380,6 +418,7 @@ class MedlevelController extends AbstractController
                 'linechart' => $ob8,
                 'linechart1' => $ob11,
                 'barchart3' => $ob9,
+                'column1' => $ob15,
                 'Species_MAMIAS' => $Species_MAMIAS,
             ]
         );

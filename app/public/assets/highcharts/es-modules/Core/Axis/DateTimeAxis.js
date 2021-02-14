@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -23,7 +23,6 @@ var DateTimeAxisAdditions = /** @class */ (function () {
     function DateTimeAxisAdditions(axis) {
         this.axis = axis;
     }
-
     /* *
      *
      *  Functions
@@ -117,7 +116,6 @@ var DateTimeAxisAdditions = /** @class */ (function () {
 var DateTimeAxis = /** @class */ (function () {
     function DateTimeAxis() {
     }
-
     /* *
      *
      *  Static Functions

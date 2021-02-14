@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2017 Highsoft, Black Label
+ *  (c) 2009-2021 Highsoft, Black Label
  *
  *  License: www.highcharts.com/license
  *
@@ -8,6 +8,9 @@
  *
  * */
 'use strict';
+import A from '../../Core/Animation/AnimationUtilities.js';
+
+var getDeferredAnimation = A.getDeferredAnimation;
 import Chart from '../../Core/Chart/Chart.js';
 
 var chartProto = Chart.prototype;
@@ -25,8 +28,8 @@ import Pointer from '../../Core/Pointer.js';
 import U from '../../Core/Utilities.js';
 
 var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase,
-    extend = U.extend, find = U.find, fireEvent = U.fireEvent, getDeferredAnimation = U.getDeferredAnimation,
-    merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
+    extend = U.extend, find = U.find, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, splat = U.splat,
+    wrap = U.wrap;
 /* *********************************************************************
  *
  * ANNOTATION
@@ -180,7 +183,6 @@ var Annotation = /** @class */ (function () {
          */
         this.init(chart, this.options);
     }
-
     /**
      * Initialize the annotation.
      * @private
@@ -999,7 +1001,7 @@ merge(true, Annotation.prototype, ControllableMixin, EventEmitterMixin,
                      *         Basic shape annotation
                      *
                      * @type      {string}
-                     * @default   'rect'
+                     * @default   rect
                      * @apioption annotations.shapeOptions.type
                      */
                     /**
@@ -1190,11 +1192,14 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
 chartProto.collectionsWithUpdate.push('annotations');
 // Let chart.update() create annoations on demand
 chartProto.collectionsWithInit.annotations = [chartProto.addAnnotation];
-chartProto.callbacks.push(function (chart) {
-    chart.annotations = [];
-    if (!chart.options.annotations) {
-        chart.options.annotations = [];
+// Create lookups initially
+addEvent(Chart, 'afterInit', function () {
+    this.annotations = [];
+    if (!this.options.annotations) {
+        this.options.annotations = [];
     }
+});
+chartProto.callbacks.push(function (chart) {
     chart.plotBoxClip = this.renderer.clipRect(this.plotBox);
     chart.controlPointsGroup = chart.renderer
         .g('control-points')
@@ -1202,8 +1207,14 @@ chartProto.callbacks.push(function (chart) {
         .clip(chart.plotBoxClip)
         .add();
     chart.options.annotations.forEach(function (annotationOptions, i) {
-        var annotation = chart.initAnnotation(annotationOptions);
-        chart.options.annotations[i] = annotation.options;
+        if (
+            // Verify that it has not been previously added in a responsive rule
+            !chart.annotations.some(function (annotation) {
+                return annotation.options === annotationOptions;
+            })) {
+            var annotation = chart.initAnnotation(annotationOptions);
+            chart.options.annotations[i] = annotation.options;
+        }
     });
     chart.drawAnnotations();
     addEvent(chart, 'redraw', chart.drawAnnotations);

@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v8.2.0 (2020-08-20)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
  * Marker clusters module for Highcharts
  *
@@ -23,19 +23,18 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Extensions/MarkerClusters.js', [_modules['Core/Chart/Chart.js'], _modules['Core/Globals.js'], _modules['Core/Options.js'], _modules['Core/Series/Point.js'], _modules['Core/Renderer/SVG/SVGRenderer.js'], _modules['Core/Utilities.js']], function (Chart, H, O, Point, SVGRenderer, U) {
+    _registerModule(_modules, 'Extensions/MarkerClusters.js', [_modules['Core/Animation/AnimationUtilities.js'], _modules['Core/Chart/Chart.js'], _modules['Core/Options.js'], _modules['Core/Color/Palette.js'], _modules['Core/Series/Point.js'], _modules['Core/Series/Series.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Renderer/SVG/SVGRenderer.js'], _modules['Core/Utilities.js'], _modules['Core/Axis/Axis.js']], function (A, Chart, O, palette, Point, Series, SeriesRegistry, SVGRenderer, U, Axis) {
         /* *
          *
          *  Marker clusters module.
          *
-         *  (c) 2010-2020 Torstein Honsi
+         *  (c) 2010-2021 Torstein Honsi
          *
          *  Author: Wojciech Chmiel
          *
@@ -44,9 +43,10 @@
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
+        var animObject = A.animObject;
         var defaultOptions = O.defaultOptions;
+        var seriesTypes = SeriesRegistry.seriesTypes;
         var addEvent = U.addEvent,
-            animObject = U.animObject,
             defined = U.defined,
             error = U.error,
             isArray = U.isArray,
@@ -70,8 +70,7 @@
          */
         ''; // detach doclets from following code
         /* eslint-disable no-invalid-this */
-        var Series = H.Series,
-            Scatter = H.seriesTypes.scatter,
+        var Scatter = seriesTypes.scatter,
             baseGeneratePoints = Series.prototype.generatePoints,
             stateIdCounter = 0,
             // Points that ids are included in the oldPointsStateId array
@@ -283,7 +282,7 @@
                 /** @internal */
                 lineWidth: 0,
                 /** @internal */
-                lineColor: '#ffffff'
+                lineColor: palette.backgroundColor
             },
             /**
              * Fires when the cluster point is clicked and `drillToCluster` is enabled.
@@ -417,7 +416,6 @@
                 y: sumY / pointsLen
             };
         }
-
         // Prepare array with sorted data objects to be
         // compared in getPointsState method.
         function getDataState(clusteredData, stateDataLen) {
@@ -433,7 +431,6 @@
             });
             return state;
         }
-
         function fadeInElement(elem, opacity, animation) {
             elem
                 .attr({
@@ -443,7 +440,6 @@
                     opacity: 1
                 }, animation);
         }
-
         function fadeInStatePoint(stateObj, opacity, animation, fadeinGraphic, fadeinDataLabel) {
             if (stateObj.point) {
                 if (fadeinGraphic && stateObj.point.graphic) {
@@ -456,7 +452,6 @@
                 }
             }
         }
-
         function hideStatePoint(stateObj, hideGraphic, hideDataLabel) {
             if (stateObj.point) {
                 if (hideGraphic && stateObj.point.graphic) {
@@ -467,7 +462,6 @@
                 }
             }
         }
-
         function destroyOldPoints(oldState) {
             if (oldState) {
                 objectEach(oldState, function (state) {
@@ -477,7 +471,6 @@
                 });
             }
         }
-
         function fadeInNewPointAndDestoryOld(newPointObj, oldPoints, animation, opacity) {
             // Fade in new point.
             fadeInStatePoint(newPointObj, opacity, animation, true, true);
@@ -488,12 +481,10 @@
                 }
             });
         }
-
         // Generate unique stateId for a state element.
         function getStateId() {
             return Math.random().toString(36).substring(2, 7) + '-' + stateIdCounter++;
         }
-
         // Useful for debugging.
         // function drawGridLines(
         //     series: Highcharts.Series,
@@ -660,7 +651,9 @@
                         oldPointObj.point.plotX !== newPointObj.point.plotX &&
                         oldPointObj.point.plotY !== newPointObj.point.plotY) {
                         newPointBBox = newPointObj.point.graphic.getBBox();
-                        offset = newPointBBox.width / 2;
+                        // Marker image does not have the offset (#14342).
+                        offset = newPointObj.point.graphic && newPointObj.point.graphic.isImg ?
+                            0 : newPointBBox.width / 2;
                         newPointObj.point.graphic.attr({
                             x: oldPointObj.point.plotX - offset,
                             y: oldPointObj.point.plotY - offset
@@ -1529,7 +1522,9 @@
             if (clusterOptions &&
                 clusterOptions.enabled &&
                 series.xData &&
+                series.xData.length &&
                 series.yData &&
+                series.yData.length &&
                 !chart.polar) {
                 type = clusterOptions.layoutAlgorithm.type;
                 layoutAlgOptions = clusterOptions.layoutAlgorithm;
@@ -1734,7 +1729,7 @@
             }
         });
         // Destroy the old tooltip after zoom.
-        addEvent(H.Axis, 'setExtremes', function () {
+        addEvent(Axis, 'setExtremes', function () {
             var chart = this.chart,
                 animationDuration = 0,
                 animation;

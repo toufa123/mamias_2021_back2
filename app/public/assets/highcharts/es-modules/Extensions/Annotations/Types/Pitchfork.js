@@ -21,7 +21,6 @@ var __extends = (this && this.__extends) || (function () {
         function __() {
             this.constructor = d;
         }
-
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
@@ -29,12 +28,10 @@ import Annotation from '../Annotations.js';
 import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
-
 var merge = U.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var Pitchfork = /** @class */ (function (_super) {
     __extends(Pitchfork, _super);
-
     /* *
      *
      * Constructors
@@ -43,7 +40,6 @@ var Pitchfork = /** @class */ (function (_super) {
     function Pitchfork(chart, options) {
         return _super.call(this, chart, options) || this;
     }
-
     /* *
      *
      * Static Functions

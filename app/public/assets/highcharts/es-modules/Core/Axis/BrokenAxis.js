@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Torstein Honsi
+ *  (c) 2009-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -9,15 +9,12 @@
  * */
 'use strict';
 import Axis from './Axis.js';
-import H from '../Globals.js';
+import Series from '../Series/Series.js';
+import StackItem from '../../Extensions/Stacking.js';
 import U from '../Utilities.js';
 
 var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber,
     pick = U.pick;
-import '../Series/Series.js';
-import StackItem from '../../Extensions/Stacking.js';
-
-var Series = H.Series;
 /* eslint-disable valid-jsdoc */
 /**
  * Provides support for broken axes.
@@ -34,7 +31,6 @@ var BrokenAxisAdditions = /** @class */ (function () {
         this.hasBreaks = false;
         this.axis = axis;
     }
-
     /* *
      *
      *  Static Functions
@@ -203,8 +199,8 @@ var BrokenAxisAdditions = /** @class */ (function () {
                 }
                 Axis.prototype.setExtremes.call(this, newMin, newMax, redraw, animation, eventArguments);
             };
-            axis.setAxisTranslation = function (saveOld) {
-                Axis.prototype.setAxisTranslation.call(this, saveOld);
+            axis.setAxisTranslation = function () {
+                Axis.prototype.setAxisTranslation.call(this);
                 brokenAxis.unitLength = null;
                 if (brokenAxis.hasBreaks) {
                     var breaks = axis.options.breaks || [],
@@ -311,7 +307,6 @@ var BrokenAxisAdditions = /** @class */ (function () {
 var BrokenAxis = /** @class */ (function () {
     function BrokenAxis() {
     }
-
     /**
      * Adds support for broken axes.
      * @private

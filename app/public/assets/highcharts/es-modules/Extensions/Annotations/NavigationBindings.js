@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2017 Highsoft, Black Label
+ *  (c) 2009-2021 Highsoft, Black Label
  *
  *  License: www.highcharts.com/license
  *
@@ -9,6 +9,7 @@
  * */
 'use strict';
 import Annotation from './Annotations.js';
+import Chart from '../../Core/Chart/Chart.js';
 import chartNavigationMixin from '../../Mixins/Navigation.js';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
@@ -66,7 +67,6 @@ function closestPolyfill(el, s) {
     }
     return ret;
 }
-
 /**
  * @private
  * @interface bindingsUtils
@@ -135,7 +135,6 @@ var NavigationBindings = /** @class */ (function () {
         this.eventsToUnbind = [];
         this.container = doc.getElementsByClassName(this.options.bindingsClassName || '');
     }
-
     // Private properties added by bindings:
     // Active (selected) annotation that is editted through popup/forms
     // activeAnnotation: Annotation
@@ -182,7 +181,7 @@ var NavigationBindings = /** @class */ (function () {
         });
         objectEach(options.events || {}, function (callback, eventName) {
             if (isFunction(callback)) {
-                navigation.eventsToUnbind.push(addEvent(navigation, eventName, callback));
+                navigation.eventsToUnbind.push(addEvent(navigation, eventName, callback, {passive: false}));
             }
         });
         navigation.eventsToUnbind.push(addEvent(chart.container, 'click', function (e) {
@@ -193,7 +192,7 @@ var NavigationBindings = /** @class */ (function () {
         }));
         navigation.eventsToUnbind.push(addEvent(chart.container, H.isTouchDevice ? 'touchmove' : 'mousemove', function (e) {
             navigation.bindingsContainerMouseMove(this, e);
-        }));
+        }, H.isTouchDevice ? {passive: false} : void 0));
     };
     /**
      * Common chart.update() delegation, shared between bindings and exporting.
@@ -485,7 +484,6 @@ var NavigationBindings = /** @class */ (function () {
                 }
             }
         }
-
         objectEach(options, function (option, key) {
             if (key === 'typeOptions') {
                 visualOptions[key] = {};
@@ -643,7 +641,7 @@ var NavigationBindings = /** @class */ (function () {
  * @type {bindingsUtils}
  */
 NavigationBindings.prototype.utils = bindingsUtils;
-H.Chart.prototype.initNavigationBindings = function () {
+Chart.prototype.initNavigationBindings = function () {
     var chart = this, options = chart.options;
     if (options && options.navigation && options.navigation.bindings) {
         chart.navigationBindings = new NavigationBindings(chart, options.navigation);
@@ -651,10 +649,10 @@ H.Chart.prototype.initNavigationBindings = function () {
         chart.navigationBindings.initUpdate();
     }
 };
-addEvent(H.Chart, 'load', function () {
+addEvent(Chart, 'load', function () {
     this.initNavigationBindings();
 });
-addEvent(H.Chart, 'destroy', function () {
+addEvent(Chart, 'destroy', function () {
     if (this.navigationBindings) {
         this.navigationBindings.destroy();
     }
@@ -667,7 +665,6 @@ addEvent(Annotation, 'remove', function () {
         this.chart.navigationBindings.deselectAnnotation();
     }
 });
-
 /**
  * Show edit-annotation form:
  * @private
@@ -675,7 +672,6 @@ addEvent(Annotation, 'remove', function () {
 function selectableAnnotation(annotationType) {
     var originalClick = annotationType.prototype.defaultOptions.events &&
         annotationType.prototype.defaultOptions.events.click;
-
     /**
      * @private
      */
@@ -723,12 +719,10 @@ function selectableAnnotation(annotationType) {
         // Let bubble event to chart.click:
         event.activeAnnotation = true;
     }
-
     merge(true, annotationType.prototype.defaultOptions.events, {
         click: selectAndshowPopup
     });
 }
-
 if (H.Annotation) {
     // Basic shapes:
     selectableAnnotation(Annotation);
@@ -983,7 +977,7 @@ setOptions({
          * from a different server.
          *
          * @type      {string}
-         * @default   https://code.highcharts.com/8.2.0/gfx/stock-icons/
+         * @default   https://code.highcharts.com/9.0.0/gfx/stock-icons/
          * @since     7.1.3
          * @apioption navigation.iconsURL
          */

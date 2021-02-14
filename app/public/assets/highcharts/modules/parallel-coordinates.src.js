@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v8.2.0 (2020-08-20)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
  * Support for parallel coordinates in Highcharts
  *
@@ -23,19 +23,18 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Extensions/ParallelCoordinates.js', [_modules['Core/Axis/Axis.js'], _modules['Core/Chart/Chart.js'], _modules['Core/Globals.js'], _modules['Core/Utilities.js']], function (Axis, Chart, H, U) {
+    _registerModule(_modules, 'Extensions/ParallelCoordinates.js', [_modules['Core/Axis/Axis.js'], _modules['Core/Chart/Chart.js'], _modules['Core/Globals.js'], _modules['Core/Series/Series.js'], _modules['Core/Utilities.js']], function (Axis, Chart, H, Series, U) {
         /* *
          *
          *  Parallel coordinates module
          *
-         *  (c) 2010-2020 Pawel Fus
+         *  (c) 2010-2021 Pawel Fus
          *
          *  License: www.highcharts.com/license
          *
@@ -275,7 +274,7 @@
         });
         // Bind each series to each yAxis. yAxis needs a reference to all series to
         // calculate extremes.
-        addEvent(H.Series, 'bindAxes', function (e) {
+        addEvent(Series, 'bindAxes', function (e) {
             if (this.chart.hasParallelCoordinates) {
                 var series = this;
                 this.chart.axes.forEach(function (axis) {
@@ -288,7 +287,7 @@
             }
         });
         // Translate each point using corresponding yAxis.
-        addEvent(H.Series, 'afterTranslate', function () {
+        addEvent(Series, 'afterTranslate', function () {
             var series = this,
                 chart = this.chart,
                 points = series.points,
@@ -326,7 +325,7 @@
             }
         }, {order: 1});
         // On destroy, we need to remove series from each axis.series
-        addEvent(H.Series, 'destroy', function () {
+        addEvent(Series, 'destroy', function () {
             if (this.chart.hasParallelCoordinates) {
                 (this.chart.axes || []).forEach(function (axis) {
                     if (axis && axis.series) {
@@ -336,7 +335,6 @@
                 }, this);
             }
         });
-
         /**
          * @private
          */
@@ -396,7 +394,6 @@
             }
             return config;
         }
-
         ['line', 'spline'].forEach(function (seriesName) {
             wrap(H.seriesTypes[seriesName].prototype.pointClass.prototype, 'getLabelConfig', addFormattedValue);
         });
@@ -468,9 +465,7 @@
                 addEvent(AxisClass, 'afterSetOptions', onAfterSetOptions);
                 addEvent(AxisClass, 'getSeriesExtremes', onGetSeriesExtremes);
             }
-
             ParallelAxis.compose = compose;
-
             /**
              * Update default options with predefined for a parallel coords.
              * @private
@@ -496,7 +491,6 @@
                     }
                 }
             }
-
             /**
              * Each axis should gather extremes from points on a particular position in
              * series.data. Not like the default one, which gathers extremes from all
@@ -526,7 +520,6 @@
                     e.preventDefault();
                 }
             }
-
             /**
              * Add parallel addition
              * @private

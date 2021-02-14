@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Keyboard navigation handler base class definition
  *
@@ -75,7 +75,6 @@ function KeyboardNavigationHandler(chart, options) {
         fail: 5 // Handler failed
     };
 }
-
 KeyboardNavigationHandler.prototype = {
     /**
      * Find handler function(s) for key code in the keyCodeMap and run it.

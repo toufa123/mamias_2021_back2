@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v8.2.0 (2020-08-20)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
  * Boost module
  *
@@ -24,14 +24,13 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Extensions/BoostCanvas.js', [_modules['Core/Chart/Chart.js'], _modules['Core/Globals.js'], _modules['Core/Color.js'], _modules['Core/Utilities.js']], function (Chart, H, Color, U) {
+    _registerModule(_modules, 'Extensions/BoostCanvas.js', [_modules['Core/Chart/Chart.js'], _modules['Core/Color/Color.js'], _modules['Core/Globals.js'], _modules['Core/Color/Palette.js'], _modules['Core/Series/Series.js'], _modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (Chart, Color, H, palette, Series, SeriesRegistry, U) {
         /* *
          *
          *  License: www.highcharts.com/license
@@ -47,6 +46,9 @@
          *
          * */
         var color = Color.parse;
+        var doc = H.doc,
+            noop = H.noop;
+        var seriesTypes = SeriesRegistry.seriesTypes;
         var addEvent = U.addEvent,
             extend = U.extend,
             fireEvent = U.fireEvent,
@@ -54,13 +56,7 @@
             merge = U.merge,
             pick = U.pick,
             wrap = U.wrap;
-        var win = H.win,
-            doc = win.document,
-            noop = function () {
-            },
-            Series = H.Series,
-            seriesTypes = H.seriesTypes,
-            CHUNK_SIZE = 50000,
+        var CHUNK_SIZE = 50000,
             destroyLoadingDiv;
         /* eslint-disable no-invalid-this, valid-jsdoc */
         /**
@@ -68,46 +64,47 @@
          *
          * @function Highcharts.initCanvasBoost
          */
-        H.initCanvasBoost = function () {
+        var initCanvasBoost = function () {
             if (H.seriesTypes.heatmap) {
-                wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function () {
-                    var chart = this.chart,
-                        ctx = this.getContext(),
-                        inverted = this.chart.inverted,
-                        xAxis = this.xAxis,
-                        yAxis = this.yAxis;
-                    if (ctx) {
-                        // draw the columns
-                        this.points.forEach(function (point) {
-                            var plotY = point.plotY,
-                                shapeArgs,
-                                pointAttr;
-                            if (typeof plotY !== 'undefined' &&
-                                !isNaN(plotY) &&
-                                point.y !== null) {
-                                shapeArgs = point.shapeArgs;
-                                if (!chart.styledMode) {
-                                    pointAttr = point.series.pointAttribs(point);
-                                } else {
-                                    pointAttr = point.series.colorAttribs(point);
+                wrap(H.seriesTypes.heatmap.prototype, 'drawPoints',
+                    function () {
+                        var chart = this.chart,
+                            ctx = this.getContext(),
+                            inverted = this.chart.inverted,
+                            xAxis = this.xAxis,
+                            yAxis = this.yAxis;
+                        if (ctx) {
+                            // draw the columns
+                            this.points.forEach(function (point) {
+                                var plotY = point.plotY,
+                                    shapeArgs,
+                                    pointAttr;
+                                if (typeof plotY !== 'undefined' &&
+                                    !isNaN(plotY) &&
+                                    point.y !== null) {
+                                    shapeArgs = point.shapeArgs;
+                                    if (!chart.styledMode) {
+                                        pointAttr = point.series.pointAttribs(point);
+                                    } else {
+                                        pointAttr = point.series.colorAttribs(point);
+                                    }
+                                    ctx.fillStyle = pointAttr.fill;
+                                    if (inverted) {
+                                        ctx.fillRect(yAxis.len - shapeArgs.y + xAxis.left, xAxis.len - shapeArgs.x + yAxis.top, -shapeArgs.height, -shapeArgs.width);
+                                    } else {
+                                        ctx.fillRect(shapeArgs.x + xAxis.left, shapeArgs.y + yAxis.top, shapeArgs.width, shapeArgs.height);
+                                    }
                                 }
-                                ctx.fillStyle = pointAttr.fill;
-                                if (inverted) {
-                                    ctx.fillRect(yAxis.len - shapeArgs.y + xAxis.left, xAxis.len - shapeArgs.x + yAxis.top, -shapeArgs.height, -shapeArgs.width);
-                                } else {
-                                    ctx.fillRect(shapeArgs.x + xAxis.left, shapeArgs.y + yAxis.top, shapeArgs.width, shapeArgs.height);
-                                }
-                            }
-                        });
-                        this.canvasToSVG();
-                    } else {
-                        this.chart.showLoading('Your browser doesn\'t support HTML5 canvas, <br>' +
-                            'please use a modern browser');
-                        // Uncomment this to provide low-level (slow) support in oldIE.
-                        // It will cause script errors on charts with more than a few
-                        // thousand points.
-                        // arguments[0].call(this);
-                    }
+                            });
+                            this.canvasToSVG();
+                        } else {
+                            this.chart.showLoading('Your browser doesn\'t support HTML5 canvas, <br>' +
+                                'please use a modern browser');
+                            // Uncomment this to provide low-level (slow) support in oldIE.
+                            // It will cause script errors on charts with more than a few
+                            // thousand points.
+                            // arguments[0].call(this);
+                        }
                 });
             }
             extend(Series.prototype, {
@@ -358,7 +355,7 @@
                     if (rawData.length > 99999) {
                         chart.options.loading = merge(loadingOptions, {
                             labelStyle: {
-                                backgroundColor: color('#ffffff').setOpacity(0.75).get(),
+                                backgroundColor: color(palette.backgroundColor).setOpacity(0.75).get(),
                                 padding: '1em',
                                 borderRadius: '0.5em'
                             },
@@ -564,7 +561,6 @@
                         chart.boostCopy();
                     }
                 }
-
                 /**
                  * @private
                  */
@@ -576,12 +572,12 @@
                         chart.canvas.getContext('2d').clearRect(0, 0, chart.canvas.width, chart.canvas.height);
                     }
                 }
-
                 addEvent(chart, 'predraw', clear);
                 addEvent(chart, 'render', canvasToSVG);
             });
         };
 
+        return initCanvasBoost;
     });
     _registerModule(_modules, 'masters/modules/boost-canvas.src.js', [], function () {
 

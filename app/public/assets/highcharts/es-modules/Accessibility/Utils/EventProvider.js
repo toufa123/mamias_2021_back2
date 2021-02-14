@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Class that can keep track of events added, and clean them up on destroy.
  *
@@ -12,7 +12,6 @@
 'use strict';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-
 var addEvent = U.addEvent, extend = U.extend;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**

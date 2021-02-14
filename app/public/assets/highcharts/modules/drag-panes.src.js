@@ -1,5 +1,5 @@
 /**
- * @license Highstock JS v8.2.0 (2020-08-20)
+ * @license Highstock JS v9.0.0 (2021-02-02)
  *
  * Drag-panes module
  *
@@ -24,19 +24,18 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Extensions/DragPanes.js', [_modules['Core/Globals.js'], _modules['Core/Axis/Axis.js'], _modules['Core/Pointer.js'], _modules['Core/Utilities.js']], function (H, Axis, Pointer, U) {
+    _registerModule(_modules, 'Extensions/DragPanes.js', [_modules['Core/Globals.js'], _modules['Core/Axis/Axis.js'], _modules['Core/Color/Palette.js'], _modules['Core/Pointer.js'], _modules['Core/Utilities.js']], function (H, Axis, palette, Pointer, U) {
         /* *
          *
          *  Plugin for resizing axes / panes in a chart.
          *
-         *  (c) 2010-2017 Highsoft AS
+         *  (c) 2010-2021 Highsoft AS
          *
          *  Author: Kacper Madej
          *
@@ -472,7 +471,7 @@
                      * @type     {Highcharts.ColorString}
                      * @requires modules/drag-panes
                      */
-                    lineColor: '#cccccc',
+                    lineColor: palette.neutralColor20,
                     /**
                      * Dash style of the control line.
                      *
@@ -544,7 +543,7 @@
                     // Resizer not present and enabled
                     if (enabled) {
                         // Add new resizer
-                        axis.resizer = new H.AxisResizer(axis);
+                        axis.resizer = new AxisResizer(axis);
                     }
                     // Resizer not present and disabled, so do nothing
                 }

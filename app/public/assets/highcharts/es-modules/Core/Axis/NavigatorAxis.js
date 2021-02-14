@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -9,10 +9,8 @@
  * */
 'use strict';
 import H from '../Globals.js';
-
 var isTouchDevice = H.isTouchDevice;
 import U from '../Utilities.js';
-
 var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, isNumber = U.isNumber, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 /**
@@ -28,7 +26,6 @@ var NavigatorAxisAdditions = /** @class */ (function () {
     function NavigatorAxisAdditions(axis) {
         this.axis = axis;
     }
-
     /* *
      *
      *  Functions
@@ -94,7 +91,6 @@ var NavigatorAxisAdditions = /** @class */ (function () {
 var NavigatorAxis = /** @class */ (function () {
     function NavigatorAxis() {
     }
-
     /* *
      *
      *  Static Functions

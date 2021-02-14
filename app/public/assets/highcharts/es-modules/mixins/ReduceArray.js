@@ -1,6 +1,6 @@
 /**
  *
- *  (c) 2010-2020 Pawel Fus & Daniel Studencki
+ *  (c) 2010-2021 Pawel Fus & Daniel Studencki
  *
  *  License: www.highcharts.com/license
  *
@@ -9,7 +9,6 @@
  * */
 'use strict';
 import '../Core/Utilities.js';
-
 var reduceArrayMixin = {
     /**
      * Get min value of array filled by OHLC data.

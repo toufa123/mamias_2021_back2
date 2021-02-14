@@ -12,7 +12,6 @@
 import Connection from './Connection.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-
 /**
  * The default pathfinder algorithm to use for a chart. It is possible to define
  * your own algorithms by adding them to the
@@ -37,16 +36,13 @@ import H from '../Core/Globals.js';
  */
 ''; // detach doclets above
 import O from '../Core/Options.js';
-
 var defaultOptions = O.defaultOptions;
 import Point from '../Core/Series/Point.js';
 import U from '../Core/Utilities.js';
-
 var addEvent = U.addEvent, defined = U.defined, error = U.error, extend = U.extend, merge = U.merge,
     objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
 import '../Extensions/ArrowSymbols.js';
-
 var deg2rad = H.deg2rad, max = Math.max, min = Math.min;
 /*
  @todo:
@@ -291,7 +287,6 @@ extend(defaultOptions, {
  * @requires  highcharts-gantt
  * @apioption series.xrange.data.connect
  */
-
 /**
  * The ID of the point to connect to.
  *
@@ -333,7 +328,6 @@ function getPointBB(point) {
         yMax: point.plotY + bb.height / 2
     } : null;
 }
-
 /**
  * Calculate margin to place around obstacles for the pathfinder in pixels.
  * Returns a minimum of 1 pixel margin.
@@ -389,7 +383,6 @@ function calculateObstacleMargin(obstacles) {
         ), 1 // 1 is the minimum margin
     );
 }
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Pathfinder class.
@@ -416,7 +409,6 @@ var Pathfinder = /** @class */ (function () {
         this.lineObstacles = void 0;
         this.init(chart);
     }
-
     /**
      * @name Highcharts.Pathfinder#algorithms
      * @type {Highcharts.Dictionary<Function>}
@@ -455,6 +447,12 @@ var Pathfinder = /** @class */ (function () {
         chart.series.forEach(function (series) {
             if (series.visible && !series.options.isInternal) {
                 series.points.forEach(function (point) {
+                    var ganttPointOptions = point.options;
+                    // For Gantt series the connect could be
+                    // defined as a dependency
+                    if (ganttPointOptions && ganttPointOptions.dependency) {
+                        ganttPointOptions.connect = ganttPointOptions.dependency;
+                    }
                     var to, connects = (point.options &&
                         point.options.connect &&
                         splat(point.options.connect));
@@ -745,7 +743,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
             rectHorizontalCenter = bb.xMin + rectHalfWidth, rectVerticalCenter = bb.yMin + rectHalfHeight, edgePoint = {
                 x: rectHorizontalCenter,
                 y: rectVerticalCenter
-            }, markerPoint = {}, xFactor = 1, yFactor = 1;
+            }, xFactor = 1, yFactor = 1;
         while (theta < -Math.PI) {
             theta += twoPI;
         }
@@ -782,12 +780,12 @@ extend(Point.prototype, /** @lends Point.prototype */ {
         if (anchor.y !== rectVerticalCenter) {
             edgePoint.y = anchor.y;
         }
-        markerPoint.x = edgePoint.x + (markerRadius * Math.cos(theta));
-        markerPoint.y = edgePoint.y - (markerRadius * Math.sin(theta));
-        return markerPoint;
+        return {
+            x: edgePoint.x + (markerRadius * Math.cos(theta)),
+            y: edgePoint.y - (markerRadius * Math.sin(theta))
+        };
     }
 });
-
 /**
  * Warn if using legacy options. Copy the options over. Note that this will
  * still break if using the legacy options in chart.update, addSeries etc.
@@ -807,7 +805,6 @@ function warnLegacy(chart) {
             'Use "chart.connectors" or "series.connectors" instead.');
     }
 }
-
 // Initialize Pathfinder for charts
 Chart.prototype.callbacks.push(function (chart) {
     var options = chart.options;

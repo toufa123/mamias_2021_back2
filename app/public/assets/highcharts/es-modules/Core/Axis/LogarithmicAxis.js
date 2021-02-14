@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -29,7 +29,6 @@ var LogarithmicAxisAdditions = /** @class */ (function () {
     function LogarithmicAxisAdditions(axis) {
         this.axis = axis;
     }
-
     /* *
      *
      *  Functions
@@ -119,7 +118,6 @@ var LogarithmicAxisAdditions = /** @class */ (function () {
 var LogarithmicAxis = /** @class */ (function () {
     function LogarithmicAxis() {
     }
-
     /**
      * Provides logarithmic support for axes.
      *
@@ -127,13 +125,6 @@ var LogarithmicAxis = /** @class */ (function () {
      */
     LogarithmicAxis.compose = function (AxisClass) {
         AxisClass.keepProps.push('logarithmic');
-        // HC <= 8 backwards compatibility, allow wrapping
-        // Axis.prototype.lin2log and log2lin
-        // @todo Remove this in next major
-        var axisProto = AxisClass.prototype;
-        var logAxisProto = LogarithmicAxisAdditions.prototype;
-        axisProto.log2lin = logAxisProto.log2lin;
-        axisProto.lin2log = logAxisProto.lin2log;
         /* eslint-disable no-invalid-this */
         addEvent(AxisClass, 'init', function (e) {
             var axis = this;
@@ -144,15 +135,6 @@ var LogarithmicAxis = /** @class */ (function () {
             } else {
                 if (!logarithmic) {
                     logarithmic = axis.logarithmic = new LogarithmicAxisAdditions(axis);
-                }
-                // HC <= 8 backwards compatibility, allow wrapping
-                // Axis.prototype.lin2log and log2lin
-                // @todo Remove this in next major
-                if (axis.log2lin !== logarithmic.log2lin) {
-                    logarithmic.log2lin = axis.log2lin.bind(axis);
-                }
-                if (axis.lin2log !== logarithmic.lin2log) {
-                    logarithmic.lin2log = axis.lin2log.bind(axis);
                 }
             }
         });

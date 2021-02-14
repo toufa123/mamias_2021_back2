@@ -237,14 +237,14 @@ final class MamiasAdmin extends AbstractAdmin
                 //->end()
                 ->end()
                 ->tab('Country-level occurrences')
-                ->with('')
+                ->with('D')
                 ->add('Distribution', CollectionType::class, ['label' => 'Country Level Occurence', 'type_options' => ['delete' => true],
                 ], ['by_reference' => true, 'edit' => 'inline', 'inline' => 'table', 'required' => false])
                 ->end()
                 //->end()
                 ->end()
                 ->tab('Geo-referenced records')
-                ->with('')
+                ->with('O')
                 ->add('Geo', CollectionType::class, ['label' => 'Geo-Occurence ', 'type_options' => ['delete' => true],
                 ], ['by_reference' => true, 'edit' => 'inline', 'inline' => 'table', 'required' => false])
                 ->end()

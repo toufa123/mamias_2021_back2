@@ -1,16 +1,20 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
+import A from '../Animation/AnimationUtilities.js';
+
+var getDeferredAnimation = A.getDeferredAnimation;
 import U from '../Utilities.js';
 
 var addEvent = U.addEvent, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent,
-    getDeferredAnimation = U.getDeferredAnimation, objectEach = U.objectEach, pick = U.pick;
+    objectEach = U.objectEach, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 /**
  * Adds stacking support to axes.
@@ -29,7 +33,6 @@ var StackingAxisAdditions = /** @class */ (function () {
         this.stacksTouched = 0;
         this.axis = axis;
     }
-
     /* *
      *
      *  Functions
@@ -148,7 +151,6 @@ var StackingAxisAdditions = /** @class */ (function () {
 var StackingAxis = /** @class */ (function () {
     function StackingAxis() {
     }
-
     /* *
      *
      *  Static Functions

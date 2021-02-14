@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,6 +10,7 @@
 'use strict';
 import Axis from './Axis.js';
 import H from '../Globals.js';
+import palette from '../../Core/Color/Palette.js';
 /**
  * Options for plot bands on axes.
  *
@@ -33,8 +34,8 @@ import H from '../Globals.js';
 import U from '../Utilities.js';
 
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined,
-    destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, merge = U.merge,
-    objectEach = U.objectEach, pick = U.pick;
+    destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent,
+    merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The object wrapper for plot lines and plot bands
@@ -54,7 +55,6 @@ var PlotLineOrBand = /** @class */ (function () {
             this.id = options.id;
         }
     }
-
     /**
      * Render the plot line or plot band. If it is already existing,
      * move it.
@@ -64,7 +64,7 @@ var PlotLineOrBand = /** @class */ (function () {
      * @return {Highcharts.PlotLineOrBand|undefined}
      */
     PlotLineOrBand.prototype.render = function () {
-        H.fireEvent(this, 'render');
+        fireEvent(this, 'render');
         var plotLine = this, axis = plotLine.axis, horiz = axis.horiz, log = axis.logarithmic,
             options = plotLine.options, optionsLabel = options.label, label = plotLine.label, to = options.to,
             from = options.from, value = options.value, isBand = defined(from) && defined(to), isLine = defined(value),
@@ -82,14 +82,14 @@ var PlotLineOrBand = /** @class */ (function () {
         // Set the presentational attributes
         if (!axis.chart.styledMode) {
             if (isLine) {
-                attribs.stroke = color || '#999999';
+                attribs.stroke = color || palette.neutralColor40;
                 attribs['stroke-width'] = pick(options.width, 1);
                 if (options.dashStyle) {
                     attribs.dashstyle =
                         options.dashStyle;
                 }
             } else if (isBand) { // plot band
-                attribs.fill = color || '#e6ebf5';
+                attribs.fill = color || palette.highlightColor10;
                 if (options.borderWidth) {
                     attribs.stroke = options.borderColor;
                     attribs['stroke-width'] = options.borderWidth;
@@ -315,7 +315,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *         Plot band on Y axis
      *
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @default   #e6ebf5
+     * @default   ${palette.highlightColor10}
      * @apioption xAxis.plotBands.color
      */
     /**
@@ -563,7 +563,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *         Plot line on Y axis
      *
      * @type      {Highcharts.ColorString}
-     * @default   #999999
+     * @default   ${palette.neutralColor40}
      * @apioption xAxis.plotLines.color
      */
     /**
@@ -849,18 +849,24 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @param {number} to
      *        The axis value to end on.
      *
+     * @param {Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions} options
+     *        The plotBand or plotLine configuration object.
+     *
      * @return {Highcharts.SVGPathArray}
      *         The SVG path definition in array form.
      */
-    getPlotBandPath: function (from, to) {
+    getPlotBandPath: function (from, to, options) {
+        if (options === void 0) {
+            options = this.options;
+        }
         var toPath = this.getPlotLinePath({
                 value: to,
                 force: true,
-                acrossPanes: this.options.acrossPanes
+                acrossPanes: options.acrossPanes
             }), path = this.getPlotLinePath({
                 value: from,
                 force: true,
-                acrossPanes: this.options.acrossPanes
+                acrossPanes: options.acrossPanes
             }), result = [], i,
             // #4964 check if chart is inverted or plotband is on yAxis
             horiz = this.horiz, plus = 1, isFlat, outside = (from < this.min && to < this.min) ||
@@ -948,8 +954,20 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @return {Highcharts.PlotLineOrBand|undefined}
      */
     addPlotBandOrLine: function (options, coll) {
-        var obj = new PlotLineOrBand(this, options).render(), userOptions = this.userOptions;
+        var _this = this;
+        var obj = new H.PlotLineOrBand(this, options), userOptions = this.userOptions;
+        if (this.visible) {
+            obj = obj.render();
+        }
         if (obj) { // #2189
+            if (!this._addedPlotLB) {
+                this._addedPlotLB = true;
+                (userOptions.plotLines || [])
+                    .concat(userOptions.plotBands || [])
+                    .forEach(function (plotLineOptions) {
+                        _this.addPlotBandOrLine(plotLineOptions);
+                    });
+            }
             // Add it to the user options for exporting and Axis.update
             if (coll) {
                 // Workaround Microsoft/TypeScript issue #32693
@@ -958,7 +976,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 userOptions[coll] = updatedOptions;
             }
             this.plotLinesAndBands.push(obj);
-            this._addedPlotLB = true;
         }
         return obj;
     },

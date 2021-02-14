@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -12,7 +12,6 @@
 'use strict';
 import Highcharts from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-
 var setOptions = U.setOptions;
 Highcharts.theme = {
     colors: ['#514F78', '#42A07B', '#9B5E4A', '#72727F', '#1F949A',

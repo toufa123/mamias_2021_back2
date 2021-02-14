@@ -8,7 +8,6 @@ import ControllableMixin from '../Mixins/ControllableMixin.js';
 import H from '../../../Core/Globals.js';
 import MarkerMixin from '../Mixins/MarkerMixin.js';
 import U from '../../../Core/Utilities.js';
-
 var extend = U.extend;
 // See TRACKER_FILL in highcharts.src.js
 var TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
@@ -69,7 +68,6 @@ var ControllablePath = /** @class */ (function () {
         this.init(annotation, options, index);
         this.collection = 'shapes';
     }
-
     /* *
      *
      *  Functions

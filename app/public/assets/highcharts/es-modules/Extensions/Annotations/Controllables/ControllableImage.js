@@ -63,7 +63,6 @@ var ControllableImage = /** @class */ (function () {
         this.init(annotation, options, index);
         this.collection = 'shapes';
     }
-
     ControllableImage.prototype.render = function (parent) {
         var attrs = this.attrsFromOptions(this.options), options = this.options;
         this.graphic = this.annotation.chart.renderer

@@ -3,7 +3,8 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import Color from '../Core/Color.js';
+'use strict';
+import Color from '../Core/Color/Color.js';
 import U from '../Core/Utilities.js';
 
 var extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge,
@@ -68,7 +69,6 @@ var getColor = function getColor(node, options) {
         siblings = options.siblings, points = series.points, getColorByPoint,
         chartOptionsChart = series.chart.options.chart, point, level, colorByPoint, colorIndexByPoint, color,
         colorIndex;
-
     /**
      * @private
      */
@@ -81,7 +81,6 @@ var getColor = function getColor(node, options) {
         }
         return color;
     }
-
     if (node) {
         point = points[node.i];
         level = mapOptionsToLevel[node.level] || {};

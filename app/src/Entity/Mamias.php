@@ -98,8 +98,7 @@ class Mamias
     /**
      * Occurence of the Species at Country Level.
      *
-     * @ORM\OneToMany(targetEntity="App\Entity\CountryDistribution",indexBy="mamias",
-     *     mappedBy="mamias",cascade={"all"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\CountryDistribution",mappedBy="mamias",cascade={"all"}, orphanRemoval=true)
      * @OrderBy({"AreaSighting" = "ASC"})
      */
     private $Distribution;

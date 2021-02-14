@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v8.2.0 (2020-08-20)
+ * @license Highcharts JS v9.0.0 (2021-02-02)
  *
  * Highcharts 3D funnel module
  *
@@ -23,19 +23,18 @@
     }
 }(function (Highcharts) {
     var _modules = Highcharts ? Highcharts._modules : {};
-
     function _registerModule(obj, path, args, fn) {
         if (!obj.hasOwnProperty(path)) {
             obj[path] = fn.apply(null, args);
         }
     }
 
-    _registerModule(_modules, 'Series/Pyramid3DSeries.js', [_modules['Core/Utilities.js']], function (U) {
+    _registerModule(_modules, 'Series/Pyramid3D/Pyramid3DSeries.js', [_modules['Core/Series/SeriesRegistry.js'], _modules['Core/Utilities.js']], function (SeriesRegistry, U) {
         /* *
          *
          *  Highcharts pyramid3d series module
          *
-         *  (c) 2010-2020 Highsoft AS
+         *  (c) 2010-2021 Highsoft AS
          *  Author: Kacper Madej
          *
          *  License: www.highcharts.com/license
@@ -43,7 +42,37 @@
          *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
          *
          * */
-        var seriesType = U.seriesType;
+        var __extends = (this && this.__extends) || (function () {
+            var extendStatics = function (d,
+                                          b) {
+                extendStatics = Object.setPrototypeOf ||
+                    ({__proto__: []} instanceof Array && function (d,
+                                                                   b) {
+                        d.__proto__ = b;
+                    }) ||
+                    function (d,
+                              b) {
+                        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+                    };
+                return extendStatics(d, b);
+            };
+            return function (d, b) {
+                extendStatics(d, b);
+
+                function __() {
+                    this.constructor = d;
+                }
+
+                d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+            };
+        })();
+        var Funnel3DSeries = SeriesRegistry.seriesTypes.funnel3d;
+        var merge = U.merge;
+        /* *
+         *
+         *  Class
+         *
+         * */
         /**
          * The pyramid3d series type.
          *
@@ -54,7 +83,28 @@
          * @requires modules/funnel3d
          * @requires modules/pyramid3d
          */
-        seriesType('pyramid3d', 'funnel3d',
+        var Pyramid3DSeries = /** @class */ (function (_super) {
+            __extends(Pyramid3DSeries, _super);
+
+            function Pyramid3DSeries() {
+                /* *
+                 *
+                 *  Static Properties
+                 *
+                 * */
+                var _this = _super !== null && _super.apply(this,
+                    arguments) || this;
+                /* *
+                 *
+                 *  Properties
+                 *
+                 * */
+                _this.data = void 0;
+                _this.options = void 0;
+                _this.points = void 0;
+                return _this;
+            }
+
             /**
              * A pyramid3d is a 3d version of pyramid series type. Pyramid charts are
              * a type of chart often used to visualize stages in a sales project,
@@ -73,7 +123,7 @@
              * @requires     modules/pyramid3d
              * @optionparent plotOptions.pyramid3d
              */
-            {
+            Pyramid3DSeries.defaultOptions = merge(Funnel3DSeries.defaultOptions, {
                 /**
                  * A reversed pyramid3d is funnel3d, but the latter supports neck
                  * related options: neckHeight and neckWidth
@@ -87,6 +137,19 @@
                     verticalAlign: 'top'
                 }
             });
+            return Pyramid3DSeries;
+        }(Funnel3DSeries));
+        SeriesRegistry.registerSeriesType('pyramid3d', Pyramid3DSeries);
+        /* *
+         *
+         *  Default Export
+         *
+         * */
+        /* *
+         *
+         *  API Options
+         *
+         * */
         /**
          * A `pyramid3d` series. If the [type](#series.pyramid3d.type) option is
          * not specified, it is inherited from [chart.type](#chart.type).
@@ -149,6 +212,7 @@
          */
         ''; // adds doclets above to the transpiled file
 
+        return Pyramid3DSeries;
     });
     _registerModule(_modules, 'masters/modules/pyramid3d.src.js', [], function () {
 

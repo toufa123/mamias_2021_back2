@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Extend SVG and Chart classes with focus border capabilities.
  *
@@ -14,14 +14,12 @@ import H from '../Core/Globals.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGLabel from '../Core/Renderer/SVG/SVGLabel.js';
 import U from '../Core/Utilities.js';
-
 var addEvent = U.addEvent, extend = U.extend, pick = U.pick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 // Attributes that trigger a focus border update
 var svgElementBorderUpdateTriggers = [
     'x', 'y', 'transform', 'width', 'height', 'r', 'd', 'stroke-width'
 ];
-
 /**
  * Add hook to destroy focus border if SVG element is destroyed, unless
  * hook already exists.
@@ -40,7 +38,6 @@ function addDestroyFocusBorderHook(el) {
     };
     el.focusBorderDestroyHook = origDestroy;
 }
-
 /**
  * Remove hook from SVG element added by addDestroyFocusBorderHook, if
  * existing.
@@ -54,7 +51,6 @@ function removeDestroyFocusBorderHook(el) {
     el.destroy = el.focusBorderDestroyHook;
     delete el.focusBorderDestroyHook;
 }
-
 /**
  * Add hooks to update the focus border of an element when the element
  * size/position is updated, unless already added.
@@ -82,7 +78,6 @@ function addUpdateFocusBorderHooks(el) {
         };
     });
 }
-
 /**
  * Remove hooks from SVG element added by addUpdateFocusBorderHooks, if
  * existing.
@@ -103,7 +98,6 @@ function removeUpdateFocusBorderHooks(el) {
     });
     delete el.focusBorderUpdateHooks;
 }
-
 /*
  * Add focus border functionality to SVGElements. Draws a new rect on top of
  * element around its bounding box. This is used by multiple components.
@@ -128,7 +122,6 @@ extend(SVGElement.prototype, {
         bb.y += this.translateY ? this.translateY : 0;
         var borderPosX = bb.x - pad, borderPosY = bb.y - pad, borderWidth = bb.width + 2 * pad,
             borderHeight = bb.height + 2 * pad;
-
         // For text elements, apply x and y offset, #11397.
         /**
          * @private
@@ -153,22 +146,32 @@ extend(SVGElement.prototype, {
                 y: posYCorrection
             };
         }
-
         var isLabel = this instanceof SVGLabel;
         if (this.element.nodeName === 'text' || isLabel) {
-            var isRotated = !!this.rotation, correction = !isLabel ? getTextAnchorCorrection(this) :
+            var isRotated = !!this.rotation;
+            var correction = !isLabel ? getTextAnchorCorrection(this) :
                 {
                     x: isRotated ? 1 : 0,
                     y: 0
                 };
-            borderPosX = +this.attr('x') - (bb.width * correction.x) - pad;
-            borderPosY = +this.attr('y') - (bb.height * correction.y) - pad;
+            var attrX = +this.attr('x');
+            var attrY = +this.attr('y');
+            if (!isNaN(attrX)) {
+                borderPosX = attrX - (bb.width * correction.x) - pad;
+            }
+            if (!isNaN(attrY)) {
+                borderPosY = attrY - (bb.height * correction.y) - pad;
+            }
             if (isLabel && isRotated) {
                 var temp = borderWidth;
                 borderWidth = borderHeight;
                 borderHeight = temp;
-                borderPosX = +this.attr('x') - (bb.height * correction.x) - pad;
-                borderPosY = +this.attr('y') - (bb.width * correction.y) - pad;
+                if (!isNaN(attrX)) {
+                    borderPosX = attrX - (bb.height * correction.x) - pad;
+                }
+                if (!isNaN(attrY)) {
+                    borderPosY = attrY - (bb.width * correction.y) - pad;
+                }
             }
         }
         this.focusBorder = this.renderer.rect(borderPosX, borderPosY, borderWidth, borderHeight, parseInt((style && style.borderRadius || 0).toString(), 10))

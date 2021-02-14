@@ -9,7 +9,6 @@ import MockPoint from '../MockPoint.js';
 import SVGRenderer from '../../../Core/Renderer/SVG/SVGRenderer.js';
 import Tooltip from '../../../Core/Tooltip.js';
 import U from '../../../Core/Utilities.js';
-
 var extend = U.extend, format = U.format, isNumber = U.isNumber, pick = U.pick;
 import '../../../Core/Renderer/SVG/SVGRenderer.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -60,7 +59,6 @@ var ControllableLabel = /** @class */ (function () {
         this.init(annotation, options, index);
         this.collection = 'labels';
     }
-
     /* *
      *
      *  Static Functions

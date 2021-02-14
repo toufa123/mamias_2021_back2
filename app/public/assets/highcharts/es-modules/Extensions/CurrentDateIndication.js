@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2020 Highsoft AS
+ *  (c) 2016-2021 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -10,16 +10,13 @@
  *
  * */
 'use strict';
-import H from '../Core/Globals.js';
-import O from '../Core/Options.js';
-
-var dateFormat = O.dateFormat;
+import Axis from '../Core/Axis/Axis.js';
+import palette from '../Core/Color/Palette.js';
 import U from '../Core/Utilities.js';
 
 var addEvent = U.addEvent, merge = U.merge, wrap = U.wrap;
 import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
 
-var Axis = H.Axis;
 var defaultConfig = {
     /**
      * Show an indicator on the axis for the current date and time. Can be a
@@ -40,7 +37,7 @@ var defaultConfig = {
      * @apioption xAxis.currentDateIndicator
      */
     currentDateIndicator: true,
-    color: '#ccd6eb',
+    color: palette.highlightColor20,
     width: 2,
     /**
      * @declare Highcharts.AxisCurrentDateIndicatorLabelOptions
@@ -51,13 +48,13 @@ var defaultConfig = {
          * [dateFormat](/class-reference/Highcharts#dateFormat) function.
          *
          * @type      {string}
-         * @default   '%a, %b %d %Y, %H:%M'
+         * @default   %a, %b %d %Y, %H:%M
          * @product   gantt
          * @apioption xAxis.currentDateIndicator.label.format
          */
         format: '%a, %b %d %Y, %H:%M',
         formatter: function (value, format) {
-            return dateFormat(format, value);
+            return this.axis.chart.time.dateFormat(format, value);
         },
         rotation: 0,
         /**

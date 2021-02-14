@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Accessibility component for exporting menu.
  *
@@ -12,17 +12,13 @@
 'use strict';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-
 var extend = U.extend;
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
-
 var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
-
 var removeElement = HTMLUtilities.removeElement, getFakeMouseEvent = HTMLUtilities.getFakeMouseEvent;
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Get the wrapped export button element of a chart.
@@ -34,7 +30,6 @@ var removeElement = HTMLUtilities.removeElement, getFakeMouseEvent = HTMLUtiliti
 function getExportMenuButtonElement(chart) {
     return chart.exportSVGElements && chart.exportSVGElements[0];
 }
-
 /**
  * Show the export menu and focus the first item (if exists).
  *
@@ -123,7 +118,6 @@ H.Chart.prototype.highlightLastExportItem = function () {
     }
     return false;
 };
-
 /**
  * @private
  * @param {Highcharts.Chart} chart

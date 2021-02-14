@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -8,13 +8,15 @@
  *
  * */
 'use strict';
-import H from '../Core/Globals.js';
+import ColumnSeries from '../Series/Column/ColumnSeries.js';
+
+var columnProto = ColumnSeries.prototype;
+import Series from '../Core/Series/Series.js';
+
+var seriesProto = Series.prototype;
 import U from '../Core/Utilities.js';
 
 var defined = U.defined, stableSort = U.stableSort;
-import '../Core/Series/Series.js';
-
-var seriesTypes = H.seriesTypes;
 /**
  * @private
  * @mixin onSeriesMixin
@@ -30,7 +32,7 @@ var onSeriesMixin = {
      * @return {Highcharts.SeriesPlotBoxObject}
      */
     getPlotBox: function () {
-        return H.Series.prototype.getPlotBox.call((this.options.onSeries &&
+        return seriesProto.getPlotBox.call((this.options.onSeries &&
             this.chart.get(this.options.onSeries)) || this);
     },
     /**
@@ -41,7 +43,7 @@ var onSeriesMixin = {
      * @return {void}
      */
     translate: function () {
-        seriesTypes.column.prototype.translate.apply(this);
+        columnProto.translate.apply(this);
         var series = this, options = series.options, chart = series.chart, points = series.points,
             cursor = points.length - 1, point, lastPoint, optionsOnSeries = options.onSeries,
             onSeries = (optionsOnSeries &&

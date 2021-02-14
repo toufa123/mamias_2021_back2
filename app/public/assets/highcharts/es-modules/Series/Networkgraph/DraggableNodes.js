@@ -2,17 +2,17 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2020 Paweł Fus
+ *  (c) 2010-2021 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-
 var addEvent = U.addEvent;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 H.dragNodesMixin = {
@@ -74,11 +74,13 @@ H.dragNodesMixin = {
      * @return {void}
      */
     onMouseUp: function (point, event) {
-        if (point.fixedPosition && point.hasDragged) {
-            if (this.layout.enableSimulation) {
-                this.layout.start();
-            } else {
-                this.chart.redraw();
+        if (point.fixedPosition) {
+            if (point.hasDragged) {
+                if (this.layout.enableSimulation) {
+                    this.layout.start();
+                } else {
+                    this.chart.redraw();
+                }
             }
             point.inDragMode = point.hasDragged = false;
             if (!this.options.fixedDraggable) {

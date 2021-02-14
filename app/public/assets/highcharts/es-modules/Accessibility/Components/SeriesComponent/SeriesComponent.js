@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Accessibility component for series and points.
  *
@@ -12,17 +12,14 @@
 'use strict';
 import H from '../../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
-
 var extend = U.extend;
 import AccessibilityComponent from '../../AccessibilityComponent.js';
 import SeriesKeyboardNavigation from './SeriesKeyboardNavigation.js';
 import NewDataAnnouncer from './NewDataAnnouncer.js';
 import addForceMarkersEvents from './ForcedMarkers.js';
 import ChartUtilities from '../../Utils/ChartUtilities.js';
-
 var hideSeriesFromAT = ChartUtilities.hideSeriesFromAT;
 import SeriesDescriber from './SeriesDescriber.js';
-
 var describeSeries = SeriesDescriber.describeSeries;
 import Tooltip from '../../../Core/Tooltip.js';
 // Expose functionality to users

@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2020 Highsoft AS
+ *  Copyright (c) 2019-2021 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -10,16 +10,17 @@
  *
  * */
 'use strict';
-import H from '../../Core/Globals.js';
-import GLShader from './WGLShader.js';
-import GLVertexBuffer from './WGLVBuffer.js';
-import Color from '../../Core/Color.js';
+import Color from '../../Core/Color/Color.js';
 
 var color = Color.parse;
+import GLShader from './WGLShader.js';
+import GLVertexBuffer from './WGLVBuffer.js';
+import H from '../../Core/Globals.js';
+
+var doc = H.doc;
 import U from '../../Core/Utilities.js';
 
 var isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
-var win = H.win, doc = win.document;
 
 /* eslint-disable valid-jsdoc */
 /**
@@ -41,7 +42,7 @@ function GLRenderer(postRenderCallback) {
     //  // Shader
     var shader = false,
         // Vertex buffers - keyed on shader attribute name
-        vbuffer = false,
+        vbuffer = false, vlen = 0,
         // Opengl context
         gl = false,
         // Width of our viewport in pixels
@@ -120,7 +121,6 @@ function GLRenderer(postRenderCallback) {
         }
         return 0;
     }
-
     /**
      * Allocate a float buffer to fit all series
      * @private
@@ -137,7 +137,6 @@ function GLRenderer(postRenderCallback) {
         });
         vbuffer.allocate(s);
     }
-
     /**
      * @private
      */
@@ -151,7 +150,6 @@ function GLRenderer(postRenderCallback) {
         }
         vbuffer.allocate(s);
     }
-
     /**
      * Returns an orthographic perspective matrix
      * @private
@@ -167,7 +165,6 @@ function GLRenderer(postRenderCallback) {
             -1, 1, -(far + near) / (far - near), 1
         ];
     }
-
     /**
      * Clear the depth and color buffer
      * @private
@@ -175,7 +172,6 @@ function GLRenderer(postRenderCallback) {
     function clear() {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     }
-
     /**
      * Get the WebGL context
      * @private
@@ -184,7 +180,6 @@ function GLRenderer(postRenderCallback) {
     function getGL() {
         return gl;
     }
-
     /**
      * Push data for a single series
      * This calculates additional vertices and transforms the data to be
@@ -253,7 +248,6 @@ function GLRenderer(postRenderCallback) {
             plotWidth = series.chart.plotHeight;
         }
         series.closestPointRangePx = Number.MAX_VALUE;
-
         /**
          * Push color to color buffer - need to do this per vertex.
          * @private
@@ -266,7 +260,6 @@ function GLRenderer(postRenderCallback) {
                 inst.colorData.push(color[3]);
             }
         }
-
         /**
          * Push a vertice to the data buffer.
          * @private
@@ -275,6 +268,7 @@ function GLRenderer(postRenderCallback) {
             pushColor(color);
             if (settings.usePreallocated) {
                 vbuffer.push(x, y, checkTreshold ? 1 : 0, pointSize || 1);
+                vlen += 4;
             } else {
                 data.push(x);
                 data.push(y);
@@ -282,16 +276,14 @@ function GLRenderer(postRenderCallback) {
                 data.push(pointSize || 1);
             }
         }
-
         /**
          * @private
          */
         function closeSegment() {
             if (inst.segments.length) {
-                inst.segments[inst.segments.length - 1].to = data.length;
+                inst.segments[inst.segments.length - 1].to = data.length || vlen;
             }
         }
-
         /**
          * Create a new segment for the current set.
          * @private
@@ -302,15 +294,14 @@ function GLRenderer(postRenderCallback) {
             // When adding a segment, if one exists from before, it should
             // set the previous segment's end
             if (inst.segments.length &&
-                inst.segments[inst.segments.length - 1].from === data.length) {
+                inst.segments[inst.segments.length - 1].from === (data.length || vlen)) {
                 return;
             }
             closeSegment();
             inst.segments.push({
-                from: data.length
+                from: data.length || vlen
             });
         }
-
         /**
          * Push a rectangle to the data buffer.
          * @private
@@ -329,7 +320,6 @@ function GLRenderer(postRenderCallback) {
             pushColor(color);
             vertice(x + w, y);
         }
-
         // Create the first segment
         beginSegment();
         // Special case for point shapes
@@ -651,7 +641,6 @@ function GLRenderer(postRenderCallback) {
         if (settings.debug.showSkipSummary) {
             console.log('skipped points:', skipped); // eslint-disable-line no-console
         }
-
         /**
          * @private
          */
@@ -669,7 +658,6 @@ function GLRenderer(postRenderCallback) {
             }
             vertice(point.x, point.y, 0, 2);
         }
-
         if (!hadPoints &&
             connectNulls !== false &&
             series.drawMode === 'line_strip') {
@@ -683,7 +671,6 @@ function GLRenderer(postRenderCallback) {
         }
         closeSegment();
     }
-
     /**
      * Push a series to the renderer
      * If we render the series immediatly, we don't have to loop later
@@ -735,7 +722,6 @@ function GLRenderer(postRenderCallback) {
             console.timeEnd('building ' + s.type + ' series'); // eslint-disable-line no-console
         }
     }
-
     /**
      * Flush the renderer.
      * This removes pushed series and vertices.
@@ -750,7 +736,6 @@ function GLRenderer(postRenderCallback) {
             vbuffer.destroy();
         }
     }
-
     /**
      * Pass x-axis to shader
      * @private
@@ -770,7 +755,6 @@ function GLRenderer(postRenderCallback) {
         shader.setUniform('xAxisIsLog', (!!axis.logarithmic));
         shader.setUniform('xAxisReversed', (!!axis.reversed));
     }
-
     /**
      * Pass y-axis to shader
      * @private
@@ -790,7 +774,6 @@ function GLRenderer(postRenderCallback) {
         shader.setUniform('yAxisIsLog', (!!axis.logarithmic));
         shader.setUniform('yAxisReversed', (!!axis.reversed));
     }
-
     /**
      * Set the translation threshold
      * @private
@@ -801,7 +784,6 @@ function GLRenderer(postRenderCallback) {
         shader.setUniform('hasThreshold', has);
         shader.setUniform('translatedThreshold', translation);
     }
-
     /**
      * Render the data
      * This renders all pushed series.
@@ -860,7 +842,9 @@ function GLRenderer(postRenderCallback) {
                     s.series.markerGroup.getStyle('fill'));
             } else {
                 fillColor =
-                    (s.series.pointAttribs && s.series.pointAttribs().fill) ||
+                    (s.drawMode === 'points' && // #14260
+                        s.series.pointAttribs &&
+                        s.series.pointAttribs().fill) ||
                     s.series.color;
                 if (options.colorByPoint) {
                     fillColor = s.series.chart.options.colors[si];
@@ -952,7 +936,6 @@ function GLRenderer(postRenderCallback) {
         }
         flush();
     }
-
     /**
      * Render the data when ready
      * @private
@@ -970,7 +953,6 @@ function GLRenderer(postRenderCallback) {
             }, 1);
         }
     }
-
     /**
      * Set the viewport size in pixels
      * Creates an orthographic perspective matrix and applies it.
@@ -988,7 +970,6 @@ function GLRenderer(postRenderCallback) {
         shader.bind();
         shader.setPMatrix(orthoMatrix(width, height));
     }
-
     /**
      * Init OpenGL
      * @private
@@ -1070,7 +1051,6 @@ function GLRenderer(postRenderCallback) {
                 // silent error
             }
         }
-
         // Circle shape
         createTexture('circle', function (ctx) {
             ctx.beginPath();
@@ -1116,7 +1096,6 @@ function GLRenderer(postRenderCallback) {
         }
         return true;
     }
-
     /**
      * Check if we have a valid OGL context
      * @private
@@ -1125,7 +1104,6 @@ function GLRenderer(postRenderCallback) {
     function valid() {
         return gl !== false;
     }
-
     /**
      * Check if the renderer has been initialized
      * @private
@@ -1134,7 +1112,6 @@ function GLRenderer(postRenderCallback) {
     function inited() {
         return isInited;
     }
-
     /**
      * @private
      */
@@ -1152,7 +1129,6 @@ function GLRenderer(postRenderCallback) {
             gl.canvas.height = 1;
         }
     }
-
     // /////////////////////////////////////////////////////////////////////////
     exports = {
         allocateBufferForSingleSeries: allocateBufferForSingleSeries,
@@ -1176,5 +1152,4 @@ function GLRenderer(postRenderCallback) {
     };
     return exports;
 }
-
 export default GLRenderer;
