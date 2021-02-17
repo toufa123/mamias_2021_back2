@@ -14,6 +14,9 @@
     {% block js %}{% endblock %}
     <!-- App css -->
     <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css"/>
+
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
     <link href="{{ asset('assets/css/core.css') }}" rel="stylesheet" type="text/css"/>
     <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet" type="text/css"/>
     <link href="{{ asset('assets/css/icons.css') }}" rel="stylesheet" type="text/css"/>
@@ -439,9 +442,7 @@
                 </li>
             </ul>
         </div>
-        <!-- /clickable menu -->
-
-
+        {{ render_esi(path('ch_cookie_consent.show_if_cookie_consent_not_set')) }}
         <!-- Footer -->
         <footer class="footer text-right">
             <div class="container-fluid">
@@ -1132,7 +1133,7 @@
 <script src="{{ asset('assets/js/jquery.core.js') }}"></script>
 <script src="{{ asset('assets/js/jquery.app.js') }}"></script>
 <script src="{{ asset('assets/js/jquery.cookie.js') }}"></script>
-<script type="text/javascript" src="{{ asset('bundles/chcookieconsent/js/cookie_consent.js') }}"></script>
+
 
 <script>
     $(document).ready(function () {
@@ -1150,7 +1151,6 @@
         });
         $('#tooltip-hover1').tooltipster();
     });
-
 
 </script>
 

@@ -322,22 +322,37 @@ class MedlevelController extends AbstractController
         //dump ($vectorcer);die;
         $cerpcategoriesc = [];
         $cerpdatac = [];
+        $cerpdatac2 = [];
+
+        $result = array();
+        foreach ($vectorcer as $element) {
+            $cerpcategoriesc[$element['vector_name']] = $element['vector_name'];
+            $result[$element['certainty']][] = [$element['vector_name'], $element['count']];
+            $abcd[] = $element['certainty'];
+        }
+        dd($abcd, $result, $cerpcategoriesc);
+
         foreach ($vectorcer as $values) {
             $cerpcategoriesc[] = [$values['vector_name']];
+
             $a4 = [$values['certainty'], $values['count']];
+            //$a222 = [$values['vector_name'],$values['count']];
             array_push($cerpdatac, $a4);
 
+
         }
-        //dump($cerpdatac); die;
+        //dump($vectorcer, $cerpdatac,$cerpdatac2); die;
 
         $ob15 = new Highchart();
         $ob15->lang->noData('No Data to display');
         $ob15->chart->renderTo('column1');
         $ob15->chart->type('column');
         $ob15->xAxis->categories($cerpcategoriesc);
+
         $ob15->title->text('Number of Reported NIS per Pathway (CBD)');
         //$ob9->xAxis->categories($pcategoriesc);
-        //$ob9->yAxis->title(['text' => 'Numbre of NIS']);
+        $ob15->yAxis->title(['text' => 'Numbre of NIS']);
+        $ob15->xAxis->title(['text' => 'Pathways']);
         //$ob9->yAxis->allowDecimals(false);
         $ob15->title->style(
             ['fontFamily' => 'Roboto light', 'fontSize' => '18px', 'color' => '#00AEEF', 'fontWeight' => 'bold']
@@ -349,11 +364,11 @@ class MedlevelController extends AbstractController
         $ob15->plotOptions->column(
             [
                 'stacking' => 'normal',
-
+                'dataLabels' => 'enabled'
             ]
         );
         //$data = array($status,$results2);
-        $ob15->series([['type' => 'column', 'name' => 'Number of NIS', 'color' => '#00AEEF', 'data' => $cerpdatac]]);
+        $ob15->series([['name' => 'Number of NIS', 'color' => '#00AEEF', 'data' => $result]]);
 
         ////////////////////////////////////////////////
         //draw cumulative numbre of NIS

@@ -2,18 +2,21 @@
 {% block title %}Search NIS Species{% endblock %}
 {% block stylesheets %}
     <!-- Data Table CSS -->
-    <link href="{{ asset('assets/plugins/datatables/jquery.dataTables.min.css') }}" rel="stylesheet" type="text/css"/>
-    <link href="{{ asset('assets/plugins/datatables/buttons.bootstrap4.min.css') }}" rel="stylesheet" type="text/css"/>
-    <link href="{{ asset('assets/plugins/datatables/fixedHeader.bootstrap4.min.css') }}" rel="stylesheet"
+    <link href="{{ asset('assets/plugins/datatables2/jquery.dataTables.min.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/plugins/datatables2/buttons.bootstrap4.min.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/plugins/datatables2/fixedHeader.bootstrap4.min.css') }}" rel="stylesheet"
           type="text/css"/>
-    <link href="{{ asset('assets/plugins/datatables/responsive.bootstrap4.min.css') }}" rel="stylesheet"
+    <link href="{{ asset('assets/plugins/datatables2/responsive.bootstrap4.min.css') }}" rel="stylesheet"
           type="text/css"/>
-    <link href="{{ asset('assets/plugins/datatables/scroller.bootstrap4.min.css') }}" rel="stylesheet" type="text/css"/>
-    <link href="{{ asset('assets/plugins/datatables/dataTables.colVis.css') }}" rel="stylesheet" type="text/css"/>
-    <link href="{{ asset('assets/plugins/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet"
+    <link href="{{ asset('assets/plugins/datatables2/scroller.bootstrap4.min.css') }}" rel="stylesheet"
           type="text/css"/>
-    <link href="{{ asset('assets/plugins/datatables/fixedColumns.dataTables.min.css') }}" rel="stylesheet"
+    <link href="{{ asset('assets/plugins/datatables2/dataTables.colVis.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/plugins/datatables2/dataTables.bootstrap4.min.css') }}" rel="stylesheet"
           type="text/css"/>
+    <link href="{{ asset('assets/plugins/datatables2/fixedColumns.dataTables.min.css') }}" rel="stylesheet"
+          type="text/css"/>
+
+
     <!-- select2 -->
     <link href="{{ asset('assets/plugins/bootstrap-tagsinput/css/bootstrap-tagsinput.css') }}" rel="stylesheet"
           type="text/css"/>
@@ -30,7 +33,7 @@
 {% endblock %}
 {% block body %}
     <div class="row">
-        <div class="col-md-8 offset-md-2 text-center m-t-20">
+        <div class="col-md-8 offset-md-2 text-center m-t-2">
             <h3 class="h4"><b>Search MAMIAS for NIS</b></h3>
         </div>
     </div>
@@ -185,22 +188,24 @@
 {% endblock %}
 {% block javascripts %}
     <!-- Data Table JavaScript -->
-    <script src="{{ asset('assets/plugins/datatables/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/dataTables.bootstrap4.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/buttons.bootstrap4.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/jszip.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/dataTables.fixedHeader.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/dataTables.keyTable.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/dataTables.responsive.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/responsive.bootstrap4.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/dataTables.scroller.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/dataTables.colVis.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/dataTables.fixedColumns.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/buttons.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/jszip.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/pdfmake.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/vfs_fonts.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/dataTables.fixedHeader.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/dataTables.keyTable.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/responsive.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/dataTables.scroller.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/dataTables.colVis.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/dataTables.fixedColumns.min.js') }}"></script>
+
+
 
     <!-- Select2 JavaScript -->
     <script src="{{ asset('assets/plugins/bootstrap-tagsinput/js/bootstrap-tagsinput.min.js') }}"></script>

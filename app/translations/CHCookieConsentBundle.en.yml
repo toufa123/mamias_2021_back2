@@ -1,13 +1,13 @@
 ch_cookie_consent:
-  title: 'Cookies on our website.'
+  title: 'Cookies on MAMIAS Web Application'
   intro: 'MAMIAS webapplication uses cookies to ensure you get the best experience on our website.'
   read_more: 'read more about this'
   analytics:
     title: 'Do you want analytical cookies?'
-    description: ''
+    description: 'These cookies allow us to count visits and traffic sources, so we can measure and improve the performance of our site. They help us know which pages are the most and least popular and see how visitors move around the site. All information these cookies collect is aggregated and therefore anonymous.'
   tracking:
     title: 'Do you want tracking cookies?'
-    description: ''
+    description: 'Tracking cookies are a specialized type of cookie that can be shared by more than one website or service. They are commonly used for legitimate marketing and advertising purposes, but because they contain a history of the user actions on multiple sites, they may be exploited or misused to track the user behavior.'
   marketing:
     title: 'Do you want personalised ads?'
     description: ''

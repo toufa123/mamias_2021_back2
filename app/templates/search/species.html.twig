@@ -3,30 +3,23 @@
 {% block title %}{{ entity }}{% endblock %}
 
 {% block stylesheets %}
-
     <!-- Data Table CSS -->
-
-     <link href="{{ asset('assets/plugins/datatables/jquery.dataTables.min.css') }}" rel="stylesheet" type="text/css"/>
-
-    <link href="{{ asset('assets/plugins/datatables/buttons.bootstrap4.min.css') }}" rel="stylesheet" type="text/css"/>
-    <link href="{{ asset('assets/plugins/datatables/fixedHeader.bootstrap4.min.css') }}" rel="stylesheet"
+    <link href="{{ asset('assets/plugins/datatables2/jquery.dataTables.min.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/plugins/datatables2/buttons.bootstrap4.min.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/plugins/datatables2/fixedHeader.bootstrap4.min.css') }}" rel="stylesheet"
           type="text/css"/>
-    <link href="{{ asset('assets/plugins/datatables/responsive.bootstrap4.min.css') }}" rel="stylesheet"
+    <link href="{{ asset('assets/plugins/datatables2/responsive.bootstrap4.min.css') }}" rel="stylesheet"
           type="text/css"/>
-    <link href="{{ asset('assets/plugins/datatables/scroller.bootstrap4.min.css') }}" rel="stylesheet" type="text/css"/>
-    <link href="{{ asset('assets/plugins/datatables/dataTables.colVis.css') }}" rel="stylesheet" type="text/css"/>
-    <link href="{{ asset('assets/plugins/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet"
+    <link href="{{ asset('assets/plugins/datatables2/scroller.bootstrap4.min.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/plugins/datatables2/dataTables.colVis.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('assets/plugins/datatables2/dataTables.bootstrap4.min.css') }}" rel="stylesheet"
           type="text/css"/>
-    <link href="{{ asset('assets/plugins/datatables/fixedColumns.dataTables.min.css') }}" rel="stylesheet"
+    <link href="{{ asset('assets/plugins/datatables2/fixedColumns.dataTables.min.css') }}" rel="stylesheet"
           type="text/css"/>
-
-
     <link rel="stylesheet" href="{{ asset('assets/leaflet/leaflet.css') }}" rel="stylesheet"/>
     <link rel="stylesheet" href="{{ asset('assets/leaflet/leaflet-locationpicker.css') }}" rel="stylesheet"/>
     <link rel="stylesheet" href="{{ asset('assets/leaflet/Leaflet.Coordinates-0.1.5.css') }}" rel="stylesheet"/>
-
     <script src="{{ asset('assets/leaflet/leaflet.js') }}"></script>
-
     <script src="{{ asset('assets/leaflet/Leaflet.Coordinates-0.1.5.min.js') }}"></script>
     <script src="{{ asset('assets/leaflet/Leaflet.Sleep.js') }}"></script>
 
@@ -310,22 +303,22 @@
 {% endblock %}
 {% block javascripts %}
     <!-- Required datatable js -->
-     <script src="{{ asset('assets/plugins/datatables/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/dataTables.bootstrap4.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/buttons.bootstrap4.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/jszip.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/dataTables.fixedHeader.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/dataTables.keyTable.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/dataTables.responsive.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/responsive.bootstrap4.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/dataTables.scroller.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/dataTables.colVis.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatables/dataTables.fixedColumns.min.js') }}"></script>
+     <script src="{{ asset('assets/plugins/datatables2/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/buttons.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/jszip.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/pdfmake.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/vfs_fonts.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/dataTables.fixedHeader.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/dataTables.keyTable.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/responsive.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/dataTables.scroller.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/dataTables.colVis.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables2/dataTables.fixedColumns.min.js') }}"></script>
     <script src="{{ asset('assets/leaflet/leaflet-locationpicker.js') }}"></script>
     <script src="{{ asset('assets/highcharts/highmaps.src.js') }}"></script>
     <script src="{{ asset('assets/highcharts/modules/data.src.js') }}"></script>

@@ -1,5 +1,5 @@
 /*! DataTables 1.10.7
- * ©2008-2014 SpryMedia Ltd - datatables.net/license
+ * ©2008-2014 SpryMedia Ltd - datatables2.net/license
  */
 
 /**
@@ -31,7 +31,7 @@
 
         if (typeof define === 'function' && define.amd) {
             // Define as an AMD module if possible
-            define('datatables', ['jquery'], factory);
+            define('datatables2', ['jquery'], factory);
         } else if (typeof exports === 'object') {
             // Node/CommonJS
             module.exports = factory(require('jquery'));

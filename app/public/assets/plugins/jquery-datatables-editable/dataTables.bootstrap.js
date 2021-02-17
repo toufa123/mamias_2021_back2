@@ -1,5 +1,5 @@
 /*! DataTables Bootstrap 3 integration
- * ©2011-2014 SpryMedia Ltd - datatables.net/license
+ * ©2011-2014 SpryMedia Ltd - datatables2.net/license
  */
 
 /**
@@ -169,10 +169,10 @@
 
 // Define as an AMD module if possible
     if (typeof define === 'function' && define.amd) {
-        define(['jquery', 'datatables'], factory);
+        define(['jquery', 'datatables2'], factory);
     } else if (typeof exports === 'object') {
         // Node/CommonJS
-        factory(require('jquery'), require('datatables'));
+        factory(require('jquery'), require('datatables2'));
     } else if (jQuery) {
         // Otherwise simply initialise as normal, stopping multiple evaluation
         factory(jQuery, jQuery.fn.dataTable);
